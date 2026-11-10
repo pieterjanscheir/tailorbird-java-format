@@ -1207,6 +1207,11 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
             token("static");
             builder.space();
         }
+        // Tailorbird: `import module java.base;` (issue #57).
+        if (ModuleImports.isModule(node)) {
+            token("module");
+            builder.space();
+        }
         visitName(node.getQualifiedIdentifier());
         token(";");
         // TODO(cushon): remove this if https://bugs.openjdk.java.net/browse/JDK-8027682 is fixed

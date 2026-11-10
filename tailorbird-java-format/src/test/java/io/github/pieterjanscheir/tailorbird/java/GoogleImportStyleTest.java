@@ -526,6 +526,52 @@ public class GoogleImportStyleTest {
                     "class Test {}",
                 }
             },
+            // Tailorbird: module imports go first, in one group sorted by name (issue #57).
+            {
+                {
+                    "package p;",
+                    "",
+                    "import java.util.List;",
+                    "import module java.sql;",
+                    "import static a.B.c;",
+                    "import module foo;",
+                    "import module java.base;",
+                    "",
+                    "class Test {}",
+                },
+                {
+                    "package p;",
+                    "",
+                    "import module foo;",
+                    "import module java.base;",
+                    "import module java.sql;",
+                    "",
+                    "import static a.B.c;",
+                    "",
+                    "import java.util.List;",
+                    "",
+                    "class Test {}",
+                }
+            },
+            // Tailorbird: `module` followed by a dot is a package named module, not a module import.
+            {
+                {
+                    "package p;", //
+                    "",
+                    "import module.util.Helper;",
+                    "import a.A;",
+                    "",
+                    "class Test {}",
+                },
+                {
+                    "package p;", //
+                    "",
+                    "import a.A;",
+                    "import module.util.Helper;",
+                    "",
+                    "class Test {}",
+                }
+            },
         };
 
         ImmutableList.Builder<Object[]> builder = ImmutableList.builder();
