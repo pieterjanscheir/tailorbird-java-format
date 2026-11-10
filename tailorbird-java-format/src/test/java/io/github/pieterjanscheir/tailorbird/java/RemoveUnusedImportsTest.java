@@ -255,7 +255,7 @@ public class RemoveUnusedImportsTest {
                     "interface Test { private static void foo() {} }",
                 },
             },
-            // Bowerbird: removing a whole group leaves one blank line, not two (issue #40).
+            // Tailorbird: removing a whole group leaves one blank line, not two (issue #40).
             {
                 {
                     "package p;", //

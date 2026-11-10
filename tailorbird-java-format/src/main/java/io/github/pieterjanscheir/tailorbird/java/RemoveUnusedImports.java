@@ -317,7 +317,7 @@ public class RemoveUnusedImports {
     }
 
     /**
-     * Bowerbird: removing the last import of a group leaves the blank lines that surrounded the group next to each
+     * Tailorbird: removing the last import of a group leaves the blank lines that surrounded the group next to each
      * other, which the next formatter run would collapse. Collapses them now, so one run reaches a fixed point.
      *
      * @return the number of characters removed
