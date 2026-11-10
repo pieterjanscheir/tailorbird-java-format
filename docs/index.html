@@ -152,7 +152,8 @@ continuationIndent: 4</code></pre>
 <h3 id="command-line">On the command line</h3>
 <p>For pre-commit hooks, CI scripts and other tools that run the formatter directly, use the <code>tailorbird</code> launcher and pass the settings file with <code>--config</code>. Each <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> from the first one on has a <code>tailorbird-&lt;version&gt;.zip</code> and its <code>SHA256SUMS</code>. Unzip it, then run:</p>
 <pre><code>tailorbird-&lt;version&gt;/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>It needs Java 21 or later, from <code>JAVA_HOME</code> or the <code>PATH</code>. On Windows, use <code>bin\tailorbird.bat</code>. To build the same launcher yourself:</p>
+<p>Each release also has a native binary that needs no Java at all: <code>tailorbird-&lt;version&gt;-linux-x86-64</code>, <code>-linux-aarch64</code>, <code>-macos-aarch64</code> and <code>-windows-x86-64.exe</code>. It takes the same options and gives the same output, and starts faster, which helps in pre-commit hooks. On macOS, a downloaded binary may first need <code>xattr -d com.apple.quarantine</code>.</p>
+<p>The zip needs Java 21 or later, from <code>JAVA_HOME</code> or the <code>PATH</code>. On Windows, use <code>bin\tailorbird.bat</code>. To build the same launcher yourself:</p>
 <pre><code>./gradlew :tailorbird-java-format:installDist
 tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
 <p>The launcher passes the flags that open up the JDK's own Java parser, so you don't need to set <code>JAVA_OPTS</code>. An invalid settings file stops with a one-line error and exit code 2.</p>

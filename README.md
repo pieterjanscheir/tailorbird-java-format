@@ -58,7 +58,8 @@ See [Default style](https://pieterjanscheir.github.io/tailorbird-java-format/#ru
 
 Releases are published to GitHub Packages, which needs a personal access token with the `read:packages`
 scope, even for public packages. The jars are also attached to each [GitHub Release](https://github.com/pieterjanscheir/tailorbird-java-format/releases),
-with a `tailorbird-<version>.zip` command-line launcher and its `SHA256SUMS`.
+with a `tailorbird-<version>.zip` command-line launcher, native binaries for Linux, macOS and Windows, and
+their `SHA256SUMS`.
 
 Apply the upstream Gradle plugin and point it at Tailorbird instead of the default formatter:
 

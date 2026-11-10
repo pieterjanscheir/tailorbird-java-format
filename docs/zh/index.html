@@ -152,7 +152,8 @@ continuationIndent: 4</code></pre>
 <h3 id="command-line">在命令行中使用</h3>
 <p>对于 pre-commit 钩子、CI 脚本以及其他直接运行格式化器的工具，请使用 <code>tailorbird</code> 启动器，并通过 <code>--config</code> 传入配置文件。从第一个版本起，每个 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> 都附带 <code>tailorbird-&lt;version&gt;.zip</code> 及其 <code>SHA256SUMS</code>。解压后运行：</p>
 <pre><code>tailorbird-&lt;version&gt;/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>它需要 Java 21 或更高版本，从 <code>JAVA_HOME</code> 或 <code>PATH</code> 中查找。在 Windows 上请使用 <code>bin\tailorbird.bat</code>。也可以自己构建同样的启动器：</p>
+<p>每个版本还附带无需 Java 的原生可执行文件：<code>tailorbird-&lt;version&gt;-linux-x86-64</code>、<code>-linux-aarch64</code>、<code>-macos-aarch64</code> 和 <code>-windows-x86-64.exe</code>。它接受相同的选项，输出也相同，而且启动更快，适合用在 pre-commit 钩子中。在 macOS 上，下载的文件可能需要先运行 <code>xattr -d com.apple.quarantine</code>。</p>
+<p>zip 包需要 Java 21 或更高版本，从 <code>JAVA_HOME</code> 或 <code>PATH</code> 中查找。在 Windows 上请使用 <code>bin\tailorbird.bat</code>。也可以自己构建同样的启动器：</p>
 <pre><code>./gradlew :tailorbird-java-format:installDist
 tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
 <p>启动器会自动传入开放 JDK 自带 Java 解析器所需的参数，因此无需设置 <code>JAVA_OPTS</code>。配置文件无效时，会输出一行错误信息并以退出码 2 结束。</p>
