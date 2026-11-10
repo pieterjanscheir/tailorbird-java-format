@@ -37,6 +37,7 @@
       <li><a href="#overview">概述</a></li>
       <li><a href="#install">安装</a></li>
       <li><a href="#gradle">Gradle</a></li>
+      <li><a href="#maven">Maven</a></li>
       <li><a href="#intellij">IntelliJ</a></li>
     </ul>
     <div class="group">配置</div>
@@ -97,6 +98,7 @@
     <tr><td>格式化器</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format</code></td></tr>
     <tr><td>SPI</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-spi</code></td></tr>
     <tr><td>JDK 引导模块</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-jdk-bootstrap</code></td></tr>
+    <tr><td>Maven 插件</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-maven-plugin</code></td></tr>
   </tbody>
 </table>
 <p>即使是公开包，GitHub Packages 也需要认证。请创建一个带有 <code>read:packages</code> 权限范围的<a href="https://github.com/settings/tokens">个人访问令牌（classic）</a>，并把该仓库添加到构建中：</p>
@@ -125,6 +127,48 @@ dependencies {
 <p>该插件会配置 IntelliJ 使用这个格式化器。如需命令行的 <code>./gradlew format</code> 任务，请添加 <a href="https://github.com/palantir/gradle-baseline#compalantirbaseline-format">com.palantir.baseline-format</a> 插件。如果使用 <a href="https://github.com/diffplug/spotless/tree/main/plugin-gradle#palantir-java-format">Spotless</a>，请将 <code>palantirJavaFormat()</code> 配置为使用 Tailorbird 的构件，然后运行 <code>./gradlew spotlessApply</code>。</p>
 <div class="callout warn"><strong>不要启用原生格式化器</strong>（<code>palantir.native.formatter</code>）。它会下载 Palantir 预编译的二进制文件，其中不包含 Tailorbird 的规则。</div>
 
+<h2 id="maven">在 Maven 中使用</h2>
+<p>Tailorbird 提供自己的 Maven 插件。在 <code>pom.xml</code> 中把 GitHub Packages 添加为插件仓库，并在 <code>~/.m2/settings.xml</code> 中用相同的 <code>id</code> 配置你的令牌：</p>
+<pre><code>&lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;tailorbird&lt;/id&gt;
+        &lt;url&gt;https://maven.pkg.github.com/pieterjanscheir/tailorbird-java-format&lt;/url&gt;
+    &lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;</code></pre>
+<pre><code>&lt;!-- ~/.m2/settings.xml --&gt;
+&lt;servers&gt;
+    &lt;server&gt;
+        &lt;id&gt;tailorbird&lt;/id&gt;
+        &lt;username&gt;你的 GitHub 用户名&lt;/username&gt;
+        &lt;password&gt;你的令牌&lt;/password&gt;
+    &lt;/server&gt;
+&lt;/servers&gt;</code></pre>
+<p>然后添加插件。<code>check</code> 目标在 <code>verify</code> 阶段运行，只要有文件未格式化，构建就会失败；<code>mvn tailorbird:apply</code> 会直接格式化源文件：</p>
+<pre><code>&lt;plugin&gt;
+    &lt;groupId&gt;io.github.pieterjanscheir.tailorbird&lt;/groupId&gt;
+    &lt;artifactId&gt;tailorbird-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;&lt;tailorbird version&gt;&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;check&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+<table>
+  <thead><tr><th>参数</th><th>属性</th><th>默认值</th></tr></thead>
+  <tbody>
+    <tr><td><code>configFile</code></td><td><code>tailorbird.config</code></td><td>在模块目录或其父模块目录中最近的 <code>tailorbird.yml</code>；都没有时使用 Tailorbird 的默认风格</td></tr>
+    <tr><td><code>skip</code></td><td><code>tailorbird.skip</code></td><td><code>false</code></td></tr>
+    <tr><td><code>sourceDirectories</code></td><td></td><td>main 和 test 源码目录，不包括生成的源码</td></tr>
+    <tr><td><code>excludes</code></td><td></td><td>无；相对于模块目录的 glob 模式，例如 <code>**/generated/**</code></td></tr>
+    <tr><td><code>javaExecutable</code></td><td><code>tailorbird.java</code></td><td>运行 Maven 的 JVM 的 <code>java</code></td></tr>
+  </tbody>
+</table>
+<p>该插件需要 Maven 3.6.3 或更高版本，并运行在 Java 11 或更高版本上。它会在单独的 JVM 中运行格式化器，并带上所需的 <code>--add-exports</code> 参数，因此不需要 <code>.mvn/jvm.config</code>。这个 JVM 必须支持你代码所用的 Java 版本：要格式化 Java 21 语法，请在 JDK 21 上运行 Maven，或让 <code>javaExecutable</code> 指向 JDK 21。经过测试的版本见<a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/compatibility.md">兼容性</a>。</p>
+<p>格式化器只读写 UTF-8。如果模块的 <code>project.build.sourceEncoding</code> 不是 UTF-8，插件会报错并停止，而不会格式化，因为重写文件会替换掉其中的非 ASCII 字符。</p>
+
 <h2 id="intellij">在 IntelliJ IDEA 中使用</h2>
 <p>安装上游的 <a href="https://plugins.jetbrains.com/plugin/13180-palantir-java-format">palantir-java-format IntelliJ 插件</a>。它使用 Gradle 插件为项目解析出的格式化器版本，因此只要 <code>palantirJavaFormat</code> 依赖指向 Tailorbird，在 IntelliJ 中导入项目或运行以下命令即可：</p>
 <pre><code>./gradlew idea</code></pre>
@@ -136,6 +180,7 @@ dependencies {
     palantirJavaFormat 'io.github.pieterjanscheir.tailorbird:tailorbird-java-format:&lt;tailorbird version&gt;'
     palantirJavaFormat files('config/tailorbird.yml')
 }</code></pre>
+<p>使用 <a href="#maven">Maven</a> 时，请把 <code>tailorbird.yml</code> 放在根 <code>pom.xml</code> 旁边，或设置插件的 <code>configFile</code>。</p>
 <p>所有配置项都是可选的：只需列出想要修改的项，其余均保持<a href="#settings">默认值</a>。例如，保留 Tailorbird 的风格，但写成 <code>if (x)</code>、使用 2 个空格缩进，并保留你输入的空行：</p>
 <pre><code># config/tailorbird.yml
 indent: 2
@@ -1417,7 +1462,8 @@ void check(int x) {
 <p>如需在其他项目中试用本地构建，请将其发布到 Maven Local，并在该项目的仓库列表中添加 <code>mavenLocal()</code>：</p>
 <pre><code>./gradlew :tailorbird-java-format-spi:publishToMavenLocal \
     :tailorbird-java-format-jdk-bootstrap:publishToMavenLocal \
-    :tailorbird-java-format:publishToMavenLocal</code></pre>
+    :tailorbird-java-format:publishToMavenLocal \
+    :tailorbird-maven-plugin:publishToMavenLocal</code></pre>
 <p>CI 会运行 <code>./gradlew build</code>，其中还包括 Error Prone 和项目自身的格式检查；如果构建修改了已跟踪的文件，CI 会失败。</p>
 
 <h2 id="adding-rules">添加格式化规则</h2>
@@ -1444,7 +1490,7 @@ void check(int x) {
 <p>推送一个版本标签即可构建、测试并发布该版本，版本号取自标签。</p>
 <pre><code>git tag 1.0.0
 git push origin 1.0.0</code></pre>
-<p>发布工作流会把格式化器、SPI 和 JDK 引导模块发布到 GitHub Packages，并创建一个包含 jar 包和自动生成的发布说明的 GitHub Release。</p>
+<p>发布工作流会把格式化器、SPI、JDK 引导模块和 Maven 插件发布到 GitHub Packages，并创建一个包含 jar 包和自动生成的发布说明的 GitHub Release。</p>
 
 <footer>
   <div class="foot-brand"><img src="../assets/logo.svg" alt="" width="22" height="22">Tailorbird Java Format</div>

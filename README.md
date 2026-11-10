@@ -55,6 +55,7 @@ See [Default style](https://pieterjanscheir.github.io/tailorbird-java-format/#ru
 | Formatter | `io.github.pieterjanscheir.tailorbird:tailorbird-java-format` |
 | SPI | `io.github.pieterjanscheir.tailorbird:tailorbird-java-format-spi` |
 | JDK bootstrap | `io.github.pieterjanscheir.tailorbird:tailorbird-java-format-jdk-bootstrap` |
+| Maven plugin | `io.github.pieterjanscheir.tailorbird:tailorbird-maven-plugin` |
 
 Releases are published to GitHub Packages, which needs a personal access token with the `read:packages`
 scope, even for public packages. The jars are also attached to each [GitHub Release](https://github.com/pieterjanscheir/tailorbird-java-format/releases).
@@ -88,6 +89,29 @@ binary, which does not contain Tailorbird's rules and can't read `tailorbird.yml
 [palantir-java-format plugin](https://plugins.jetbrains.com/plugin/13180-palantir-java-format); it picks up the
 formatter version the Gradle plugin resolves. See [IntelliJ](https://pieterjanscheir.github.io/tailorbird-java-format/#intellij).
 
+For Maven, add GitHub Packages as a `<pluginRepository>` (with your token in `~/.m2/settings.xml` under the
+same `id`) and the Tailorbird plugin. `check` runs in the `verify` phase and fails on unformatted files;
+`mvn tailorbird:apply` formats them. The plugin picks up the nearest `tailorbird.yml` in the module or a parent
+module, and only formats UTF-8 sources.
+See [Maven](https://pieterjanscheir.github.io/tailorbird-java-format/#maven) for all parameters.
+
+```xml
+<plugin>
+    <groupId>io.github.pieterjanscheir.tailorbird</groupId>
+    <artifactId>tailorbird-maven-plugin</artifactId>
+    <version><!-- tailorbird version --></version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>check</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+Supported Java, Maven and Gradle versions are listed in [docs/compatibility.md](./docs/compatibility.md).
+
 Tailorbird's Java packages are `io.github.pieterjanscheir.tailorbird`, except the SPI (`com.palantir.javaformat.java.FormatterService`
 and its types) and a forwarding `com.palantir.javaformat.java.Main`. The upstream Gradle and IntelliJ plugins load
 Tailorbird through those names.
@@ -98,7 +122,7 @@ Requires JDK 21.
 
 ```bash
 ./gradlew :tailorbird-java-format:test
-./gradlew :tailorbird-java-format-spi:publishToMavenLocal :tailorbird-java-format-jdk-bootstrap:publishToMavenLocal :tailorbird-java-format:publishToMavenLocal
+./gradlew :tailorbird-java-format-spi:publishToMavenLocal :tailorbird-java-format-jdk-bootstrap:publishToMavenLocal :tailorbird-java-format:publishToMavenLocal :tailorbird-maven-plugin:publishToMavenLocal
 ```
 
 CI ([ci.yml](./.github/workflows/ci.yml)) runs `./gradlew build` on every pull request and push to `main`.
@@ -154,7 +178,7 @@ git fetch upstream --tags
 
 ## Releasing
 
-Push a version tag. [release.yml](./.github/workflows/release.yml) runs the tests, publishes the three
+Push a version tag. [release.yml](./.github/workflows/release.yml) runs the tests, publishes the four
 artifacts to GitHub Packages and creates a GitHub Release with the jars and generated release notes.
 
 ```bash

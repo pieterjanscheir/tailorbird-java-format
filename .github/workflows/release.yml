@@ -32,7 +32,7 @@ jobs:
           cache-read-only: true
 
       - name: Test
-        run: ./gradlew :tailorbird-java-format-spi:check :tailorbird-java-format-jdk-bootstrap:check :tailorbird-java-format:check --stacktrace
+        run: ./gradlew :tailorbird-java-format-spi:check :tailorbird-java-format-jdk-bootstrap:check :tailorbird-java-format:check :tailorbird-maven-plugin:check --stacktrace
 
       - name: Publish to GitHub Packages
         env:
@@ -43,6 +43,7 @@ jobs:
           :tailorbird-java-format-spi:publishMavenPublicationToGitHubPackagesRepository
           :tailorbird-java-format-jdk-bootstrap:publishMavenPublicationToGitHubPackagesRepository
           :tailorbird-java-format:publishMavenPublicationToGitHubPackagesRepository
+          :tailorbird-maven-plugin:publishMavenPublicationToGitHubPackagesRepository
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
@@ -52,3 +53,4 @@ jobs:
             tailorbird-java-format/build/libs/*.jar
             tailorbird-java-format-spi/build/libs/*.jar
             tailorbird-java-format-jdk-bootstrap/build/libs/*.jar
+            tailorbird-maven-plugin/build/libs/*.jar

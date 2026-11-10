@@ -18,6 +18,7 @@ include ':tailorbird-java-format'
 include ':tailorbird-java-format-jdk-bootstrap'
 include ':tailorbird-java-format-benchmarks'
 include ':tailorbird-java-format-native'
+include ':tailorbird-maven-plugin'
 
 boolean isCiServer = System.getenv().containsKey('CI')
 buildCache {
