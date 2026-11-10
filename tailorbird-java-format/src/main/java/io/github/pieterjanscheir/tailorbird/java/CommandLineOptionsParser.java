@@ -103,6 +103,13 @@ final class CommandLineOptionsParser {
                     // Tailorbird: format with the rules in this tailorbird.yml.
                     optionsBuilder.tailorbirdConfig(getValue(flag, it, value));
                     break;
+                case "--export-intellij-style":
+                    // Tailorbird: print an IntelliJ code style that matches the rules instead of formatting.
+                    optionsBuilder.export(IntellijCodeStyle.Format.INTELLIJ_STYLE);
+                    break;
+                case "--export-editorconfig":
+                    optionsBuilder.export(IntellijCodeStyle.Format.EDITORCONFIG);
+                    break;
                 case "--version":
                 case "-version":
                 case "-v":

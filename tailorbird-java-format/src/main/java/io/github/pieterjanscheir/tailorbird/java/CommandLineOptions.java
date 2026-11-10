@@ -46,6 +46,7 @@ final class CommandLineOptions {
     private final boolean reflowLongStrings;
     private final boolean outputReplacements;
     private final Optional<String> tailorbirdConfig;
+    private final Optional<IntellijCodeStyle.Format> export;
 
     CommandLineOptions(
             ImmutableList<String> files,
@@ -67,7 +68,8 @@ final class CommandLineOptions {
             Optional<String> assumeFilename,
             boolean reflowLongStrings,
             boolean outputReplacements,
-            Optional<String> tailorbirdConfig) {
+            Optional<String> tailorbirdConfig,
+            Optional<IntellijCodeStyle.Format> export) {
         this.files = files;
         this.inPlace = inPlace;
         this.lines = lines;
@@ -88,11 +90,17 @@ final class CommandLineOptions {
         this.reflowLongStrings = reflowLongStrings;
         this.outputReplacements = outputReplacements;
         this.tailorbirdConfig = tailorbirdConfig;
+        this.export = export;
     }
 
     /** Tailorbird: the tailorbird.yml to format with, from {@code --config}. */
     Optional<String> tailorbirdConfig() {
         return tailorbirdConfig;
+    }
+
+    /** Tailorbird: print a matching IntelliJ code style instead of formatting, from {@code --export-*}. */
+    Optional<IntellijCodeStyle.Format> export() {
+        return export;
     }
 
     /** The files to format. */
@@ -219,6 +227,7 @@ final class CommandLineOptions {
         private boolean reflowLongStrings = true;
         private boolean outputReplacements = false;
         private Optional<String> tailorbirdConfig = Optional.empty();
+        private Optional<IntellijCodeStyle.Format> export = Optional.empty();
 
         private Builder() {}
 
@@ -319,6 +328,14 @@ final class CommandLineOptions {
             return this;
         }
 
+        Builder export(IntellijCodeStyle.Format export) {
+            Preconditions.checkArgument(
+                    this.export.isEmpty() || this.export.get() == export,
+                    "Cannot use both --export-intellij-style and --export-editorconfig");
+            this.export = Optional.of(export);
+            return this;
+        }
+
         CommandLineOptions build() {
             Preconditions.checkArgument(!aosp || !palantirStyle, "Cannot use both aosp and palantir style");
             Preconditions.checkArgument(
@@ -343,7 +360,8 @@ final class CommandLineOptions {
                     assumeFilename,
                     reflowLongStrings,
                     outputReplacements,
-                    tailorbirdConfig);
+                    tailorbirdConfig,
+                    export);
         }
     }
 }
