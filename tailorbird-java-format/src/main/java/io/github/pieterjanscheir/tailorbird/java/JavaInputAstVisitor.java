@@ -132,6 +132,7 @@ import io.github.pieterjanscheir.tailorbird.doc.FillMode;
 import io.github.pieterjanscheir.tailorbird.doc.Token;
 import io.github.pieterjanscheir.tailorbird.java.DimensionHelpers.SortedDims;
 import io.github.pieterjanscheir.tailorbird.java.DimensionHelpers.TypeWithDims;
+import io.github.pieterjanscheir.tailorbird.java.TailorbirdRules.AnnotationPlacement;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -2552,7 +2553,9 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
 
             visitToDeclare(
                     DeclarationKind.PARAMETER,
-                    Direction.HORIZONTAL,
+                    annotationDirection(
+                            parameter.getModifiers(),
+                            rules != null ? rules.parameterAnnotations() : AnnotationPlacement.INLINE),
                     parameter,
                     /* initializer= */ Optional.empty(),
                     "=",
@@ -3643,7 +3646,11 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
                 && modifiers.isPresent()
                 && !modifiers.get().getAnnotations().isEmpty()) {
             if (!isInRecord(modifiers.get())) {
-                builder.open(plusFour);
+                // Tailorbird: when the rules put parameter annotations on their own lines, the type lines up with them.
+                boolean chosenVertical = annotationsDirection.isVertical()
+                        && rules != null
+                        && rules.parameterAnnotations() != AnnotationPlacement.INLINE;
+                builder.open(chosenVertical ? ZERO : plusFour);
             } else {
                 // pjf specific: we are enforcing the column limit for annotated parameters of records
                 builder.open(OpenOp.builder()
@@ -3922,8 +3929,11 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
                     visitVariables(
                             variableFragments(it, bodyDeclaration),
                             DeclarationKind.FIELD,
-                            // We always want field annotations to be vertical
-                            Direction.VERTICAL);
+                            // We always want field annotations to be vertical (Tailorbird: unless the rules say
+                            // otherwise)
+                            annotationDirection(
+                                    ((VariableTree) bodyDeclaration).getModifiers(),
+                                    rules != null ? rules.fieldAnnotations() : AnnotationPlacement.VERTICAL));
                 } else {
                     scan(bodyDeclaration, null);
                 }
@@ -4079,6 +4089,40 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
             }
         }
         return Direction.HORIZONTAL;
+    }
+
+    /**
+     * Tailorbird: the direction for a declaration's annotations under {@code placement}. {@code KEEP} is vertical when
+     * the input has a line break between the first annotation and the token after the last one.
+     */
+    private Direction annotationDirection(ModifiersTree modifiers, AnnotationPlacement placement) {
+        switch (placement) {
+            case VERTICAL:
+                return Direction.VERTICAL;
+            case INLINE:
+                return Direction.HORIZONTAL;
+            case KEEP:
+                return annotationsWrittenVertically(modifiers) ? Direction.VERTICAL : Direction.HORIZONTAL;
+        }
+        throw new IllegalArgumentException("Unknown annotation placement: " + placement);
+    }
+
+    @SuppressWarnings("for-rollout:NullAway")
+    private boolean annotationsWrittenVertically(ModifiersTree modifiers) {
+        List<? extends AnnotationTree> annotations = modifiers.getAnnotations();
+        if (annotations.isEmpty()) {
+            return false;
+        }
+        Input input = builder.getInput();
+        ImmutableRangeMap<Integer, ? extends Input.Token> tokens = input.getPositionTokenMap();
+        int firstLine = input.getLineNumber(getStartPosition(annotations.get(0)));
+        int position = getEndPosition(getLast(annotations), getCurrentPath());
+        int end = input.getText().length();
+        while (position < end && tokens.get(position) == null) {
+            position++;
+        }
+        return position < end
+                && input.getLineNumber(tokens.get(position).getTok().getPosition()) != firstLine;
     }
 
     /**

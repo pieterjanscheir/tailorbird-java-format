@@ -1,0 +1,31 @@
+package example;
+
+class AnnotationsFieldsKeep {
+
+    @Mock
+    private OrderService orderService;
+
+    @Mock private AccountService accountService;
+
+    @Nullable String nickname;
+
+    @Inject @Named("primary") private DataSource dataSource;
+
+    @Inject
+    @Named("secondary")
+    private DataSource secondaryDataSource;
+
+    @JsonProperty(value = "a_very_long_property_name_that_takes_room", required = true) private final String veryLongFieldName;
+
+    AnnotationsFieldsKeep(@Nullable String nickname, @Named("primary") DataSource dataSource) {
+        this.nickname = nickname;
+        this.dataSource = dataSource;
+    }
+
+    void place(
+            @Nullable
+            String account,
+            @Valid Order order) {}
+
+    record Fill(@JsonProperty("qty") int quantity, @Nullable String venue) {}
+}

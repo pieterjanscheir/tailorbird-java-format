@@ -195,6 +195,8 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-javadoc-blanklineafterreturn"><code>javadoc.blankLineAfterReturn</code></a></td><td><code>true</code></td><td>One blank line after <code>@return</code>, when more tags follow.</td></tr>
     <tr><td><a href="#rule-javadoc-singlespaceaftertagname"><code>javadoc.singleSpaceAfterTagName</code></a></td><td><code>true</code></td><td>Exactly one space between a <code>@param</code> or <code>@throws</code> name and its description.</td></tr>
     <tr><td><a href="#rule-javadoc-wrap"><code>javadoc.wrap</code></a></td><td><code>false</code></td><td>Re-wrap JavaDoc text at the line length. <code>&lt;pre&gt;</code> blocks are never wrapped.</td></tr>
+    <tr><td><a href="#rule-annotations-fields"><code>annotations.fields</code></a></td><td><code>vertical</code></td><td>Where field annotations go: <code>vertical</code>, <code>inline</code> or <code>keep</code>.</td></tr>
+    <tr><td><a href="#rule-annotations-parameters"><code>annotations.parameters</code></a></td><td><code>inline</code></td><td>Where method and constructor parameter annotations go: <code>vertical</code>, <code>inline</code> or <code>keep</code>.</td></tr>
     <tr><td><a href="#rule-formattertags-enabled"><code>formatterTags.enabled</code></a></td><td><code>false</code></td><td>Leave code between <code>// @formatter:off</code> and <code>// @formatter:on</code> as written.</td></tr>
     <tr><td><a href="#rule-formattertags-off"><code>formatterTags.off</code></a></td><td><code>"@formatter:off"</code></td><td>The text in a comment that starts such a region.</td></tr>
     <tr><td><a href="#rule-formattertags-on"><code>formatterTags.on</code></a></td><td><code>"@formatter:on"</code></td><td>The text in a comment that ends it.</td></tr>
@@ -229,6 +231,9 @@ javadoc:
   blankLineAfterReturn: true
   singleSpaceAfterTagName: true
   wrap: false
+annotations:
+  fields: vertical
+  parameters: inline
 formatterTags:
   enabled: false
   off: "@formatter:off"
@@ -1295,6 +1300,76 @@ class Example {
      * are joined.
      */
     void joined() {}
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-annotations-fields">
+<h4><code>annotations.fields</code></h4>
+<p>Where field annotations go. <code>vertical</code> puts each annotation on its own line, as upstream always does. <code>inline</code> keeps them on the field&#39;s line while it fits within <code>lineLength</code>, and puts them one per line otherwise; handy for <code>@Mock</code> fields in tests. <code>keep</code> is <code>vertical</code> when you wrote a line break between the annotations and the field, and <code>inline</code> otherwise.</p>
+<table class="rule-facts"><tr><th>Values</th><td><code>vertical</code>, <code>inline</code> or <code>keep</code></td></tr><tr><th>Default</th><td><code>vertical</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>vertical</code> · <code>google</code>: <code>vertical</code></td></tr></table>
+<details><summary>Input</summary><pre><code>class Example {
+    @Mock private OrderService orderService;
+
+    @Inject
+    @Named("primary")
+    private DataSource dataSource;
+}</code></pre></details>
+<div class="compare three">
+<div><div class="label yaml">annotations:<br>&nbsp;&nbsp;fields: vertical</div><pre><code>class Example {
+
+    @Mock
+    private OrderService orderService;
+    @Inject
+    @Named("primary")
+    private DataSource dataSource;
+
+}</code></pre></div>
+<div><div class="label yaml">annotations:<br>&nbsp;&nbsp;fields: inline</div><pre><code>class Example {
+
+    @Mock private OrderService orderService;
+    @Inject @Named("primary") private DataSource dataSource;
+
+}</code></pre></div>
+<div><div class="label yaml">annotations:<br>&nbsp;&nbsp;fields: keep</div><pre><code>class Example {
+
+    @Mock private OrderService orderService;
+    @Inject
+    @Named("primary")
+    private DataSource dataSource;
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-annotations-parameters">
+<h4><code>annotations.parameters</code></h4>
+<p>Where the annotations of method and constructor parameters go, with the same three values. <code>inline</code> is upstream&#39;s layout. With <code>vertical</code>, or <code>keep</code> on a parameter written that way, each annotation goes on its own line and the parameters go one per line. Record components keep upstream&#39;s layout.</p>
+<table class="rule-facts"><tr><th>Values</th><td><code>vertical</code>, <code>inline</code> or <code>keep</code></td></tr><tr><th>Default</th><td><code>inline</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>inline</code> · <code>google</code>: <code>inline</code></td></tr></table>
+<details><summary>Input</summary><pre><code>class Example {
+    void place(@Nullable
+            String account, @Valid Order order) {}
+}</code></pre></details>
+<div class="compare three">
+<div><div class="label yaml">annotations:<br>&nbsp;&nbsp;parameters: vertical</div><pre><code>class Example {
+
+    void place(
+        @Nullable
+        String account,
+        @Valid
+        Order order
+    ) {}
+
+}</code></pre></div>
+<div><div class="label yaml">annotations:<br>&nbsp;&nbsp;parameters: inline</div><pre><code>class Example {
+
+    void place(@Nullable String account, @Valid Order order) {}
+
+}</code></pre></div>
+<div><div class="label yaml">annotations:<br>&nbsp;&nbsp;parameters: keep</div><pre><code>class Example {
+
+    void place(
+        @Nullable
+        String account,
+        @Valid Order order
+    ) {}
 
 }</code></pre></div>
 </div></div>
