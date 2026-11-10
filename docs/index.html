@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bowerbird Java Format</title>
-<meta name="description" content="Bowerbird is a Java formatter based on palantir-java-format, with IntelliJ-compatible formatting rules.">
+<title>Tailorbird Java Format</title>
+<meta name="description" content="Tailorbird is a Java formatter based on palantir-java-format, with IntelliJ-compatible formatting rules.">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
@@ -20,11 +20,11 @@
 <header class="topbar">
   <div class="topbar-inner">
     <button class="icon-btn menu-btn" type="button" id="menu-toggle" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-    <a class="brand" href="#overview"><img src="assets/logo.svg" alt="" width="28" height="28"><span>Bowerbird</span><span class="brand-sub">Java Format</span></a>
+    <a class="brand" href="#overview"><img src="assets/logo.svg" alt="" width="28" height="28"><span>Tailorbird</span><span class="brand-sub">Java Format</span></a>
     <button class="search-trigger" type="button" id="search-open" aria-label="Search the docs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search</span><kbd>/</kbd></button>
     <div class="top-actions">
       <div class="lang"><span aria-current="true">EN</span><a href="zh/" lang="zh-CN" hreflang="zh-CN">中文</a></div>
-      <a class="icon-btn" href="https://github.com/pieterjanscheir/bowerbird-java-format" aria-label="GitHub repository"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a>
+      <a class="icon-btn" href="https://github.com/pieterjanscheir/tailorbird-java-format" aria-label="GitHub repository"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a>
       <button class="icon-btn theme-toggle" type="button" id="theme-toggle" aria-label="Toggle dark mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
     </div>
   </div>
@@ -72,38 +72,38 @@
 <main id="content">
 <header class="hero" id="overview">
   <div class="eyebrow"><img src="assets/logo.svg" alt="" width="18" height="18">Based on palantir-java-format</div>
-  <h1>Bowerbird Java <em>Format</em></h1>
-  <p class="lede">A Java formatter that arranges your code the way a bowerbird arranges its nest: carefully, and always the same way.</p>
+  <h1>Tailorbird Java <em>Format</em></h1>
+  <p class="lede">A Java formatter that stitches your code together the way a tailorbird stitches its nest: carefully, and always the same way.</p>
   <div class="buttons">
     <a class="btn primary" href="#install">Get started</a>
-    <a class="btn" href="https://github.com/pieterjanscheir/bowerbird-java-format">GitHub</a>
-    <a class="btn" href="https://github.com/pieterjanscheir/bowerbird-java-format/releases">Releases</a>
+    <a class="btn" href="https://github.com/pieterjanscheir/tailorbird-java-format">GitHub</a>
+    <a class="btn" href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">Releases</a>
   </div>
   <ul class="features">
     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><strong>IntelliJ-compatible</strong>Output matches IntelliJ IDEA for the target code style.</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span><strong>Every rule is a setting</strong>Change any rule in one <code>bowerbird.yml</code>.</span></li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span><strong>Every rule is a setting</strong>Change any rule in one <code>tailorbird.yml</code>.</span></li>
     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg><span><strong>Palantir and Google presets</strong>Start from upstream style and tweak from there.</span></li>
   </ul>
 </header>
 
-<p>Bowerbird is a modified version of <a href="https://github.com/palantir/palantir-java-format">palantir-java-format</a>, which is itself based on <a href="https://github.com/google/google-java-format">google-java-format</a>. Unlike most formatters, it isn't one fixed style: every formatting rule is a setting in a <a href="#configure"><code>bowerbird.yml</code></a> file, so a team can choose its own layout. Without a settings file you get Bowerbird's <a href="#rules">default style</a>, whose output matches IntelliJ IDEA's formatter for the target code style.</p>
-<p>Bowerbird is available under the <a href="https://github.com/pieterjanscheir/bowerbird-java-format/blob/main/LICENSE">Apache 2.0 License</a>, the same licence as upstream. See <a href="https://github.com/pieterjanscheir/bowerbird-java-format/blob/main/NOTICE">NOTICE</a> for attribution.</p>
+<p>Tailorbird is a modified version of <a href="https://github.com/palantir/palantir-java-format">palantir-java-format</a>, which is itself based on <a href="https://github.com/google/google-java-format">google-java-format</a>. Unlike most formatters, it isn't one fixed style: every formatting rule is a setting in a <a href="#configure"><code>tailorbird.yml</code></a> file, so a team can choose its own layout. Without a settings file you get Tailorbird's <a href="#rules">default style</a>, whose output matches IntelliJ IDEA's formatter for the target code style.</p>
+<p>Tailorbird is available under the <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/LICENSE">Apache 2.0 License</a>, the same licence as upstream. See <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/NOTICE">NOTICE</a> for attribution.</p>
 
 <h2 id="install">Install</h2>
-<p>Bowerbird is published to GitHub Packages under these coordinates:</p>
+<p>Tailorbird is published to GitHub Packages under these coordinates:</p>
 <table>
   <thead><tr><th>Artifact</th><th>Coordinates</th></tr></thead>
   <tbody>
-    <tr><td>Formatter</td><td><code>io.github.pieterjanscheir.bowerbird:bowerbird-java-format</code></td></tr>
-    <tr><td>SPI</td><td><code>io.github.pieterjanscheir.bowerbird:bowerbird-java-format-spi</code></td></tr>
-    <tr><td>JDK bootstrap</td><td><code>io.github.pieterjanscheir.bowerbird:bowerbird-java-format-jdk-bootstrap</code></td></tr>
+    <tr><td>Formatter</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format</code></td></tr>
+    <tr><td>SPI</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-spi</code></td></tr>
+    <tr><td>JDK bootstrap</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-jdk-bootstrap</code></td></tr>
   </tbody>
 </table>
 <p>GitHub Packages needs authentication, even for public packages. Create a <a href="https://github.com/settings/tokens">personal access token (classic)</a> with the <code>read:packages</code> scope and add the repository to your build:</p>
 <pre><code>repositories {
     mavenCentral()
     maven {
-        url = 'https://maven.pkg.github.com/pieterjanscheir/bowerbird-java-format'
+        url = 'https://maven.pkg.github.com/pieterjanscheir/tailorbird-java-format'
         credentials {
             username = providers.gradleProperty('gpr.user').orElse(providers.environmentVariable('GITHUB_ACTOR')).get()
             password = providers.gradleProperty('gpr.key').orElse(providers.environmentVariable('GITHUB_TOKEN')).get()
@@ -111,33 +111,33 @@
     }
 }</code></pre>
 <p>Put <code>gpr.user</code> and <code>gpr.key</code> in <code>~/.gradle/gradle.properties</code> locally. In GitHub Actions, the built-in <code>GITHUB_TOKEN</code> works when the job has <code>packages: read</code> permission.</p>
-<p>Every release also attaches the jars to its <a href="https://github.com/pieterjanscheir/bowerbird-java-format/releases">GitHub Release</a>, if you prefer to download them.</p>
+<p>Every release also attaches the jars to its <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a>, if you prefer to download them.</p>
 
 <h2 id="gradle">Using it with Gradle</h2>
-<p>The SPI classes and the main class keep their upstream names (<code>com.palantir.javaformat.java</code>), so the upstream Gradle plugin can load Bowerbird. Apply the plugin and point it at Bowerbird instead of the default formatter:</p>
+<p>The SPI classes and the main class keep their upstream names (<code>com.palantir.javaformat.java</code>), so the upstream Gradle plugin can load Tailorbird. Apply the plugin and point it at Tailorbird instead of the default formatter:</p>
 <pre><code>plugins {
-    id 'com.palantir.java-format' version '&lt;upstream version Bowerbird is based on&gt;'
+    id 'com.palantir.java-format' version '&lt;upstream version Tailorbird is based on&gt;'
 }
 
 dependencies {
-    palantirJavaFormat 'io.github.pieterjanscheir.bowerbird:bowerbird-java-format:&lt;bowerbird version&gt;'
+    palantirJavaFormat 'io.github.pieterjanscheir.tailorbird:tailorbird-java-format:&lt;tailorbird version&gt;'
 }</code></pre>
-<p>The plugin configures IntelliJ to use that formatter. For a command-line <code>./gradlew format</code> task, add the <a href="https://github.com/palantir/gradle-baseline#compalantirbaseline-format">com.palantir.baseline-format</a> plugin. With <a href="https://github.com/diffplug/spotless/tree/main/plugin-gradle#palantir-java-format">Spotless</a>, configure <code>palantirJavaFormat()</code> to use Bowerbird's artifact and run <code>./gradlew spotlessApply</code>.</p>
-<div class="callout warn"><strong>Do not enable the native formatter</strong> (<code>palantir.native.formatter</code>). It downloads Palantir's precompiled binary, which does not contain Bowerbird's rules.</div>
+<p>The plugin configures IntelliJ to use that formatter. For a command-line <code>./gradlew format</code> task, add the <a href="https://github.com/palantir/gradle-baseline#compalantirbaseline-format">com.palantir.baseline-format</a> plugin. With <a href="https://github.com/diffplug/spotless/tree/main/plugin-gradle#palantir-java-format">Spotless</a>, configure <code>palantirJavaFormat()</code> to use Tailorbird's artifact and run <code>./gradlew spotlessApply</code>.</p>
+<div class="callout warn"><strong>Do not enable the native formatter</strong> (<code>palantir.native.formatter</code>). It downloads Palantir's precompiled binary, which does not contain Tailorbird's rules.</div>
 
 <h2 id="intellij">Using it in IntelliJ IDEA</h2>
-<p>Install the upstream <a href="https://plugins.jetbrains.com/plugin/13180-palantir-java-format">palantir-java-format IntelliJ plugin</a>. It uses the formatter version that the Gradle plugin resolves for your project, so once the <code>palantirJavaFormat</code> dependency points at Bowerbird, import the project in IntelliJ or run:</p>
+<p>Install the upstream <a href="https://plugins.jetbrains.com/plugin/13180-palantir-java-format">palantir-java-format IntelliJ plugin</a>. It uses the formatter version that the Gradle plugin resolves for your project, so once the <code>palantirJavaFormat</code> dependency points at Tailorbird, import the project in IntelliJ or run:</p>
 <pre><code>./gradlew idea</code></pre>
-<p>Make sure the plugin is enabled under <em>Settings → palantir-java-format Settings</em>. <em>Reformat Code</em> then formats with Bowerbird.</p>
+<p>Make sure the plugin is enabled under <em>Settings → palantir-java-format Settings</em>. <em>Reformat Code</em> then formats with Tailorbird.</p>
 
 <h2 id="configure">Configuring the rules</h2>
-<p>Create a <code>bowerbird.yml</code>, for example in <code>config/</code>, and add the file to the <code>palantirJavaFormat</code> dependencies next to Bowerbird:</p>
+<p>Create a <code>tailorbird.yml</code>, for example in <code>config/</code>, and add the file to the <code>palantirJavaFormat</code> dependencies next to Tailorbird:</p>
 <pre><code>dependencies {
-    palantirJavaFormat 'io.github.pieterjanscheir.bowerbird:bowerbird-java-format:&lt;bowerbird version&gt;'
-    palantirJavaFormat files('config/bowerbird.yml')
+    palantirJavaFormat 'io.github.pieterjanscheir.tailorbird:tailorbird-java-format:&lt;tailorbird version&gt;'
+    palantirJavaFormat files('config/tailorbird.yml')
 }</code></pre>
-<p>Every setting is optional: list only what you want to change, and everything else keeps its <a href="#settings">default</a>. For example, to keep Bowerbird's style but write <code>if (x)</code>, indent by 2 spaces and keep the blank lines you type:</p>
-<pre><code># config/bowerbird.yml
+<p>Every setting is optional: list only what you want to change, and everything else keeps its <a href="#settings">default</a>. For example, to keep Tailorbird's style but write <code>if (x)</code>, indent by 2 spaces and keep the blank lines you type:</p>
+<pre><code># config/tailorbird.yml
 indent: 2
 spaceAfterControlKeyword: true
 blankLines:
@@ -147,31 +147,31 @@ blankLines:
 <pre><code>preset: palantir
 indent: 2
 continuationIndent: 4</code></pre>
-<p>The presets are <code>bowerbird</code> (the default), <code>palantir</code> (120 characters, 4-space indent, 8-space continuation) and <code>google</code> (upstream's Google style: like <code>palantir</code>, with 100 characters, 2-space indent and 4-space continuation).</p>
+<p>The presets are <code>tailorbird</code> (the default), <code>palantir</code> (120 characters, 4-space indent, 8-space continuation) and <code>google</code> (upstream's Google style: like <code>palantir</code>, with 100 characters, 2-space indent and 4-space continuation).</p>
 
 <h3 id="command-line">On the command line</h3>
 <p>For pre-commit hooks, CI scripts and other tools that run the formatter directly, build the command-line launcher and pass the settings file with <code>--config</code>:</p>
-<pre><code>./gradlew :bowerbird-java-format:installDist
+<pre><code>./gradlew :tailorbird-java-format:installDist
 export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' $p; done)"
-bowerbird-java-format/build/install/bowerbird-java-format/bin/bowerbird-java-format \
-    --config bowerbird.yml --replace src/main/java/Example.java</code></pre>
+tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
+    --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
 <p>The <code>JAVA_OPTS</code> line is needed on JDK 16 and later: the formatter uses the JDK's own Java parser, which the JDK only opens up with these flags. An invalid settings file stops with a one-line error and exit code 2.</p>
-<p><code>--palantir</code> without <code>--config</code> uses a <code>bowerbird.yml</code> on the classpath, or Bowerbird's defaults.</p>
+<p><code>--palantir</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults.</p>
 
 <p>Gradle, Spotless and IntelliJ all load the formatter from the <code>palantirJavaFormat</code> dependencies, so they all read the same file; that's why it goes there. Spotless also notices when the file changes and formats again. A few things to know:</p>
 <ul>
   <li><strong>Mistakes stop formatting.</strong> An unknown setting, a wrong type or invalid YAML fails with a message that names the setting and lists the valid ones, so a typo never goes unnoticed.</li>
-  <li><strong>One file.</strong> If <code>bowerbird.yml</code> is on the formatter classpath more than once, formatting fails instead of guessing which one wins.</li>
+  <li><strong>One file.</strong> If <code>tailorbird.yml</code> is on the formatter classpath more than once, formatting fails instead of guessing which one wins.</li>
   <li><strong>IntelliJ</strong> reads the file each time it formats, so edits apply on the next <em>Reformat Code</em>. Run <code>./gradlew idea</code> or reload the Gradle project once after adding the file.</li>
   <li><strong>Native formatter:</strong> the native-image formatter can't read a settings file. Leave <code>palantir.native.formatter</code> off.</li>
 </ul>
 
 <h3 id="settings">All settings</h3>
-<p>The defaults are Bowerbird's own style. Each setting links to examples of what it changes.</p>
+<p>The defaults are Tailorbird's own style. Each setting links to examples of what it changes.</p>
 <table>
   <thead><tr><th>Setting</th><th>Default</th><th>What it does</th></tr></thead>
   <tbody>
-    <tr><td><a href="#rule-preset"><code>preset</code></a></td><td><code>bowerbird</code></td><td>The starting point for every other setting: <code>bowerbird</code>, <code>palantir</code> or <code>google</code>. See <a href="#presets">presets</a>.</td></tr>
+    <tr><td><a href="#rule-preset"><code>preset</code></a></td><td><code>tailorbird</code></td><td>The starting point for every other setting: <code>tailorbird</code>, <code>palantir</code> or <code>google</code>. See <a href="#presets">presets</a>.</td></tr>
     <tr><td><a href="#rule-linelength"><code>lineLength</code></a></td><td><code>120</code></td><td>Maximum line length. At least 40.</td></tr>
     <tr><td><a href="#rule-indent"><code>indent</code></a></td><td><code>4</code></td><td>Spaces per block indent.</td></tr>
     <tr><td><a href="#rule-continuationindent"><code>continuationIndent</code></a></td><td><code>4</code></td><td>Spaces a <a href="#wrapping">wrapped line</a> is indented by, relative to the line it continues. Upstream uses 8.</td></tr>
@@ -204,7 +204,7 @@ bowerbird-java-format/build/install/bowerbird-java-format/bin/bowerbird-java-for
   </tbody>
 </table>
 <p>Here is a complete file with every setting at its default, to copy and edit:</p>
-<pre><code>preset: bowerbird
+<pre><code>preset: tailorbird
 lineLength: 120
 indent: 4
 continuationIndent: 4
@@ -243,11 +243,11 @@ formatterTags:
 
 <!-- rules-reference:start -->
 <h3 id="reference">Rules reference</h3>
-<p>Every setting, what it accepts, and what it does. The examples are the formatter's real output for the input shown: each column sets only that one setting, everything else stays at Bowerbird's defaults.</p>
+<p>Every setting, what it accepts, and what it does. The examples are the formatter's real output for the input shown: each column sets only that one setting, everything else stays at Tailorbird's defaults.</p>
 <div class="rule" id="rule-preset">
 <h4><code>preset</code></h4>
-<p>The starting point for every other setting. <code>bowerbird</code> is Bowerbird's own style; <code>palantir</code> is exactly upstream palantir-java-format (tested against all 226 upstream test cases); <code>google</code> is upstream's Google style. Settings in the same file change the preset, wherever <code>preset</code> appears in it.</p>
-<table class="rule-facts"><tr><th>Values</th><td><code>bowerbird</code>, <code>palantir</code> or <code>google</code></td></tr><tr><th>Default</th><td><code>bowerbird</code></td></tr></table>
+<p>The starting point for every other setting. <code>tailorbird</code> is Tailorbird's own style; <code>palantir</code> is exactly upstream palantir-java-format (tested against all 226 upstream test cases); <code>google</code> is upstream's Google style. Settings in the same file change the preset, wherever <code>preset</code> appears in it.</p>
+<table class="rule-facts"><tr><th>Values</th><td><code>tailorbird</code>, <code>palantir</code> or <code>google</code></td></tr><tr><th>Default</th><td><code>tailorbird</code></td></tr></table>
 <p class="note">Compare the same input in each preset.</p>
 <details><summary>Input</summary><pre><code>package example;
 import java.util.List;
@@ -264,7 +264,7 @@ class Orders {
     }
 }</code></pre></details>
 <div class="compare three">
-<div><div class="label yaml">preset: bowerbird</div><pre><code>package example;
+<div><div class="label yaml">preset: tailorbird</div><pre><code>package example;
 
 import static java.util.Objects.requireNonNull;
 
@@ -1463,7 +1463,7 @@ class Example {
 <!-- rules-reference:end -->
 
 <h2 id="rules">Default style</h2>
-<p>Without a <code>bowerbird.yml</code>, Bowerbird formats as shown below. Each rule is a <a href="#settings">setting</a> you can change; the setting is named in brackets. Compared to upstream palantir-java-format:</p>
+<p>Without a <code>tailorbird.yml</code>, Tailorbird formats as shown below. Each rule is a <a href="#settings">setting</a> you can change; the setting is named in brackets. Compared to upstream palantir-java-format:</p>
 <ul class="rules">
   <li>No space between a control keyword and <code>(</code>: <code>if(</code>, <code>for(</code>, <code>while(</code>, <code>switch(</code>, <code>try(</code>, <code>catch(</code>, <code>synchronized(</code> (<code>spaceAfterControlKeyword</code>).</li>
   <li>Imports in groups: static, <code>java</code>, <code>javax</code>, <code>org</code>, <code>com</code>, everything else, with a blank line between groups (<code>imports</code>).</li>
@@ -1666,32 +1666,32 @@ void check(int x) {
 
 <h2 id="building">Building</h2>
 <p>You need JDK 21. The Gradle wrapper downloads everything else.</p>
-<pre><code>./gradlew :bowerbird-java-format:test</code></pre>
+<pre><code>./gradlew :tailorbird-java-format:test</code></pre>
 <p>To try a local build in another project, publish it to Maven Local and add <code>mavenLocal()</code> to that project's repositories:</p>
-<pre><code>./gradlew :bowerbird-java-format-spi:publishToMavenLocal \
-    :bowerbird-java-format-jdk-bootstrap:publishToMavenLocal \
-    :bowerbird-java-format:publishToMavenLocal</code></pre>
+<pre><code>./gradlew :tailorbird-java-format-spi:publishToMavenLocal \
+    :tailorbird-java-format-jdk-bootstrap:publishToMavenLocal \
+    :tailorbird-java-format:publishToMavenLocal</code></pre>
 <p>CI runs <code>./gradlew build</code>, which also runs Error Prone and the project's own format check, and fails when the build changes tracked files.</p>
 
 <h2 id="adding-rules">Adding a formatting rule</h2>
 <ol>
-  <li>Add a <code>YourRule.input</code> and <code>YourRule.output</code> pair to <code>bowerbird-java-format/src/test/resources/io/github/pieterjanscheir/bowerbird/java/bowerbird-testdata/</code>. <code>BowerbirdIntegrationTest</code> picks them up.</li>
-  <li>Add the setting to <code>BowerbirdRules</code> (with its default) and to the table in <code>BowerbirdConfig</code>, so <code>bowerbird.yml</code> can set it.</li>
-  <li>Change the formatter, usually in <code>JavaInputAstVisitor.java</code>, behind <code>rule(BowerbirdRules::yourSetting)</code>, so upstream styles and their tests are unaffected.</li>
-  <li>To test the non-default value, add a <code>YourRule.yml</code> next to the input and output files; <code>BowerbirdIntegrationTest</code> applies it to that test case.</li>
+  <li>Add a <code>YourRule.input</code> and <code>YourRule.output</code> pair to <code>tailorbird-java-format/src/test/resources/io/github/pieterjanscheir/tailorbird/java/tailorbird-testdata/</code>. <code>TailorbirdIntegrationTest</code> picks them up.</li>
+  <li>Add the setting to <code>TailorbirdRules</code> (with its default) and to the table in <code>TailorbirdConfig</code>, so <code>tailorbird.yml</code> can set it.</li>
+  <li>Change the formatter, usually in <code>JavaInputAstVisitor.java</code>, behind <code>rule(TailorbirdRules::yourSetting)</code>, so upstream styles and their tests are unaffected.</li>
+  <li>To test the non-default value, add a <code>YourRule.yml</code> next to the input and output files; <code>TailorbirdIntegrationTest</code> applies it to that test case.</li>
   <li>Run the tests. <code>./gradlew test -Drecreate=true</code> regenerates the expected outputs, so review that diff carefully.</li>
-  <li>Check the output against IntelliJ's formatter with the target code style: IntelliJ should leave Bowerbird's output unchanged.</li>
+  <li>Check the output against IntelliJ's formatter with the target code style: IntelliJ should leave Tailorbird's output unchanged.</li>
 </ol>
 <p>Keep one rule per commit, so upstream merge conflicts are easy to trace.</p>
 
 <h2 id="upstream">Staying up to date with upstream</h2>
 <p>A weekly workflow opens a pull request when palantir-java-format publishes a new release, or an issue when the merge conflicts. You can also run it by hand from the Actions tab for a specific upstream tag or branch.</p>
-<p>Don't use a plain <code>git merge</code>: Bowerbird renamed upstream's packages and modules, so every renamed line would conflict with upstream edits next to it. <code>.github/scripts/upstream-merge.sh</code> first gives upstream's code Bowerbird's names, then merges, so only real conflicts are left. To merge by hand:</p>
+<p>Don't use a plain <code>git merge</code>: Tailorbird renamed upstream's packages and modules, so every renamed line would conflict with upstream edits next to it. <code>.github/scripts/upstream-merge.sh</code> first gives upstream's code Tailorbird's names, then merges, so only real conflicts are left. To merge by hand:</p>
 <pre><code>git fetch upstream --tags
 .github/scripts/upstream-merge.sh upstream/develop
 ./gradlew format # renamed lines can need re-wrapping; commit what it changes</code></pre>
-<p>When it conflicts, keep Bowerbird's <code>rule(...)</code> checks and apply upstream's change around them, then run <code>git add -A &amp;&amp; git commit --no-edit</code> and <code>./gradlew format</code>. <code>BowerbirdPalantirPresetTest</code> fails when upstream's formatting changed and <code>preset: palantir</code> no longer matches it.</p>
-<p><code>README.md</code> conflicts on every upstream change to it: keep Bowerbird's version and apply upstream's changes to <a href="https://github.com/pieterjanscheir/bowerbird-java-format/blob/main/docs/upstream-README.md"><code>docs/upstream-README.md</code></a> if they matter.</p>
+<p>When it conflicts, keep Tailorbird's <code>rule(...)</code> checks and apply upstream's change around them, then run <code>git add -A &amp;&amp; git commit --no-edit</code> and <code>./gradlew format</code>. <code>TailorbirdPalantirPresetTest</code> fails when upstream's formatting changed and <code>preset: palantir</code> no longer matches it.</p>
+<p><code>README.md</code> conflicts on every upstream change to it: keep Tailorbird's version and apply upstream's changes to <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/upstream-README.md"><code>docs/upstream-README.md</code></a> if they matter.</p>
 
 <h2 id="releasing">Releasing</h2>
 <p>Push a version tag to build, test and publish that version. The version is taken from the tag.</p>
@@ -1700,9 +1700,9 @@ git push origin 1.0.0</code></pre>
 <p>The release workflow publishes the formatter, SPI and JDK bootstrap to GitHub Packages and creates a GitHub Release with the jars and generated release notes.</p>
 
 <footer>
-  <div class="foot-brand"><img src="assets/logo.svg" alt="" width="22" height="22">Bowerbird Java Format</div>
-  Bowerbird is a fork of palantir-java-format and google-java-format, under the Apache 2.0 License.
-  This page is built from <a href="https://github.com/pieterjanscheir/bowerbird-java-format/blob/main/docs/index.html"><code>docs/index.html</code></a>.
+  <div class="foot-brand"><img src="assets/logo.svg" alt="" width="22" height="22">Tailorbird Java Format</div>
+  Tailorbird is a fork of palantir-java-format and google-java-format, under the Apache 2.0 License.
+  This page is built from <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/index.html"><code>docs/index.html</code></a>.
 </footer>
 </main>
 <aside class="toc" id="toc" aria-label="On this page"></aside>

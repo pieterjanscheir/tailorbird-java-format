@@ -45,7 +45,7 @@ allprojects {
     apply plugin: 'com.palantir.baseline-null-away'
     apply plugin: 'com.palantir.java-format'
     apply plugin: 'com.palantir.jakarta-package-alignment'
-    group = 'io.github.pieterjanscheir.bowerbird'
+    group = 'io.github.pieterjanscheir.tailorbird'
     version = rootProject.version
 
     repositories {
@@ -54,27 +54,27 @@ allprojects {
     }
 }
 
-// Bowerbird: the formatter artifacts, published under their project names.
-def bowerbirdPublishedProjects = [
-    'bowerbird-java-format',
-    'bowerbird-java-format-spi',
-    'bowerbird-java-format-jdk-bootstrap',
+// Tailorbird: the formatter artifacts, published under their project names.
+def tailorbirdPublishedProjects = [
+    'tailorbird-java-format',
+    'tailorbird-java-format-spi',
+    'tailorbird-java-format-jdk-bootstrap',
 ]
 subprojects { p ->
     p.plugins.withId('maven-publish') {
         p.publishing.publications.withType(MavenPublication).configureEach {
-            if (bowerbirdPublishedProjects.contains(p.name)) {
+            if (tailorbirdPublishedProjects.contains(p.name)) {
                 artifactId = p.name
             }
         }
-        if (bowerbirdPublishedProjects.contains(p.name)) {
-            // Bowerbird: released to GitHub Packages by .github/workflows/release.yml.
-            // BOWERBIRD_MAVEN_URL overrides the target, for example with a file:// URL to test publishing locally.
+        if (tailorbirdPublishedProjects.contains(p.name)) {
+            // Tailorbird: released to GitHub Packages by .github/workflows/release.yml.
+            // TAILORBIRD_MAVEN_URL overrides the target, for example with a file:// URL to test publishing locally.
             p.publishing.repositories {
                 maven {
                     name = 'GitHubPackages'
-                    url = System.env.BOWERBIRD_MAVEN_URL ?: 'https://maven.pkg.github.com/pieterjanscheir/bowerbird-java-format'
-                    if (!System.env.BOWERBIRD_MAVEN_URL) {
+                    url = System.env.TAILORBIRD_MAVEN_URL ?: 'https://maven.pkg.github.com/pieterjanscheir/tailorbird-java-format'
+                    if (!System.env.TAILORBIRD_MAVEN_URL) {
                         credentials {
                             username = System.env.GITHUB_ACTOR
                             password = System.env.GITHUB_TOKEN
