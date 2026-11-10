@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Merges an upstream palantir-java-format commit into the current branch, with upstream's code in Bowerbird's
+# Merges an upstream palantir-java-format commit into the current branch, with upstream's code in Tailorbird's
 # package and module names.
 #
 # Usage: upstream-merge.sh <upstream-commit> [commit message]
@@ -8,9 +8,9 @@
 #   0  merged and committed
 #   1  conflicts: they are left in the working tree. Resolve them, then run `git commit --no-edit`.
 #
-# Bowerbird renamed every package and module (#27), so a plain `git merge` sees each renamed line as a Bowerbird
+# Tailorbird renamed every package and module (#27), so a plain `git merge` sees each renamed line as a Tailorbird
 # change and conflicts wherever upstream edits next to one, such as an import or a project(':...') line.
-# Instead, this renames upstream's side and the merge base with bowerbird-rename.sh and merges those, so both
+# Instead, this renames upstream's side and the merge base with tailorbird-rename.sh and merges those, so both
 # sides use the same names and only real conflicts remain. The merge commit's second parent is the upstream
 # commit itself, so git and the sync workflow see it as merged.
 set -euo pipefail
@@ -32,14 +32,14 @@ base=$(git merge-base HEAD "$sha")
 tmp=$(mktemp -d)
 trap 'git worktree remove --force "$tmp/tree" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
 
-# Prints a commit that has the tree of commit $1 in Bowerbird's names.
+# Prints a commit that has the tree of commit $1 in Tailorbird's names.
 renamed() {
     git worktree add --quiet --detach "$tmp/tree" "$1"
-    (cd "$tmp/tree" && "$SCRIPT_DIR/bowerbird-rename.sh" >/dev/null)
+    (cd "$tmp/tree" && "$SCRIPT_DIR/tailorbird-rename.sh" >/dev/null)
     local tree
     tree=$(git -C "$tmp/tree" write-tree)
     git worktree remove --force "$tmp/tree"
-    git commit-tree "$tree" -p "$1" -m "$1 in Bowerbird's names"
+    git commit-tree "$tree" -p "$1" -m "$1 in Tailorbird's names"
 }
 
 renamed_base=$(renamed "$base")
