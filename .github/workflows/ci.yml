@@ -87,7 +87,7 @@ jobs:
       # Gradle still runs on 21; only the tests run on the JDK 25 from gradle/jdks. The formatter parses with the JDK it
       # runs on, so this is where syntax that only newer JDKs know gets tested.
       - name: Test
-        run: ./gradlew :bowerbird-java-format:test -PtestJdk=25 --stacktrace
+        run: ./gradlew :tailorbird-java-format:test -PtestJdk=25 --stacktrace
 
   forbidden-words:
     name: No forbidden words
