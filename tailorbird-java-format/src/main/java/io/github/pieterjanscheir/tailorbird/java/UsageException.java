@@ -83,12 +83,27 @@ final class UsageException extends Exception {
         "If --lines, --offset, or --length are given, only one file (or -) may be given."
     };
 
+    /**
+     * Tailorbird: {@code false} for {@code --help}, which also prints the usage through this exception but isn't a
+     * mistake, so the CLI exits with 0 for it and with 2 for everything else (#52).
+     */
+    private final boolean error;
+
+    /** The usage statement on its own, for {@code --help}. */
     UsageException() {
         super(buildMessage(null));
+        this.error = false;
     }
 
+    /** A usage error: {@code message}, followed by the usage statement. */
     UsageException(String message) {
         super(buildMessage(checkNotNull(message)));
+        this.error = true;
+    }
+
+    /** Whether this is a usage error rather than a request for the usage statement. */
+    boolean isError() {
+        return error;
     }
 
     private static String buildMessage(@Nullable String message) {
