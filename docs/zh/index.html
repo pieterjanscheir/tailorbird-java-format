@@ -60,6 +60,7 @@
     </ul>
     <div class="group">开发</div>
     <ul>
+      <li><a href="#embedding">嵌入</a></li>
       <li><a href="#building">构建</a></li>
       <li><a href="#adding-rules">添加规则</a></li>
       <li><a href="#upstream">同步上游</a></li>
@@ -1410,6 +1411,21 @@ void check(int x) {
  * @throws IllegalArgumentException when invalid
  */</code></pre></div>
 </div>
+
+<h2 id="embedding">嵌入 Bowerbird</h2>
+<p>需要用 Bowerbird 格式化 Java 代码的工具（例如构建插件或 IDE 插件）应使用格式化器构件中的 <code>io.github.pieterjanscheir.bowerbird.api.BowerbirdFormatter</code>。该包中的公共类型是受支持的 API：在同一个主版本内不会发生不兼容的修改，也不会暴露上游的类型。jar 中的其他内容都可能随任何一次上游合并而改变。</p>
+<pre><code>BowerbirdFormatter formatter = BowerbirdFormatter.fromConfig(Path.of("bowerbird.yml"));
+String formatted = formatter.format(source);   // 整理导入、排版代码、折行过长的字符串
+
+// 用于只格式化选中内容的编辑器：返回这些范围所涉及的行的修改。
+List&lt;TextEdit&gt; edits = formatter.formatRanges(source, List.of(TextRange.of(start, end)));
+String result = TextEdit.apply(source, edits);</code></pre>
+<ul>
+  <li><code>defaults()</code>、<code>fromConfig(Path)</code>、<code>fromConfigText(String, String)</code> 和 <code>fromClasspath(ClassLoader)</code> 用于创建格式化器。配置文件无效时会抛出 <code>BowerbirdConfigException</code>，其消息会指出文件和配置项，可以直接显示给用户。</li>
+  <li>源代码无法解析时，<code>format</code>、<code>fixImports</code> 和 <code>formatRanges</code> 会抛出 <code>BowerbirdFormatException</code>，其 <code>diagnostics()</code> 给出从 1 开始的行号和列号。</li>
+  <li>格式化器可以在多个线程之间共享。</li>
+  <li>在 JDK 16 及更高版本上，执行格式化的 JVM 需要 <code>BowerbirdFormatter.requiredJvmArguments()</code> 中的参数，与<a href="#command-line">命令行</a>中 <code>JAVA_OPTS</code> 的参数相同。在自身进程中格式化的插件需要在该进程上加上这些参数；否则，请用这些参数为格式化器单独启动一个 JVM。</li>
+</ul>
 
 <h2 id="building">构建</h2>
 <p>需要 JDK 21，其余依赖都由 Gradle wrapper 自动下载。</p>

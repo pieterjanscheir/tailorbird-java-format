@@ -60,6 +60,7 @@
     </ul>
     <div class="group">Develop</div>
     <ul>
+      <li><a href="#embedding">Embedding</a></li>
       <li><a href="#building">Building</a></li>
       <li><a href="#adding-rules">Adding a rule</a></li>
       <li><a href="#upstream">Upstream sync</a></li>
@@ -1410,6 +1411,21 @@ void check(int x) {
  * @throws IllegalArgumentException when invalid
  */</code></pre></div>
 </div>
+
+<h2 id="embedding">Embedding Bowerbird</h2>
+<p>Tools that format Java code with Bowerbird, such as build or IDE plugins, should use <code>io.github.pieterjanscheir.bowerbird.api.BowerbirdFormatter</code> from the formatter artifact. The public types in that package are the supported API: they won't change incompatibly within a major version, and they don't expose upstream's types. Everything else in the jar can change with any upstream merge.</p>
+<pre><code>BowerbirdFormatter formatter = BowerbirdFormatter.fromConfig(Path.of("bowerbird.yml"));
+String formatted = formatter.format(source);   // imports fixed, code laid out, long strings wrapped
+
+// For an editor that formats a selection: the edits for the lines the ranges touch.
+List&lt;TextEdit&gt; edits = formatter.formatRanges(source, List.of(TextRange.of(start, end)));
+String result = TextEdit.apply(source, edits);</code></pre>
+<ul>
+  <li><code>defaults()</code>, <code>fromConfig(Path)</code>, <code>fromConfigText(String, String)</code> and <code>fromClasspath(ClassLoader)</code> create a formatter. An invalid settings file throws <code>BowerbirdConfigException</code>, whose message names the file and the setting, ready to show to the user.</li>
+  <li><code>format</code>, <code>fixImports</code> and <code>formatRanges</code> throw <code>BowerbirdFormatException</code> when the source doesn't parse. Its <code>diagnostics()</code> give 1-based lines and columns.</li>
+  <li>A formatter can be shared between threads.</li>
+  <li>On JDK 16 and later, the JVM that formats needs the options in <code>BowerbirdFormatter.requiredJvmArguments()</code>, the same ones as <code>JAVA_OPTS</code> <a href="#command-line">on the command line</a>. A plugin that formats in its own process needs them there; otherwise, start a JVM for the formatter with them.</li>
+</ul>
 
 <h2 id="building">Building</h2>
 <p>You need JDK 21. The Gradle wrapper downloads everything else.</p>
