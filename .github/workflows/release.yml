@@ -39,7 +39,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./gradlew --stacktrace :bowerbird-java-format-native:nativeCompile
+        run: ./gradlew --stacktrace :tailorbird-java-format-native:nativeCompile
 
       - name: Name the binary after the version and platform
         shell: bash
@@ -48,10 +48,10 @@ jobs:
           VERSION: ${{ github.ref_name }}
         run: |
           mkdir dist
-          binary=$(find bowerbird-java-format-native/build/native/nativeCompile -maxdepth 1 -type f -name 'bowerbird-*' | head -1)
+          binary=$(find tailorbird-java-format-native/build/native/nativeCompile -maxdepth 1 -type f -name 'tailorbird-*' | head -1)
           extension=""
           case "$binary" in *.exe) extension=".exe" ;; esac
-          cp "$binary" "dist/bowerbird-$VERSION-$PLATFORM$extension"
+          cp "$binary" "dist/tailorbird-$VERSION-$PLATFORM$extension"
           ls -la dist
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -85,7 +85,7 @@ jobs:
           cache-read-only: true
 
       - name: Test
-        run: ./gradlew :bowerbird-java-format-spi:check :bowerbird-java-format-jdk-bootstrap:check :bowerbird-java-format:check --stacktrace
+        run: ./gradlew :tailorbird-java-format-spi:check :tailorbird-java-format-jdk-bootstrap:check :tailorbird-java-format:check --stacktrace
 
       - name: Publish to GitHub Packages
         env:
@@ -93,9 +93,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
           ./gradlew --stacktrace
-          :bowerbird-java-format-spi:publishMavenPublicationToGitHubPackagesRepository
-          :bowerbird-java-format-jdk-bootstrap:publishMavenPublicationToGitHubPackagesRepository
-          :bowerbird-java-format:publishMavenPublicationToGitHubPackagesRepository
+          :tailorbird-java-format-spi:publishMavenPublicationToGitHubPackagesRepository
+          :tailorbird-java-format-jdk-bootstrap:publishMavenPublicationToGitHubPackagesRepository
+          :tailorbird-java-format:publishMavenPublicationToGitHubPackagesRepository
 
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -105,11 +105,11 @@ jobs:
 
       - name: Build the launcher zip and checksums
         run: |
-          ./gradlew --stacktrace :bowerbird-java-format:distZip
-          cp bowerbird-java-format/build/distributions/bowerbird-*.zip dist/
-          chmod +x dist/bowerbird-*-linux-* dist/bowerbird-*-macos-*
+          ./gradlew --stacktrace :tailorbird-java-format:distZip
+          cp tailorbird-java-format/build/distributions/tailorbird-*.zip dist/
+          chmod +x dist/tailorbird-*-linux-* dist/tailorbird-*-macos-*
           cd dist
-          sha256sum bowerbird-* > SHA256SUMS
+          sha256sum tailorbird-* > SHA256SUMS
           cat SHA256SUMS
 
       - name: Create GitHub Release
@@ -117,8 +117,8 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            dist/bowerbird-*
+            dist/tailorbird-*
             dist/SHA256SUMS
-            bowerbird-java-format/build/libs/*.jar
-            bowerbird-java-format-spi/build/libs/*.jar
-            bowerbird-java-format-jdk-bootstrap/build/libs/*.jar
+            tailorbird-java-format/build/libs/*.jar
+            tailorbird-java-format-spi/build/libs/*.jar
+            tailorbird-java-format-jdk-bootstrap/build/libs/*.jar
