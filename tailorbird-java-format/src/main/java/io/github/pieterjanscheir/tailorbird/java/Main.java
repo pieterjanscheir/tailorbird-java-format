@@ -154,7 +154,7 @@ public final class Main {
     }
 
     /**
-     * Bowerbird: the file arguments, with each folder replaced by the {@code .java} files under it, in sorted order.
+     * Tailorbird: the file arguments, with each folder replaced by the {@code .java} files under it, in sorted order.
      * Hidden folders and folders named {@code build} or {@code target} are skipped, since they hold generated code.
      * A folder without Java files gets a warning on {@code err}. Without this, a folder was skipped as a non-Java file
      * and the run still passed.

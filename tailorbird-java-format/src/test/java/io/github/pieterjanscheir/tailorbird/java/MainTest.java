@@ -520,7 +520,7 @@ public class MainTest {
         assertThat(out.toString()).isEqualTo(joiner.join(expected));
     }
 
-    // Bowerbird: a folder argument is searched for Java files instead of being skipped (issue #45).
+    // Tailorbird: a folder argument is searched for Java files instead of being skipped (issue #45).
     @Test
     public void folderIsSearchedForJavaFiles() throws Exception {
         Path src = testFolder.resolve("src");
