@@ -157,6 +157,10 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
 <p>The <code>JAVA_OPTS</code> line is needed on JDK 16 and later: the formatter uses the JDK's own Java parser, which the JDK only opens up with these flags. An invalid settings file stops with a one-line error and exit code 2.</p>
 <p><code>--tailorbird</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults. <code>--palantir</code> does the same and is there for the upstream plugins, which pass it; it doesn't give Palantir's style. For that, use a settings file with <a href="#presets"><code>preset: palantir</code></a>.</p>
+<p>To check without changing anything, for example in CI or a pre-commit hook, use <code>--diff --set-exit-if-changed</code>. It prints a unified diff of what the formatter would change and exits with 1 if anything would. The diff can be applied with <code>patch -p0</code> or <code>git apply -p0</code>:</p>
+<pre><code>tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
+    --config tailorbird.yml --diff --set-exit-if-changed src/main/java/Example.java</code></pre>
+<p><code>--dry-run</code> (<code>-n</code>) lists only the names of the files that would change.</p>
 
 <p>Gradle, Spotless and IntelliJ all load the formatter from the <code>palantirJavaFormat</code> dependencies, so they all read the same file; that's why it goes there. Spotless also notices when the file changes and formats again. A few things to know:</p>
 <ul>

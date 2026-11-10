@@ -58,6 +58,8 @@ final class UsageException extends Exception {
         "    Do not reflow string literals that exceed the column limit.",
         "  --dry-run, -n",
         "    Prints the paths of the files whose contents would change if the formatter were run" + " normally.",
+        "  --diff, -diff",
+        "    Prints a unified diff of the changes the formatter would make, without changing any files.",
         "  --set-exit-if-changed",
         "    Return exit code 1 if there are any formatting changes.",
         "  --lines, -lines, --line, -line",

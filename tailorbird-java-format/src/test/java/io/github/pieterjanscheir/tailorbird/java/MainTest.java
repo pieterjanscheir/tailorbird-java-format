@@ -425,6 +425,69 @@ public class MainTest {
     }
 
     @Test
+    public void diff_prints_the_changes_and_leaves_the_file() throws Exception {
+        Path path = testFolder.resolve("Diff.java");
+        String input = "class Diff {\n\n  int x;\n\n}\n";
+        Files.write(path, input.getBytes(UTF_8));
+        StringWriter out = new StringWriter();
+        StringWriter err = new StringWriter();
+        Main main = new Main(new PrintWriter(out, true), new PrintWriter(err, true), System.in);
+        assertThat(main.format("--palantir", "--diff", "--set-exit-if-changed", path.toString()))
+                .isEqualTo(1);
+        assertThat(out.toString())
+                .isEqualTo("--- " + path + "\n"
+                        + "+++ " + path + "\n"
+                        + "@@ -1,5 +1,5 @@\n"
+                        + " class Diff {\n"
+                        + " \n"
+                        + "-  int x;\n"
+                        + "+    int x;\n"
+                        + " \n"
+                        + " }\n");
+        assertThat(new String(Files.readAllBytes(path), UTF_8)).isEqualTo(input);
+    }
+
+    @Test
+    public void diff_of_a_formatted_file_is_empty() throws Exception {
+        String input = "class Diff {\n\n    int x;\n\n}\n";
+        StringWriter out = new StringWriter();
+        StringWriter err = new StringWriter();
+        Main main = new Main(
+                new PrintWriter(out, true),
+                new PrintWriter(err, true),
+                new ByteArrayInputStream(input.getBytes(UTF_8)));
+        assertThat(main.format("--palantir", "--diff", "--set-exit-if-changed", "--assume-filename=Diff.java", "-"))
+                .isEqualTo(0);
+        assertThat(out.toString()).isEmpty();
+    }
+
+    @Test
+    public void diff_from_standard_input_uses_the_assumed_file_name() throws Exception {
+        String input = "class Diff {\n\n  int x;\n\n}\n";
+        StringWriter out = new StringWriter();
+        StringWriter err = new StringWriter();
+        Main main = new Main(
+                new PrintWriter(out, true),
+                new PrintWriter(err, true),
+                new ByteArrayInputStream(input.getBytes(UTF_8)));
+        assertThat(main.format("--palantir", "--diff", "--assume-filename=src/Diff.java", "-"))
+                .isEqualTo(0);
+        assertThat(out.toString()).startsWith("--- src/Diff.java\n+++ src/Diff.java\n@@ -1,5 +1,5 @@\n");
+    }
+
+    @Test
+    public void diff_cannot_be_combined_with_other_output() {
+        for (String other : new String[] {"--replace", "--dry-run", "--output-replacements"}) {
+            try {
+                Main.processArgs("--diff", other, "A.java");
+                throw new AssertionError("Expected UsageException for " + other);
+            } catch (UsageException e) {
+                assertThat(e.getMessage()).contains("--diff cannot be used with");
+            }
+        }
+    }
+
+    @Test
     public void exitIfChangedFiles() throws Exception {
         Path path = Files.createFile(testFolder.resolve("Test.java"));
         Files.write(path, "class Test {\n}\n".getBytes(UTF_8));

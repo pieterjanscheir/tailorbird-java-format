@@ -157,6 +157,10 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
 <p>在 JDK 16 及更高版本上需要 <code>JAVA_OPTS</code> 这一行：格式化器使用 JDK 自带的 Java 解析器，而 JDK 只有在加上这些参数时才会开放它。配置文件无效时，会输出一行错误信息并以退出码 2 结束。</p>
 <p>只指定 <code>--tailorbird</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>tailorbird.yml</code>；如果没有，则使用 Tailorbird 的默认值。<code>--palantir</code> 的效果相同，保留它是因为上游插件会传入这个参数；它不会生成 Palantir 风格。如需 Palantir 风格，请使用包含 <a href="#presets"><code>preset: palantir</code></a> 的设置文件。</p>
+<p>如果只想检查而不修改任何内容（例如在 CI 或 pre-commit 钩子中），请使用 <code>--diff --set-exit-if-changed</code>。它会以统一 diff 格式输出格式化器将要做的修改；只要有任何修改，就以退出码 1 结束。这个 diff 可以用 <code>patch -p0</code> 或 <code>git apply -p0</code> 应用：</p>
+<pre><code>tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
+    --config tailorbird.yml --diff --set-exit-if-changed src/main/java/Example.java</code></pre>
+<p><code>--dry-run</code>（<code>-n</code>）只列出将被修改的文件名。</p>
 
 <p>Gradle、Spotless 和 IntelliJ 都从 <code>palantirJavaFormat</code> 依赖中加载格式化器，因此读取的是同一个文件；这正是要把它放在那里的原因。文件修改后，Spotless 也会察觉并重新格式化。需要注意以下几点：</p>
 <ul>

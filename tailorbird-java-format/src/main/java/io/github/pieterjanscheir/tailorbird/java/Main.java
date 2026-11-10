@@ -204,6 +204,8 @@ public final class Main {
                 if (changed) {
                     outWriter.println(path);
                 }
+            } else if (parameters.diff()) {
+                outWriter.write(UnifiedDiff.diff(path.toString(), inputs.get(path), formatted));
             } else {
                 outWriter.write(formatted);
             }
@@ -230,6 +232,8 @@ public final class Main {
                 if (changed) {
                     outWriter.println(stdinFilename);
                 }
+            } else if (parameters.diff()) {
+                outWriter.write(UnifiedDiff.diff(stdinFilename, input, output));
             } else {
                 outWriter.write(output);
             }
@@ -279,6 +283,10 @@ public final class Main {
         }
         if (parameters.dryRun() && parameters.inPlace()) {
             throw new UsageException("cannot use --dry-run and --in-place at the same time");
+        }
+        // Tailorbird: --diff replaces the output, so it can't be combined with another kind of output (#50).
+        if (parameters.diff() && (parameters.inPlace() || parameters.dryRun() || parameters.outputReplacements())) {
+            throw new UsageException("--diff cannot be used with --in-place, --dry-run or --output-replacements");
         }
         return parameters;
     }
