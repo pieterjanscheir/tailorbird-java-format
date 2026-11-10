@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bowerbird Java Format</title>
-<meta name="description" content="Bowerbird 是一款基于 palantir-java-format 的 Java 格式化工具，格式化规则与 IntelliJ 兼容。">
+<title>Tailorbird Java Format</title>
+<meta name="description" content="Tailorbird 是一款基于 palantir-java-format 的 Java 格式化工具，格式化规则与 IntelliJ 兼容。">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
@@ -20,11 +20,11 @@
 <header class="topbar">
   <div class="topbar-inner">
     <button class="icon-btn menu-btn" type="button" id="menu-toggle" aria-label="打开导航" aria-controls="sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-    <a class="brand" href="#overview"><img src="../assets/logo.svg" alt="" width="28" height="28"><span>Bowerbird</span><span class="brand-sub">Java Format</span></a>
+    <a class="brand" href="#overview"><img src="../assets/logo.svg" alt="" width="28" height="28"><span>Tailorbird</span><span class="brand-sub">Java Format</span></a>
     <button class="search-trigger" type="button" id="search-open" aria-label="搜索文档"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>搜索</span><kbd>/</kbd></button>
     <div class="top-actions">
       <div class="lang"><a href="../" lang="en" hreflang="en">EN</a><span aria-current="true">中文</span></div>
-      <a class="icon-btn" href="https://github.com/pieterjanscheir/bowerbird-java-format" aria-label="GitHub 仓库"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a>
+      <a class="icon-btn" href="https://github.com/pieterjanscheir/tailorbird-java-format" aria-label="GitHub 仓库"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg></a>
       <button class="icon-btn theme-toggle" type="button" id="theme-toggle" aria-label="切换深色模式"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button>
     </div>
   </div>
@@ -72,38 +72,38 @@
 <main id="content">
 <header class="hero" id="overview">
   <div class="eyebrow"><img src="../assets/logo.svg" alt="" width="18" height="18">基于 palantir-java-format</div>
-  <h1>Bowerbird Java <em>Format</em></h1>
-  <p class="lede">一款 Java 格式化工具，像园丁鸟（bowerbird）布置巢穴那样整理你的代码：一丝不苟，而且始终如一。</p>
+  <h1>Tailorbird Java <em>Format</em></h1>
+  <p class="lede">一款 Java 格式化工具，像缝叶莺（tailorbird）缝制巢穴那样编排你的代码：一丝不苟，而且始终如一。</p>
   <div class="buttons">
     <a class="btn primary" href="#install">快速开始</a>
-    <a class="btn" href="https://github.com/pieterjanscheir/bowerbird-java-format">GitHub</a>
-    <a class="btn" href="https://github.com/pieterjanscheir/bowerbird-java-format/releases">版本发布</a>
+    <a class="btn" href="https://github.com/pieterjanscheir/tailorbird-java-format">GitHub</a>
+    <a class="btn" href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">版本发布</a>
   </div>
   <ul class="features">
     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><strong>与 IntelliJ 兼容</strong>输出与 IntelliJ IDEA 在目标代码风格下的结果一致。</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span><strong>每条规则都是配置项</strong>在一个 <code>bowerbird.yml</code> 中修改任意规则。</span></li>
+    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span><strong>每条规则都是配置项</strong>在一个 <code>tailorbird.yml</code> 中修改任意规则。</span></li>
     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg><span><strong>Palantir 和 Google 预设</strong>从上游风格出发，再按需调整。</span></li>
   </ul>
 </header>
 
-<p>Bowerbird 是 <a href="https://github.com/palantir/palantir-java-format">palantir-java-format</a> 的修改版，而后者本身又基于 <a href="https://github.com/google/google-java-format">google-java-format</a>。与大多数格式化工具不同，它并不是一套固定的风格：每条格式化规则都是 <a href="#configure"><code>bowerbird.yml</code></a> 文件中的一个配置项，团队可以自行决定代码布局。没有配置文件时，使用的是 Bowerbird 的<a href="#rules">默认风格</a>，其输出与 IntelliJ IDEA 格式化器在目标代码风格下的结果一致。</p>
-<p>Bowerbird 采用与上游相同的 <a href="https://github.com/pieterjanscheir/bowerbird-java-format/blob/main/LICENSE">Apache 2.0 许可证</a>。署名信息见 <a href="https://github.com/pieterjanscheir/bowerbird-java-format/blob/main/NOTICE">NOTICE</a>。</p>
+<p>Tailorbird 是 <a href="https://github.com/palantir/palantir-java-format">palantir-java-format</a> 的修改版，而后者本身又基于 <a href="https://github.com/google/google-java-format">google-java-format</a>。与大多数格式化工具不同，它并不是一套固定的风格：每条格式化规则都是 <a href="#configure"><code>tailorbird.yml</code></a> 文件中的一个配置项，团队可以自行决定代码布局。没有配置文件时，使用的是 Tailorbird 的<a href="#rules">默认风格</a>，其输出与 IntelliJ IDEA 格式化器在目标代码风格下的结果一致。</p>
+<p>Tailorbird 采用与上游相同的 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/LICENSE">Apache 2.0 许可证</a>。署名信息见 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/NOTICE">NOTICE</a>。</p>
 
 <h2 id="install">安装</h2>
-<p>Bowerbird 发布在 GitHub Packages 上，坐标如下：</p>
+<p>Tailorbird 发布在 GitHub Packages 上，坐标如下：</p>
 <table>
   <thead><tr><th>构件</th><th>坐标</th></tr></thead>
   <tbody>
-    <tr><td>格式化器</td><td><code>io.github.pieterjanscheir.bowerbird:bowerbird-java-format</code></td></tr>
-    <tr><td>SPI</td><td><code>io.github.pieterjanscheir.bowerbird:bowerbird-java-format-spi</code></td></tr>
-    <tr><td>JDK 引导模块</td><td><code>io.github.pieterjanscheir.bowerbird:bowerbird-java-format-jdk-bootstrap</code></td></tr>
+    <tr><td>格式化器</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format</code></td></tr>
+    <tr><td>SPI</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-spi</code></td></tr>
+    <tr><td>JDK 引导模块</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-jdk-bootstrap</code></td></tr>
   </tbody>
 </table>
 <p>即使是公开包，GitHub Packages 也需要认证。请创建一个带有 <code>read:packages</code> 权限范围的<a href="https://github.com/settings/tokens">个人访问令牌（classic）</a>，并把该仓库添加到构建中：</p>
 <pre><code>repositories {
     mavenCentral()
     maven {
-        url = 'https://maven.pkg.github.com/pieterjanscheir/bowerbird-java-format'
+        url = 'https://maven.pkg.github.com/pieterjanscheir/tailorbird-java-format'
         credentials {
             username = providers.gradleProperty('gpr.user').orElse(providers.environmentVariable('GITHUB_ACTOR')).get()
             password = providers.gradleProperty('gpr.key').orElse(providers.environmentVariable('GITHUB_TOKEN')).get()
@@ -111,33 +111,33 @@
     }
 }</code></pre>
 <p>在本地，把 <code>gpr.user</code> 和 <code>gpr.key</code> 写入 <code>~/.gradle/gradle.properties</code>。在 GitHub Actions 中，只要作业拥有 <code>packages: read</code> 权限，内置的 <code>GITHUB_TOKEN</code> 即可使用。</p>
-<p>每个版本也会把 jar 包附加到对应的 <a href="https://github.com/pieterjanscheir/bowerbird-java-format/releases">GitHub Release</a> 上，方便直接下载。</p>
+<p>每个版本也会把 jar 包附加到对应的 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> 上，方便直接下载。</p>
 
 <h2 id="gradle">在 Gradle 中使用</h2>
-<p>SPI 类和主类保留了上游的名称（<code>com.palantir.javaformat.java</code>），这样上游的 Gradle 插件就能加载 Bowerbird。应用该插件，并让它使用 Bowerbird 而不是默认的格式化器：</p>
+<p>SPI 类和主类保留了上游的名称（<code>com.palantir.javaformat.java</code>），这样上游的 Gradle 插件就能加载 Tailorbird。应用该插件，并让它使用 Tailorbird 而不是默认的格式化器：</p>
 <pre><code>plugins {
-    id 'com.palantir.java-format' version '&lt;upstream version Bowerbird is based on&gt;'
+    id 'com.palantir.java-format' version '&lt;upstream version Tailorbird is based on&gt;'
 }
 
 dependencies {
-    palantirJavaFormat 'io.github.pieterjanscheir.bowerbird:bowerbird-java-format:&lt;bowerbird version&gt;'
+    palantirJavaFormat 'io.github.pieterjanscheir.tailorbird:tailorbird-java-format:&lt;tailorbird version&gt;'
 }</code></pre>
-<p>该插件会配置 IntelliJ 使用这个格式化器。如需命令行的 <code>./gradlew format</code> 任务，请添加 <a href="https://github.com/palantir/gradle-baseline#compalantirbaseline-format">com.palantir.baseline-format</a> 插件。如果使用 <a href="https://github.com/diffplug/spotless/tree/main/plugin-gradle#palantir-java-format">Spotless</a>，请将 <code>palantirJavaFormat()</code> 配置为使用 Bowerbird 的构件，然后运行 <code>./gradlew spotlessApply</code>。</p>
-<div class="callout warn"><strong>不要启用原生格式化器</strong>（<code>palantir.native.formatter</code>）。它会下载 Palantir 预编译的二进制文件，其中不包含 Bowerbird 的规则。</div>
+<p>该插件会配置 IntelliJ 使用这个格式化器。如需命令行的 <code>./gradlew format</code> 任务，请添加 <a href="https://github.com/palantir/gradle-baseline#compalantirbaseline-format">com.palantir.baseline-format</a> 插件。如果使用 <a href="https://github.com/diffplug/spotless/tree/main/plugin-gradle#palantir-java-format">Spotless</a>，请将 <code>palantirJavaFormat()</code> 配置为使用 Tailorbird 的构件，然后运行 <code>./gradlew spotlessApply</code>。</p>
+<div class="callout warn"><strong>不要启用原生格式化器</strong>（<code>palantir.native.formatter</code>）。它会下载 Palantir 预编译的二进制文件，其中不包含 Tailorbird 的规则。</div>
 
 <h2 id="intellij">在 IntelliJ IDEA 中使用</h2>
-<p>安装上游的 <a href="https://plugins.jetbrains.com/plugin/13180-palantir-java-format">palantir-java-format IntelliJ 插件</a>。它使用 Gradle 插件为项目解析出的格式化器版本，因此只要 <code>palantirJavaFormat</code> 依赖指向 Bowerbird，在 IntelliJ 中导入项目或运行以下命令即可：</p>
+<p>安装上游的 <a href="https://plugins.jetbrains.com/plugin/13180-palantir-java-format">palantir-java-format IntelliJ 插件</a>。它使用 Gradle 插件为项目解析出的格式化器版本，因此只要 <code>palantirJavaFormat</code> 依赖指向 Tailorbird，在 IntelliJ 中导入项目或运行以下命令即可：</p>
 <pre><code>./gradlew idea</code></pre>
-<p>请确认已在 <em>Settings → palantir-java-format Settings</em> 中启用该插件。之后 <em>Reformat Code</em> 就会使用 Bowerbird 进行格式化。</p>
+<p>请确认已在 <em>Settings → palantir-java-format Settings</em> 中启用该插件。之后 <em>Reformat Code</em> 就会使用 Tailorbird 进行格式化。</p>
 
 <h2 id="configure">配置规则</h2>
-<p>创建一个 <code>bowerbird.yml</code>，例如放在 <code>config/</code> 中，然后把该文件与 Bowerbird 一起加入 <code>palantirJavaFormat</code> 依赖：</p>
+<p>创建一个 <code>tailorbird.yml</code>，例如放在 <code>config/</code> 中，然后把该文件与 Tailorbird 一起加入 <code>palantirJavaFormat</code> 依赖：</p>
 <pre><code>dependencies {
-    palantirJavaFormat 'io.github.pieterjanscheir.bowerbird:bowerbird-java-format:&lt;bowerbird version&gt;'
-    palantirJavaFormat files('config/bowerbird.yml')
+    palantirJavaFormat 'io.github.pieterjanscheir.tailorbird:tailorbird-java-format:&lt;tailorbird version&gt;'
+    palantirJavaFormat files('config/tailorbird.yml')
 }</code></pre>
-<p>所有配置项都是可选的：只需列出想要修改的项，其余均保持<a href="#settings">默认值</a>。例如，保留 Bowerbird 的风格，但写成 <code>if (x)</code>、使用 2 个空格缩进，并保留你输入的空行：</p>
-<pre><code># config/bowerbird.yml
+<p>所有配置项都是可选的：只需列出想要修改的项，其余均保持<a href="#settings">默认值</a>。例如，保留 Tailorbird 的风格，但写成 <code>if (x)</code>、使用 2 个空格缩进，并保留你输入的空行：</p>
+<pre><code># config/tailorbird.yml
 indent: 2
 spaceAfterControlKeyword: true
 blankLines:
@@ -147,36 +147,36 @@ blankLines:
 <pre><code>preset: palantir
 indent: 2
 continuationIndent: 4</code></pre>
-<p>可用的预设有 <code>bowerbird</code>（默认）、<code>palantir</code>（120 个字符、4 空格缩进、8 空格续行缩进）和 <code>google</code>（上游的 Google 风格：与 <code>palantir</code> 类似，但为 100 个字符、2 空格缩进、4 空格续行缩进）。</p>
+<p>可用的预设有 <code>tailorbird</code>（默认）、<code>palantir</code>（120 个字符、4 空格缩进、8 空格续行缩进）和 <code>google</code>（上游的 Google 风格：与 <code>palantir</code> 类似，但为 100 个字符、2 空格缩进、4 空格续行缩进）。</p>
 
 <h3 id="command-line">在命令行中使用</h3>
-<p>对于 pre-commit 钩子、CI 脚本以及其他直接运行格式化器的工具，请使用 <code>bowerbird</code> 启动器，并通过 <code>--config</code> 传入配置文件。从第一个版本起，每个 <a href="https://github.com/pieterjanscheir/bowerbird-java-format/releases">GitHub Release</a> 都附带 <code>bowerbird-&lt;version&gt;.zip</code> 及其 <code>SHA256SUMS</code>。解压后运行：</p>
-<pre><code>bowerbird-&lt;version&gt;/bin/bowerbird --config bowerbird.yml --replace src/main/java/Example.java</code></pre>
-<p>它需要 Java 21 或更高版本，从 <code>JAVA_HOME</code> 或 <code>PATH</code> 中查找。在 Windows 上请使用 <code>bin\bowerbird.bat</code>。也可以自己构建同样的启动器：</p>
-<pre><code>./gradlew :bowerbird-java-format:installDist
-bowerbird-java-format/build/install/bowerbird/bin/bowerbird --config bowerbird.yml --replace src/main/java/Example.java</code></pre>
+<p>对于 pre-commit 钩子、CI 脚本以及其他直接运行格式化器的工具，请使用 <code>tailorbird</code> 启动器，并通过 <code>--config</code> 传入配置文件。从第一个版本起，每个 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> 都附带 <code>tailorbird-&lt;version&gt;.zip</code> 及其 <code>SHA256SUMS</code>。解压后运行：</p>
+<pre><code>tailorbird-&lt;version&gt;/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>它需要 Java 21 或更高版本，从 <code>JAVA_HOME</code> 或 <code>PATH</code> 中查找。在 Windows 上请使用 <code>bin\tailorbird.bat</code>。也可以自己构建同样的启动器：</p>
+<pre><code>./gradlew :tailorbird-java-format:installDist
+tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
 <p>启动器会自动传入开放 JDK 自带 Java 解析器所需的参数，因此无需设置 <code>JAVA_OPTS</code>。配置文件无效时，会输出一行错误信息并以退出码 2 结束。</p>
 <p>作为 Git pre-commit 钩子（保存为 <code>.git/hooks/pre-commit</code> 并设为可执行），当暂存的 Java 文件未格式化时，它会阻止提交并列出这些文件：</p>
 <pre><code>#!/bin/sh
 files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
-[ -z "$files" ] || bowerbird --config bowerbird.yml --dry-run --set-exit-if-changed $files</code></pre>
+[ -z "$files" ] || tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed $files</code></pre>
 <p>将 <code>--dry-run --set-exit-if-changed</code> 换成 <code>--replace</code> 再运行一次即可修复。钩子检查的是磁盘上的文件内容，而不只是暂存的改动。</p>
-<p>只指定 <code>--palantir</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>bowerbird.yml</code>；如果没有，则使用 Bowerbird 的默认值。</p>
+<p>只指定 <code>--palantir</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>tailorbird.yml</code>；如果没有，则使用 Tailorbird 的默认值。</p>
 
 <p>Gradle、Spotless 和 IntelliJ 都从 <code>palantirJavaFormat</code> 依赖中加载格式化器，因此读取的是同一个文件；这正是要把它放在那里的原因。文件修改后，Spotless 也会察觉并重新格式化。需要注意以下几点：</p>
 <ul>
   <li><strong>配置错误会中止格式化。</strong>未知的配置项、错误的类型或无效的 YAML 都会导致失败，错误信息会指出出错的配置项并列出所有有效配置项，因此拼写错误不会被忽略。</li>
-  <li><strong>只能有一个文件。</strong>如果格式化器的 classpath 上出现多个 <code>bowerbird.yml</code>，格式化会直接失败，而不会去猜测应该以哪个为准。</li>
+  <li><strong>只能有一个文件。</strong>如果格式化器的 classpath 上出现多个 <code>tailorbird.yml</code>，格式化会直接失败，而不会去猜测应该以哪个为准。</li>
   <li><strong>IntelliJ</strong> 每次格式化时都会读取该文件，因此修改会在下一次 <em>Reformat Code</em> 时生效。添加该文件后，请运行一次 <code>./gradlew idea</code> 或重新加载 Gradle 项目。</li>
   <li><strong>原生格式化器：</strong>native-image 格式化器无法读取配置文件。请保持 <code>palantir.native.formatter</code> 关闭。</li>
 </ul>
 
 <h3 id="settings">全部配置项</h3>
-<p>默认值即 Bowerbird 自身的风格。每个配置项都链接到展示其效果的示例。</p>
+<p>默认值即 Tailorbird 自身的风格。每个配置项都链接到展示其效果的示例。</p>
 <table>
   <thead><tr><th>配置项</th><th>默认值</th><th>作用</th></tr></thead>
   <tbody>
-    <tr><td><a href="#rule-preset"><code>preset</code></a></td><td><code>bowerbird</code></td><td>其他所有配置项的起点：<code>bowerbird</code>、<code>palantir</code> 或 <code>google</code>。参见<a href="#presets">预设</a>。</td></tr>
+    <tr><td><a href="#rule-preset"><code>preset</code></a></td><td><code>tailorbird</code></td><td>其他所有配置项的起点：<code>tailorbird</code>、<code>palantir</code> 或 <code>google</code>。参见<a href="#presets">预设</a>。</td></tr>
     <tr><td><a href="#rule-linelength"><code>lineLength</code></a></td><td><code>120</code></td><td>最大行宽，不能小于 40。</td></tr>
     <tr><td><a href="#rule-indent"><code>indent</code></a></td><td><code>4</code></td><td>每级代码块缩进的空格数。</td></tr>
     <tr><td><a href="#rule-continuationindent"><code>continuationIndent</code></a></td><td><code>4</code></td><td><a href="#wrapping">换行后的续行</a>相对于其所接续的行缩进的空格数。上游使用 8。</td></tr>
@@ -201,7 +201,7 @@ files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
   </tbody>
 </table>
 <p>下面是一个包含所有配置项及其默认值的完整文件，可直接复制后修改：</p>
-<pre><code>preset: bowerbird
+<pre><code>preset: tailorbird
 lineLength: 120
 indent: 4
 continuationIndent: 4
@@ -229,11 +229,11 @@ javadoc:
 
 <!-- rules-reference:start -->
 <h3 id="reference">规则参考</h3>
-<p>每个配置项接受哪些值、有什么作用。示例是格式化器对所示输入的真实输出：每一列只设置这一个配置项，其他配置项都保持 Bowerbird 的默认值。</p>
+<p>每个配置项接受哪些值、有什么作用。示例是格式化器对所示输入的真实输出：每一列只设置这一个配置项，其他配置项都保持 Tailorbird 的默认值。</p>
 <div class="rule" id="rule-preset">
 <h4><code>preset</code></h4>
-<p>所有其他配置项的起点。<code>bowerbird</code> 是 Bowerbird 自己的风格；<code>palantir</code> 与上游 palantir-java-format 完全一致（已通过上游全部 226 个测试用例的验证）；<code>google</code> 是上游的 Google 风格。同一文件中的其他配置项会在预设的基础上进行修改，与 <code>preset</code> 在文件中的位置无关。</p>
-<table class="rule-facts"><tr><th>取值</th><td><code>bowerbird</code>、<code>palantir</code> 或 <code>google</code></td></tr><tr><th>默认值</th><td><code>bowerbird</code></td></tr></table>
+<p>所有其他配置项的起点。<code>tailorbird</code> 是 Tailorbird 自己的风格；<code>palantir</code> 与上游 palantir-java-format 完全一致（已通过上游全部 226 个测试用例的验证）；<code>google</code> 是上游的 Google 风格。同一文件中的其他配置项会在预设的基础上进行修改，与 <code>preset</code> 在文件中的位置无关。</p>
+<table class="rule-facts"><tr><th>取值</th><td><code>tailorbird</code>、<code>palantir</code> 或 <code>google</code></td></tr><tr><th>默认值</th><td><code>tailorbird</code></td></tr></table>
 <p class="note">对比同一段输入在各个预设下的结果。</p>
 <details><summary>输入</summary><pre><code>package example;
 import java.util.List;
@@ -250,7 +250,7 @@ class Orders {
     }
 }</code></pre></details>
 <div class="compare three">
-<div><div class="label yaml">preset: bowerbird</div><pre><code>package example;
+<div><div class="label yaml">preset: tailorbird</div><pre><code>package example;
 
 import static java.util.Objects.requireNonNull;
 
@@ -1215,7 +1215,7 @@ class Example {
 <!-- rules-reference:end -->
 
 <h2 id="rules">默认风格</h2>
-<p>没有 <code>bowerbird.yml</code> 时，Bowerbird 按如下方式格式化。每条规则都是一个可以修改的<a href="#settings">配置项</a>，括号中注明了对应的配置项。与上游 palantir-java-format 相比：</p>
+<p>没有 <code>tailorbird.yml</code> 时，Tailorbird 按如下方式格式化。每条规则都是一个可以修改的<a href="#settings">配置项</a>，括号中注明了对应的配置项。与上游 palantir-java-format 相比：</p>
 <ul class="rules">
   <li>控制关键字与 <code>(</code> 之间没有空格：<code>if(</code>、<code>for(</code>、<code>while(</code>、<code>switch(</code>、<code>try(</code>、<code>catch(</code>、<code>synchronized(</code>（<code>spaceAfterControlKeyword</code>）。</li>
   <li>导入按分组排列：静态导入、<code>java</code>、<code>javax</code>、<code>org</code>、<code>com</code>、其余所有导入，分组之间空一行（<code>imports</code>）。</li>
@@ -1418,32 +1418,32 @@ void check(int x) {
 
 <h2 id="building">构建</h2>
 <p>需要 JDK 21，其余依赖都由 Gradle wrapper 自动下载。</p>
-<pre><code>./gradlew :bowerbird-java-format:test</code></pre>
+<pre><code>./gradlew :tailorbird-java-format:test</code></pre>
 <p>如需在其他项目中试用本地构建，请将其发布到 Maven Local，并在该项目的仓库列表中添加 <code>mavenLocal()</code>：</p>
-<pre><code>./gradlew :bowerbird-java-format-spi:publishToMavenLocal \
-    :bowerbird-java-format-jdk-bootstrap:publishToMavenLocal \
-    :bowerbird-java-format:publishToMavenLocal</code></pre>
+<pre><code>./gradlew :tailorbird-java-format-spi:publishToMavenLocal \
+    :tailorbird-java-format-jdk-bootstrap:publishToMavenLocal \
+    :tailorbird-java-format:publishToMavenLocal</code></pre>
 <p>CI 会运行 <code>./gradlew build</code>，其中还包括 Error Prone 和项目自身的格式检查；如果构建修改了已跟踪的文件，CI 会失败。</p>
 
 <h2 id="adding-rules">添加格式化规则</h2>
 <ol>
-  <li>在 <code>bowerbird-java-format/src/test/resources/io/github/pieterjanscheir/bowerbird/java/bowerbird-testdata/</code> 中添加一对 <code>YourRule.input</code> 和 <code>YourRule.output</code> 文件，<code>BowerbirdIntegrationTest</code> 会自动识别它们。</li>
-  <li>把该配置项（连同默认值）添加到 <code>BowerbirdRules</code>，并加入 <code>BowerbirdConfig</code> 中的映射表，这样 <code>bowerbird.yml</code> 就能设置它。</li>
-  <li>修改格式化器（通常在 <code>JavaInputAstVisitor.java</code> 中），并用 <code>rule(BowerbirdRules::yourSetting)</code> 进行控制，以免影响上游风格及其测试。</li>
-  <li>如需测试非默认值，请在输入和输出文件旁添加 <code>YourRule.yml</code>；<code>BowerbirdIntegrationTest</code> 会将其应用到该测试用例。</li>
+  <li>在 <code>tailorbird-java-format/src/test/resources/io/github/pieterjanscheir/tailorbird/java/tailorbird-testdata/</code> 中添加一对 <code>YourRule.input</code> 和 <code>YourRule.output</code> 文件，<code>TailorbirdIntegrationTest</code> 会自动识别它们。</li>
+  <li>把该配置项（连同默认值）添加到 <code>TailorbirdRules</code>，并加入 <code>TailorbirdConfig</code> 中的映射表，这样 <code>tailorbird.yml</code> 就能设置它。</li>
+  <li>修改格式化器（通常在 <code>JavaInputAstVisitor.java</code> 中），并用 <code>rule(TailorbirdRules::yourSetting)</code> 进行控制，以免影响上游风格及其测试。</li>
+  <li>如需测试非默认值，请在输入和输出文件旁添加 <code>YourRule.yml</code>；<code>TailorbirdIntegrationTest</code> 会将其应用到该测试用例。</li>
   <li>运行测试。<code>./gradlew test -Drecreate=true</code> 会重新生成预期输出，因此请仔细检查由此产生的 diff。</li>
-  <li>使用目标代码风格，将输出与 IntelliJ 格式化器的结果进行对照：IntelliJ 不应改动 Bowerbird 的输出。</li>
+  <li>使用目标代码风格，将输出与 IntelliJ 格式化器的结果进行对照：IntelliJ 不应改动 Tailorbird 的输出。</li>
 </ol>
 <p>每次提交只包含一条规则，这样与上游合并时出现的冲突更容易追溯。</p>
 
 <h2 id="upstream">与上游保持同步</h2>
 <p>每周运行的工作流会在 palantir-java-format 发布新版本时创建一个 pull request；如果合并出现冲突，则创建一个 issue。你也可以在 Actions 标签页中针对特定的上游标签或分支手动运行它。</p>
-<p>不要直接使用 <code>git merge</code>：Bowerbird 重命名了上游的包和模块，因此每一行被重命名的代码都会与上游在其附近的修改发生冲突。<code>.github/scripts/upstream-merge.sh</code> 会先把上游代码改成 Bowerbird 的名称，然后再合并，这样只会留下真正的冲突。手动合并的方法如下：</p>
+<p>不要直接使用 <code>git merge</code>：Tailorbird 重命名了上游的包和模块，因此每一行被重命名的代码都会与上游在其附近的修改发生冲突。<code>.github/scripts/upstream-merge.sh</code> 会先把上游代码改成 Tailorbird 的名称，然后再合并，这样只会留下真正的冲突。手动合并的方法如下：</p>
 <pre><code>git fetch upstream --tags
 .github/scripts/upstream-merge.sh upstream/develop
 ./gradlew format # 重命名后的代码行可能需要重新换行；提交它所做的修改</code></pre>
-<p>出现冲突时，请保留 Bowerbird 的 <code>rule(...)</code> 检查，并在其周围应用上游的修改，然后运行 <code>git add -A &amp;&amp; git commit --no-edit</code> 和 <code>./gradlew format</code>。如果上游的格式化行为发生了变化、<code>preset: palantir</code> 不再与之一致，<code>BowerbirdPalantirPresetTest</code> 会失败。</p>
-<p>上游每次修改 <code>README.md</code> 都会产生冲突：请保留 Bowerbird 的版本；如果上游的改动有意义，再把它们应用到 <a href="https://github.com/pieterjanscheir/bowerbird-java-format/blob/main/docs/upstream-README.md"><code>docs/upstream-README.md</code></a>。</p>
+<p>出现冲突时，请保留 Tailorbird 的 <code>rule(...)</code> 检查，并在其周围应用上游的修改，然后运行 <code>git add -A &amp;&amp; git commit --no-edit</code> 和 <code>./gradlew format</code>。如果上游的格式化行为发生了变化、<code>preset: palantir</code> 不再与之一致，<code>TailorbirdPalantirPresetTest</code> 会失败。</p>
+<p>上游每次修改 <code>README.md</code> 都会产生冲突：请保留 Tailorbird 的版本；如果上游的改动有意义，再把它们应用到 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/upstream-README.md"><code>docs/upstream-README.md</code></a>。</p>
 
 <h2 id="releasing">发布</h2>
 <p>推送一个版本标签即可构建、测试并发布该版本，版本号取自标签。</p>
@@ -1452,9 +1452,9 @@ git push origin 1.0.0</code></pre>
 <p>发布工作流会把格式化器、SPI 和 JDK 引导模块发布到 GitHub Packages，并创建一个包含 jar 包和自动生成的发布说明的 GitHub Release。</p>
 
 <footer>
-  <div class="foot-brand"><img src="../assets/logo.svg" alt="" width="22" height="22">Bowerbird Java Format</div>
-  Bowerbird 是 palantir-java-format 和 google-java-format 的分支，采用 Apache 2.0 许可证。
-  本页面由 <a href="https://github.com/pieterjanscheir/bowerbird-java-format/blob/main/docs/zh/index.html"><code>docs/zh/index.html</code></a> 构建，是英文页面的翻译版本。
+  <div class="foot-brand"><img src="../assets/logo.svg" alt="" width="22" height="22">Tailorbird Java Format</div>
+  Tailorbird 是 palantir-java-format 和 google-java-format 的分支，采用 Apache 2.0 许可证。
+  本页面由 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/zh/index.html"><code>docs/zh/index.html</code></a> 构建，是英文页面的翻译版本。
 </footer>
 </main>
 <aside class="toc" id="toc" aria-label="本页内容"></aside>
