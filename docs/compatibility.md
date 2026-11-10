@@ -3,14 +3,14 @@
 Which Java, Maven and Gradle versions Tailorbird works with. "Tested" means a Tailorbird build was run against that
 version; anything else is marked as such.
 
-Last checked: 2026-11-05, on top of Tailorbird `ad789c1`.
+Last checked: 2026-11-10, on top of Tailorbird `7f60e42`.
 
 ## Java
 
 | Component | Minimum Java | Why |
 |---|---|---|
 | `tailorbird-java-format`, `tailorbird-java-format-spi` (formatter jars) | 11 | Compiled to Java 11 bytecode |
-| `tailorbird-maven-plugin` | 17 | Compiled to Java 17 bytecode, so Maven must run on Java 17+ |
+| `tailorbird-maven-plugin` | 11 | Compiled to Java 11 bytecode, like the formatter it runs |
 | Building this repository | 21 | Gradle daemon runs on 21; the build provisions JDK 17, 21 and 23 itself (`gradle/jdks`) |
 
 ### Java version of the code being formatted
@@ -35,13 +35,13 @@ or in the root of a multi-module build was also tested, including building one m
 
 | Maven | JDK 11 | JDK 16 | JDK 17 | JDK 21 | JDK 26 |
 |---|---|---|---|---|---|
-| 3.6.3 | ❌ plugin needs Java 17 | ❌ plugin needs Java 17 | ✅ | ✅ | ✅ |
-| 3.8.8 | ❌ plugin needs Java 17 | ❌ plugin needs Java 17 | ✅ | ✅ | ✅ |
-| 3.9.16 | ❌ plugin needs Java 17 | ❌ plugin needs Java 17 | ✅ | ✅ | ✅ |
+| 3.6.3 | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 3.8.8 | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 3.9.16 | ✅ | ✅ | ✅ | ✅ | ✅ |
 | 4.0.0-rc-7 | ❌ Maven 4 needs Java 17 | ❌ Maven 4 needs Java 17 | ✅ | ✅ | ✅ |
 
-On Java 11 or 16 the build fails with `UnsupportedClassVersionError` (class file version 61.0). Maven versions older
-than 3.6.3 were not tested.
+On Java 11 and 16 the formatter can only parse the Java syntax that JDK supports. Maven versions older than 3.6.3
+were not tested.
 
 ## Gradle
 

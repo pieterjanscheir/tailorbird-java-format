@@ -178,7 +178,7 @@ git fetch upstream --tags
 
 ## Releasing
 
-Push a version tag. [release.yml](./.github/workflows/release.yml) runs the tests, publishes the three
+Push a version tag. [release.yml](./.github/workflows/release.yml) runs the tests, publishes the four
 artifacts to GitHub Packages and creates a GitHub Release with the jars and generated release notes.
 
 ```bash

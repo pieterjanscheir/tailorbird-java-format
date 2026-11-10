@@ -18,6 +18,15 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
+// Baseline sets every JavaCompile task's compatibility to the javaVersion target in afterEvaluate.
+// Java 11, like the formatter it forks, so the plugin also loads in Maven running on JDK 11.
+afterEvaluate {
+    tasks.withType(JavaCompile).named('compileJava') {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
 mavenPlugin {
     goalPrefix = 'tailorbird'
 }

@@ -166,7 +166,7 @@ dependencies {
     <tr><td><code>javaExecutable</code></td><td><code>tailorbird.java</code></td><td>运行 Maven 的 JVM 的 <code>java</code></td></tr>
   </tbody>
 </table>
-<p>该插件需要 Maven 3.6.3 或更高版本，并运行在 Java 17 或更高版本上。它会在单独的 JVM 中运行格式化器，并带上所需的 <code>--add-exports</code> 参数，因此不需要 <code>.mvn/jvm.config</code>。这个 JVM 必须支持你代码所用的 Java 版本：要格式化 Java 21 语法，请在 JDK 21 上运行 Maven，或让 <code>javaExecutable</code> 指向 JDK 21。经过测试的版本见<a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/compatibility.md">兼容性</a>。</p>
+<p>该插件需要 Maven 3.6.3 或更高版本，并运行在 Java 11 或更高版本上。它会在单独的 JVM 中运行格式化器，并带上所需的 <code>--add-exports</code> 参数，因此不需要 <code>.mvn/jvm.config</code>。这个 JVM 必须支持你代码所用的 Java 版本：要格式化 Java 21 语法，请在 JDK 21 上运行 Maven，或让 <code>javaExecutable</code> 指向 JDK 21。经过测试的版本见<a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/compatibility.md">兼容性</a>。</p>
 <p>格式化器只读写 UTF-8。如果模块的 <code>project.build.sourceEncoding</code> 不是 UTF-8，插件会报错并停止，而不会格式化，因为重写文件会替换掉其中的非 ASCII 字符。</p>
 
 <h2 id="intellij">在 IntelliJ IDEA 中使用</h2>
@@ -1462,7 +1462,8 @@ void check(int x) {
 <p>如需在其他项目中试用本地构建，请将其发布到 Maven Local，并在该项目的仓库列表中添加 <code>mavenLocal()</code>：</p>
 <pre><code>./gradlew :tailorbird-java-format-spi:publishToMavenLocal \
     :tailorbird-java-format-jdk-bootstrap:publishToMavenLocal \
-    :tailorbird-java-format:publishToMavenLocal</code></pre>
+    :tailorbird-java-format:publishToMavenLocal \
+    :tailorbird-maven-plugin:publishToMavenLocal</code></pre>
 <p>CI 会运行 <code>./gradlew build</code>，其中还包括 Error Prone 和项目自身的格式检查；如果构建修改了已跟踪的文件，CI 会失败。</p>
 
 <h2 id="adding-rules">添加格式化规则</h2>
@@ -1489,7 +1490,7 @@ void check(int x) {
 <p>推送一个版本标签即可构建、测试并发布该版本，版本号取自标签。</p>
 <pre><code>git tag 1.0.0
 git push origin 1.0.0</code></pre>
-<p>发布工作流会把格式化器、SPI 和 JDK 引导模块发布到 GitHub Packages，并创建一个包含 jar 包和自动生成的发布说明的 GitHub Release。</p>
+<p>发布工作流会把格式化器、SPI、JDK 引导模块和 Maven 插件发布到 GitHub Packages，并创建一个包含 jar 包和自动生成的发布说明的 GitHub Release。</p>
 
 <footer>
   <div class="foot-brand"><img src="../assets/logo.svg" alt="" width="22" height="22">Tailorbird Java Format</div>

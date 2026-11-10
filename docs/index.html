@@ -166,7 +166,7 @@ dependencies {
     <tr><td><code>javaExecutable</code></td><td><code>tailorbird.java</code></td><td>the <code>java</code> of the JVM running Maven</td></tr>
   </tbody>
 </table>
-<p>The plugin needs Maven 3.6.3 or later running on Java 17 or later. It runs the formatter in a separate JVM with the <code>--add-exports</code> flags it needs, so you don't need a <code>.mvn/jvm.config</code>. That JVM must support the Java version of your code: to format Java 21 syntax, run Maven on JDK 21 or point <code>javaExecutable</code> at one. See <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/compatibility.md">compatibility</a> for the tested versions.</p>
+<p>The plugin needs Maven 3.6.3 or later running on Java 11 or later. It runs the formatter in a separate JVM with the <code>--add-exports</code> flags it needs, so you don't need a <code>.mvn/jvm.config</code>. That JVM must support the Java version of your code: to format Java 21 syntax, run Maven on JDK 21 or point <code>javaExecutable</code> at one. See <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/compatibility.md">compatibility</a> for the tested versions.</p>
 <p>The formatter reads and writes UTF-8 only. In a module whose <code>project.build.sourceEncoding</code> is anything else, the plugin stops with an error instead of formatting, because rewriting the files would replace their non-ASCII characters.</p>
 
 <h2 id="intellij">Using it in IntelliJ IDEA</h2>
@@ -1462,7 +1462,8 @@ void check(int x) {
 <p>To try a local build in another project, publish it to Maven Local and add <code>mavenLocal()</code> to that project's repositories:</p>
 <pre><code>./gradlew :tailorbird-java-format-spi:publishToMavenLocal \
     :tailorbird-java-format-jdk-bootstrap:publishToMavenLocal \
-    :tailorbird-java-format:publishToMavenLocal</code></pre>
+    :tailorbird-java-format:publishToMavenLocal \
+    :tailorbird-maven-plugin:publishToMavenLocal</code></pre>
 <p>CI runs <code>./gradlew build</code>, which also runs Error Prone and the project's own format check, and fails when the build changes tracked files.</p>
 
 <h2 id="adding-rules">Adding a formatting rule</h2>
@@ -1489,7 +1490,7 @@ void check(int x) {
 <p>Push a version tag to build, test and publish that version. The version is taken from the tag.</p>
 <pre><code>git tag 1.0.0
 git push origin 1.0.0</code></pre>
-<p>The release workflow publishes the formatter, SPI and JDK bootstrap to GitHub Packages and creates a GitHub Release with the jars and generated release notes.</p>
+<p>The release workflow publishes the formatter, SPI, JDK bootstrap and Maven plugin to GitHub Packages and creates a GitHub Release with the jars and generated release notes.</p>
 
 <footer>
   <div class="foot-brand"><img src="assets/logo.svg" alt="" width="22" height="22">Tailorbird Java Format</div>

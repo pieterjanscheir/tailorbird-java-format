@@ -53,3 +53,4 @@ jobs:
             tailorbird-java-format/build/libs/*.jar
             tailorbird-java-format-spi/build/libs/*.jar
             tailorbird-java-format-jdk-bootstrap/build/libs/*.jar
+            tailorbird-maven-plugin/build/libs/*.jar
