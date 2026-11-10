@@ -193,6 +193,9 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-javadoc-blanklineafterparams"><code>javadoc.blankLineAfterParams</code></a></td><td><code>true</code></td><td>One blank line after the block of <code>@param</code> tags, when more tags follow.</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterreturn"><code>javadoc.blankLineAfterReturn</code></a></td><td><code>true</code></td><td>One blank line after <code>@return</code>, when more tags follow.</td></tr>
     <tr><td><a href="#rule-javadoc-singlespaceaftertagname"><code>javadoc.singleSpaceAfterTagName</code></a></td><td><code>true</code></td><td>Exactly one space between a <code>@param</code> or <code>@throws</code> name and its description.</td></tr>
+    <tr><td><a href="#rule-formattertags-enabled"><code>formatterTags.enabled</code></a></td><td><code>false</code></td><td>Leave code between <code>// @formatter:off</code> and <code>// @formatter:on</code> as written.</td></tr>
+    <tr><td><a href="#rule-formattertags-off"><code>formatterTags.off</code></a></td><td><code>"@formatter:off"</code></td><td>The text in a comment that starts such a region.</td></tr>
+    <tr><td><a href="#rule-formattertags-on"><code>formatterTags.on</code></a></td><td><code>"@formatter:on"</code></td><td>The text in a comment that ends it.</td></tr>
   </tbody>
 </table>
 <p>Here is a complete file with every setting at its default, to copy and edit:</p>
@@ -220,7 +223,11 @@ javadoc:
   blankLineAfterDescription: true
   blankLineAfterParams: true
   blankLineAfterReturn: true
-  singleSpaceAfterTagName: true</code></pre>
+  singleSpaceAfterTagName: true
+formatterTags:
+  enabled: false
+  off: "@formatter:off"
+  on: "@formatter:on"</code></pre>
 
 <!-- rules-reference:start -->
 <h3 id="reference">Rules reference</h3>
@@ -1207,6 +1214,56 @@ class Example {
 
 }</code></pre></div>
 </div></div>
+<div class="rule" id="rule-formattertags-enabled">
+<h4><code>formatterTags.enabled</code></h4>
+<p>Leave the code between a comment containing <code>@formatter:off</code> and one containing <code>@formatter:on</code> exactly as written, for hand-aligned tables, DSLs and test data. These are the same markers as IntelliJ&#39;s, which has them off by default too.</p>
+<table class="rule-facts"><tr><th>Values</th><td><code>true</code> or <code>false</code></td></tr><tr><th>Default</th><td><code>false</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">The region runs from the start of the <code>off</code> comment to the end of the <code>on</code> comment; the formatter still indents the <code>off</code> comment itself. An <code>off</code> without an <code>on</code> runs to the end of the file, and an <code>off</code> inside a region is ignored. The markers only count in comments, not in strings. Imports inside a region are neither sorted nor removed, and strings inside one aren&#39;t reflowed.</p>
+<details><summary>Input</summary><pre><code>class Example {
+    // @formatter:off
+    int[][] scores = {
+        {  10, 200,  3 },
+        { 400,   5, 60 },
+    };
+    // @formatter:on
+    int   size  =  2;
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">formatterTags:<br>&nbsp;&nbsp;enabled: true</div><pre><code>class Example {
+
+    // @formatter:off
+    int[][] scores = {
+        {  10, 200,  3 },
+        { 400,   5, 60 },
+    };
+    // @formatter:on
+    int size = 2;
+
+}</code></pre></div>
+<div><div class="label yaml">formatterTags:<br>&nbsp;&nbsp;enabled: false</div><pre><code>class Example {
+
+    // @formatter:off
+    int[][] scores = {
+        { 10, 200, 3 },
+        { 400, 5, 60 },
+    };
+    // @formatter:on
+    int size = 2;
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-formattertags-off">
+<h4><code>formatterTags.off</code></h4>
+<p>The text in a comment that starts a region the formatter leaves alone.</p>
+<table class="rule-facts"><tr><th>Values</th><td>text without spaces, <code>/</code> or <code>*</code></td></tr><tr><th>Default</th><td><code>"@formatter:off"</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>"@formatter:off"</code> · <code>google</code>: <code>"@formatter:off"</code></td></tr></table>
+<p class="note">Only used when <code>formatterTags.enabled</code> is true.</p>
+</div>
+<div class="rule" id="rule-formattertags-on">
+<h4><code>formatterTags.on</code></h4>
+<p>The text in a comment that ends it.</p>
+<table class="rule-facts"><tr><th>Values</th><td>text without spaces, <code>/</code> or <code>*</code></td></tr><tr><th>Default</th><td><code>"@formatter:on"</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>"@formatter:on"</code> · <code>google</code>: <code>"@formatter:on"</code></td></tr></table>
+<p class="note">Only used when <code>formatterTags.enabled</code> is true.</p>
+</div>
 <!-- rules-reference:end -->
 
 <h2 id="rules">Default style</h2>

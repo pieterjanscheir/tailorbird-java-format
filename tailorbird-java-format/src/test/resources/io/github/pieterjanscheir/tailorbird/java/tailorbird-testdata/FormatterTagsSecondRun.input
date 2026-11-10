@@ -1,0 +1,29 @@
+package p;
+
+import java.util.List;
+
+class T {
+
+    int a = 1;
+    // @formatter:off
+  int[][] table = {
+      { 1,   0,   0 },
+      { 0,   1,   0 },
+      { 0,   0,   1 },
+  };
+  // @formatter:on
+
+    void m() {
+        int b = 2;
+        // @formatter:off
+    String sql =   "SELECT a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z FROM a_really_long_table_name WHERE x = 1";
+    List<String>   kept   =   null;
+    // @formatter:on
+        int c = 3;
+        String s = "// @formatter:off is only text here";
+        int d = 4;
+    }
+
+    // @formatter:off
+  void   unclosed(  ) {   }
+}

@@ -14,6 +14,7 @@
 
 package io.github.pieterjanscheir.tailorbird.java;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.Immutable;
 import java.util.List;
@@ -58,6 +59,9 @@ public final class TailorbirdRules {
     private final boolean javadocBlankLineAfterParams;
     private final boolean javadocBlankLineAfterReturn;
     private final boolean javadocSingleSpaceAfterTagName;
+    private final boolean formatterTags;
+    private final String formatterOffTag;
+    private final String formatterOnTag;
 
     private TailorbirdRules(Builder b) {
         this.lineLength = b.lineLength;
@@ -81,6 +85,9 @@ public final class TailorbirdRules {
         this.javadocBlankLineAfterParams = b.javadocBlankLineAfterParams;
         this.javadocBlankLineAfterReturn = b.javadocBlankLineAfterReturn;
         this.javadocSingleSpaceAfterTagName = b.javadocSingleSpaceAfterTagName;
+        this.formatterTags = b.formatterTags;
+        this.formatterOffTag = b.formatterOffTag;
+        this.formatterOnTag = b.formatterOnTag;
     }
 
     /** Tailorbird's own style: what you get without a {@code tailorbird.yml}. */
@@ -215,6 +222,24 @@ public final class TailorbirdRules {
         return blankLineBetweenImportGroups;
     }
 
+    /**
+     * Leave the code between a comment containing {@link #formatterOffTag()} and one containing
+     * {@link #formatterOnTag()} as written (IntelliJ's formatter markers). Off by default.
+     */
+    public boolean formatterTags() {
+        return formatterTags;
+    }
+
+    /** The text that marks the start of a region the formatter leaves alone, {@code @formatter:off} by default. */
+    public String formatterOffTag() {
+        return formatterOffTag;
+    }
+
+    /** The text that marks the end of such a region, {@code @formatter:on} by default. */
+    public String formatterOnTag() {
+        return formatterOnTag;
+    }
+
     /** Apply the {@code javadoc} rules below; when false, JavaDoc is left as written. */
     public boolean javadocLayout() {
         return javadocLayout;
@@ -269,7 +294,10 @@ public final class TailorbirdRules {
                 && javadocBlankLineAfterDescription == o.javadocBlankLineAfterDescription
                 && javadocBlankLineAfterParams == o.javadocBlankLineAfterParams
                 && javadocBlankLineAfterReturn == o.javadocBlankLineAfterReturn
-                && javadocSingleSpaceAfterTagName == o.javadocSingleSpaceAfterTagName;
+                && javadocSingleSpaceAfterTagName == o.javadocSingleSpaceAfterTagName
+                && formatterTags == o.formatterTags
+                && formatterOffTag.equals(o.formatterOffTag)
+                && formatterOnTag.equals(o.formatterOnTag);
     }
 
     @Override
@@ -295,7 +323,10 @@ public final class TailorbirdRules {
                 javadocBlankLineAfterDescription,
                 javadocBlankLineAfterParams,
                 javadocBlankLineAfterReturn,
-                javadocSingleSpaceAfterTagName);
+                javadocSingleSpaceAfterTagName,
+                formatterTags,
+                formatterOffTag,
+                formatterOnTag);
     }
 
     @Override
@@ -328,8 +359,41 @@ public final class TailorbirdRules {
         private boolean javadocBlankLineAfterParams = true;
         private boolean javadocBlankLineAfterReturn = true;
         private boolean javadocSingleSpaceAfterTagName = true;
+        private boolean formatterTags = false;
+        private String formatterOffTag = "@formatter:off";
+        private String formatterOnTag = "@formatter:on";
 
         private Builder() {}
+
+        public Builder formatterTags(boolean value) {
+            this.formatterTags = value;
+            return this;
+        }
+
+        public Builder formatterOffTag(String value) {
+            this.formatterOffTag = requireTag("formatterTags.off", value);
+            return this;
+        }
+
+        public Builder formatterOnTag(String value) {
+            this.formatterOnTag = requireTag("formatterTags.on", value);
+            return this;
+        }
+
+        private static String requireTag(String name, String value) {
+            String tag = value.trim();
+            if (tag.isEmpty()) {
+                throw new IllegalArgumentException(name + " must not be empty");
+            }
+            // Formatting adds a space after `//` and reflows JavaDoc at whitespace, so a tag with comment syntax or
+            // whitespace could appear or break apart only after formatting.
+            // Guava's whitespace, the definition the comment wrapping uses, which includes a non-breaking space.
+            if (CharMatcher.whitespace().or(CharMatcher.anyOf("/*")).matchesAnyOf(tag)) {
+                throw new IllegalArgumentException(
+                        name + " must not contain spaces, / or *, like @formatter:off; got \"" + tag + "\"");
+            }
+            return tag;
+        }
 
         public Builder lineLength(int value) {
             this.lineLength = requireAtLeast("lineLength", value, 40);

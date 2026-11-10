@@ -64,7 +64,7 @@ public final class StringWrapper {
             return input;
         }
 
-        TreeRangeMap<Integer, String> replacements = getReflowReplacements(columnLimit, input);
+        TreeRangeMap<Integer, String> replacements = reflowOutsideOffRegions(columnLimit, input, formatter);
         String firstPass =
                 formatter.formatSource(input, replacements.asMapOfRanges().keySet());
 
@@ -72,7 +72,7 @@ public final class StringWrapper {
             // If formatting the replacement ranges resulted in a change, recalculate the replacements on
             // the updated input.
             input = firstPass;
-            replacements = getReflowReplacements(columnLimit, input);
+            replacements = reflowOutsideOffRegions(columnLimit, input, formatter);
         }
 
         String result = applyReplacements(input, replacements);
@@ -81,7 +81,7 @@ public final class StringWrapper {
         String secondPass = formatter.formatSource(result, rangesAfterAppliedReplacements(replacements));
 
         if (!secondPass.equals(result)) {
-            replacements = getReflowReplacements(columnLimit, secondPass);
+            replacements = reflowOutsideOffRegions(columnLimit, secondPass, formatter);
             result = applyReplacements(secondPass, replacements);
         }
 
@@ -100,6 +100,23 @@ public final class StringWrapper {
         }
 
         return result;
+    }
+
+    /** Tailorbird: the reflow replacements, without those that would change a @formatter:off region (issue #22). */
+    private static TreeRangeMap<Integer, String> reflowOutsideOffRegions(
+            int columnLimit, String input, Formatter formatter) throws FormatterException {
+        TreeRangeMap<Integer, String> replacements = getReflowReplacements(columnLimit, input);
+        RangeSet<Integer> offRegions = FormatterTags.offRegions(input, formatter.rules());
+        if (offRegions.isEmpty()) {
+            return replacements;
+        }
+        TreeRangeMap<Integer, String> outside = TreeRangeMap.create();
+        replacements.asMapOfRanges().forEach((range, text) -> {
+            if (!FormatterTags.touches(offRegions, range)) {
+                outside.put(range, text);
+            }
+        });
+        return outside;
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

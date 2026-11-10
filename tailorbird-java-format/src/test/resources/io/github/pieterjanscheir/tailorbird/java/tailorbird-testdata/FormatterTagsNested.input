@@ -1,0 +1,10 @@
+class FormatterTagsNested {
+  // @formatter:off
+  int   a   =   1;
+  // @formatter:off (ignored, already off)
+  int   b   =   2;
+  // @formatter:on
+  int   c   =   3;
+  // @formatter:on (ignored, already on)
+  int   d   =   4;
+}

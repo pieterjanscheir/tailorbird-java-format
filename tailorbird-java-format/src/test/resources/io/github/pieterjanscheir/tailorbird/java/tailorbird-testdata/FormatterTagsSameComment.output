@@ -1,0 +1,6 @@
+class FormatterTagsSameComment {
+
+    /* @formatter:off for nothing, @formatter:on again */
+    int x = 1;
+
+}

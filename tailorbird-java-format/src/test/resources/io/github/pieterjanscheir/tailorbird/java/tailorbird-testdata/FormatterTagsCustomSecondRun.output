@@ -1,0 +1,10 @@
+class FormatterTagsCustom {
+
+    // fmt:off
+  int   x   =   1;
+  // fmt:on
+    int y = 2;
+    // @formatter:off is not a tag here
+    int z = 3;
+
+}

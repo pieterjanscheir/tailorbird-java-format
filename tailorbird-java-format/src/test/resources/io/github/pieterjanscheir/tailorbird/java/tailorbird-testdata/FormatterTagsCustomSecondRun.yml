@@ -1,0 +1,4 @@
+formatterTags:
+  enabled: true
+  off: "fmt:off"
+  on: "fmt:on"

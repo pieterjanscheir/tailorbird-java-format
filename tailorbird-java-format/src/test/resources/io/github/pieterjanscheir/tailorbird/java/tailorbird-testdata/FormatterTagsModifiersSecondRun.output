@@ -1,0 +1,8 @@
+class FormatterTagsModifiers {
+
+    // @formatter:off
+  final   static   int   A = 1;
+  // @formatter:on
+    static final int B = 2;
+
+}
