@@ -180,6 +180,7 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-closingparenonownline"><code>closingParenOnOwnLine</code></a></td><td><code>true</code></td><td>当形参或实参按每行一个换行时，<code>)</code> 单独占一行。为 false 时，<code>)</code> 留在最后一行，作为最后一个实参传入的 lambda 也留在调用所在的行：<code>execute(account, () -&gt; {</code>。<a href="#wrapping">示例</a>。</td></tr>
     <tr><td><a href="#rule-tryresourcesonownlines"><code>tryResourcesOnOwnLines</code></a></td><td><code>true</code></td><td>包含多个资源的 try 语句中，每个资源各占一行，<code>(</code> 和 <code>)</code> 也各自单独占一行。</td></tr>
     <tr><td><a href="#rule-bodywithoutbracesonownline"><code>bodyWithoutBracesOnOwnLine</code></a></td><td><code>true</code></td><td>不带花括号的 <code>if</code>、<code>for</code> 或 <code>while</code> 语句体总是另起一行。为 false 时，<code>if (x) return;</code> 可以保持在同一行。<a href="#blocks">示例</a>。</td></tr>
+    <tr><td><a href="#rule-wrapping-methodchaincolumnlimit"><code>wrapping.methodChainColumnLimit</code></a></td><td><code>80</code></td><td>方法链只有在最后一个 <code>.</code> 位于此列之前时才保持在一行。</td></tr>
     <tr><td><a href="#rule-blanklines-keeptyped"><code>blankLines.keepTyped</code></a></td><td><code>false</code></td><td>与上游一样，保留你在代码中和成员之间输入的空行。为 false 时这些空行会被删除，只由下面的规则添加空行。<a href="#blank-lines">示例</a>。</td></tr>
     <tr><td><a href="#rule-blanklines-aroundclassbody"><code>blankLines.aroundClassBody</code></a></td><td><code>true</code></td><td>在类声明头之后和类的右花括号之前各保留一个空行。</td></tr>
     <tr><td><a href="#rule-blanklines-betweenfields"><code>blankLines.betweenFields</code></a></td><td><code>false</code></td><td>像方法一样，在每个字段前后添加空行。为 false 时，字段之间不留空行，即使字段带有 JavaDoc 也是如此。</td></tr>
@@ -209,6 +210,8 @@ arrayInitializerBraceSpaces: true
 closingParenOnOwnLine: true
 tryResourcesOnOwnLines: true
 bodyWithoutBracesOnOwnLine: true
+wrapping:
+  methodChainColumnLimit: 80
 blankLines:
   keepTyped: false
   aroundClassBody: true
@@ -571,6 +574,35 @@ class Orders {
     int check(int x) {
         if(x &lt; 0) return 0;
         return x;
+    }
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-wrapping-methodchaincolumnlimit">
+<h4><code>wrapping.methodChainColumnLimit</code></h4>
+<p>方法链只有在最后一个 <code>.</code> 位于此列之前时才会保持在一行；否则每个调用各占一行。默认值 80 与 <code>lineLength</code> 无关，因此在 <code>lineLength: 120</code> 时，较短的链也可能在还有空间时被拆开。设为 <code>lineLength</code> 或更大，则只有放不下时才拆分。</p>
+<table class="rule-facts"><tr><th>取值</th><td>整数，至少为 1</td></tr><tr><th>默认值</th><td><code>80</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>80</code> · <code>google</code>: <code>80</code></td></tr></table>
+<details><summary>输入</summary><pre><code>class Example {
+    Order create() {
+        return Order.builder().account(clientAccount).instrument(instrument).quantity(quantity).build();
+    }
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">wrapping:<br>&nbsp;&nbsp;methodChainColumnLimit: 80</div><pre><code>class Example {
+
+    Order create() {
+        return Order.builder()
+            .account(clientAccount)
+            .instrument(instrument)
+            .quantity(quantity)
+            .build();
+    }
+
+}</code></pre></div>
+<div><div class="label yaml">wrapping:<br>&nbsp;&nbsp;methodChainColumnLimit: 120</div><pre><code>class Example {
+
+    Order create() {
+        return Order.builder().account(clientAccount).instrument(instrument).quantity(quantity).build();
     }
 
 }</code></pre></div>

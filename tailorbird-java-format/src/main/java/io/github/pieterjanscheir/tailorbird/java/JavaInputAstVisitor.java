@@ -336,6 +336,11 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
         }
     }
 
+    /** Tailorbird: the column a method chain's last {@code .} must come before to stay on one line. */
+    private int methodChainColumnLimit() {
+        return rules != null ? rules.methodChainColumnLimit() : METHOD_CHAIN_COLUMN_LIMIT;
+    }
+
     /** Tailorbird: the rules to apply, or {@code null} for upstream behaviour. */
     @Nullable
     private final TailorbirdRules rules;
@@ -2845,7 +2850,7 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
                                 isTextBlock
                                         ? LastLevelBreakability.ACCEPT_INLINE_CHAIN
                                         : LastLevelBreakability.ACCEPT_INLINE_CHAIN_IF_SIMPLE_OTHERWISE_CHECK_INNER)
-                        .columnLimitBeforeLastBreak(METHOD_CHAIN_COLUMN_LIMIT)
+                        .columnLimitBeforeLastBreak(methodChainColumnLimit())
                         .isSimple(false)
                         .build());
                 scan(getArrayBase(node), null);
@@ -2948,7 +2953,7 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
                     .plusIndent(plusFour)
                     .breakBehaviour(BreakBehaviours.preferBreakingLastInnerLevel(false))
                     .breakabilityIfLastLevel(LastLevelBreakability.ACCEPT_INLINE_CHAIN_IF_SIMPLE_OTHERWISE_CHECK_INNER)
-                    .columnLimitBeforeLastBreak(METHOD_CHAIN_COLUMN_LIMIT)
+                    .columnLimitBeforeLastBreak(methodChainColumnLimit())
                     .isSimple(!trailingDereferences)
                     .build());
         }
@@ -3046,7 +3051,7 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
                                 ? LastLevelBreakability.ACCEPT_INLINE_CHAIN_IF_SIMPLE_OTHERWISE_CHECK_INNER
                                 : LastLevelBreakability.CHECK_INNER)
                 .partialInlineability(PartialInlineability.IF_FIRST_LEVEL_FITS)
-                .columnLimitBeforeLastBreak(METHOD_CHAIN_COLUMN_LIMIT)
+                .columnLimitBeforeLastBreak(methodChainColumnLimit())
                 .isSimple(!trailingDereferences)
                 .build());
 

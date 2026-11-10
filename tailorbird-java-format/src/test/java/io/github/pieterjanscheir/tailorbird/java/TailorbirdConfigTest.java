@@ -101,7 +101,7 @@ class TailorbirdConfigTest {
                         .formatterOffTag("fmt:off")
                         .formatterOnTag("fmt:on")
                         .build());
-        assertThat(TailorbirdConfig.settingNames()).hasSize(25);
+        assertThat(TailorbirdConfig.settingNames()).hasSize(26);
     }
 
     @Test
@@ -194,6 +194,9 @@ class TailorbirdConfigTest {
         assertThatThrownBy(() -> TailorbirdConfig.parse("formatterTags:\n  on: 3\n", "test"))
                 .isInstanceOf(TailorbirdConfigException.class)
                 .hasMessageContaining("formatterTags.on must be text");
+        assertThatThrownBy(() -> TailorbirdConfig.parse("wrapping:\n  methodChainColumnLimit: 0\n", "test"))
+                .isInstanceOf(TailorbirdConfigException.class)
+                .hasMessageContaining("wrapping.methodChainColumnLimit must be at least 1");
         assertThatThrownBy(() -> TailorbirdConfig.parse("lineLength: 10\n", "test"))
                 .isInstanceOf(TailorbirdConfigException.class)
                 .hasMessageContaining("lineLength must be at least 40");

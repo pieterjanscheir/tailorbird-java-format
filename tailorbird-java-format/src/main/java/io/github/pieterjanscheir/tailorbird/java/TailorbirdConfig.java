@@ -54,6 +54,8 @@ import javax.annotation.Nullable;
  * closingParenOnOwnLine: true
  * tryResourcesOnOwnLines: true
  * bodyWithoutBracesOnOwnLine: true
+ * wrapping:
+ *   methodChainColumnLimit: 80
  * blankLines:
  *   keepTyped: false
  *   aroundClassBody: true
@@ -95,6 +97,7 @@ public final class TailorbirdConfig {
     private static final ImmutableMap<String, BiConsumer<TailorbirdRules.Builder, Value>> SETTINGS =
             ImmutableMap.<String, BiConsumer<TailorbirdRules.Builder, Value>>builder()
                     .put("lineLength", (b, v) -> b.lineLength(v.integer()))
+                    .put("wrapping.methodChainColumnLimit", (b, v) -> b.methodChainColumnLimit(v.integer()))
                     .put("indent", (b, v) -> b.indent(v.integer()))
                     .put("continuationIndent", (b, v) -> b.continuationIndent(v.integer()))
                     .put("spaceAfterControlKeyword", (b, v) -> b.spaceAfterControlKeyword(v.bool()))

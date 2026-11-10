@@ -180,6 +180,7 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-closingparenonownline"><code>closingParenOnOwnLine</code></a></td><td><code>true</code></td><td><code>)</code> on its own line when parameters or arguments wrap one per line. When false, <code>)</code> stays on the last line and a lambda passed as the last argument stays on the call's line: <code>execute(account, () -&gt; {</code>. <a href="#wrapping">Example</a>.</td></tr>
     <tr><td><a href="#rule-tryresourcesonownlines"><code>tryResourcesOnOwnLines</code></a></td><td><code>true</code></td><td>A try with several resources puts each one on its own line, with <code>(</code> and <code>)</code> on their own lines.</td></tr>
     <tr><td><a href="#rule-bodywithoutbracesonownline"><code>bodyWithoutBracesOnOwnLine</code></a></td><td><code>true</code></td><td>The body of an <code>if</code>, <code>for</code> or <code>while</code> without braces always goes on its own line. When false, <code>if (x) return;</code> may stay on one line. <a href="#blocks">Example</a>.</td></tr>
+    <tr><td><a href="#rule-wrapping-methodchaincolumnlimit"><code>wrapping.methodChainColumnLimit</code></a></td><td><code>80</code></td><td>A method chain stays on one line only if its last <code>.</code> comes before this column.</td></tr>
     <tr><td><a href="#rule-blanklines-keeptyped"><code>blankLines.keepTyped</code></a></td><td><code>false</code></td><td>Keep the blank lines you type in code and between members, as upstream does. When false they are removed and only the rules below add blank lines. <a href="#blank-lines">Example</a>.</td></tr>
     <tr><td><a href="#rule-blanklines-aroundclassbody"><code>blankLines.aroundClassBody</code></a></td><td><code>true</code></td><td>One blank line after a class header and before the class's closing brace.</td></tr>
     <tr><td><a href="#rule-blanklines-betweenfields"><code>blankLines.betweenFields</code></a></td><td><code>false</code></td><td>A blank line around each field, like around methods. When false, fields are listed without blank lines, also when they have JavaDoc.</td></tr>
@@ -209,6 +210,8 @@ arrayInitializerBraceSpaces: true
 closingParenOnOwnLine: true
 tryResourcesOnOwnLines: true
 bodyWithoutBracesOnOwnLine: true
+wrapping:
+  methodChainColumnLimit: 80
 blankLines:
   keepTyped: false
   aroundClassBody: true
@@ -571,6 +574,35 @@ class Orders {
     int check(int x) {
         if(x &lt; 0) return 0;
         return x;
+    }
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-wrapping-methodchaincolumnlimit">
+<h4><code>wrapping.methodChainColumnLimit</code></h4>
+<p>A method chain stays on one line only if its last <code>.</code> comes before this column; otherwise it is split one call per line. The default of 80 doesn&#39;t follow <code>lineLength</code>, so with <code>lineLength: 120</code> a short chain can be split while there is room left. Set it to <code>lineLength</code> or more to split a chain only when it doesn&#39;t fit.</p>
+<table class="rule-facts"><tr><th>Values</th><td>a whole number, at least 1</td></tr><tr><th>Default</th><td><code>80</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>80</code> · <code>google</code>: <code>80</code></td></tr></table>
+<details><summary>Input</summary><pre><code>class Example {
+    Order create() {
+        return Order.builder().account(clientAccount).instrument(instrument).quantity(quantity).build();
+    }
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">wrapping:<br>&nbsp;&nbsp;methodChainColumnLimit: 80</div><pre><code>class Example {
+
+    Order create() {
+        return Order.builder()
+            .account(clientAccount)
+            .instrument(instrument)
+            .quantity(quantity)
+            .build();
+    }
+
+}</code></pre></div>
+<div><div class="label yaml">wrapping:<br>&nbsp;&nbsp;methodChainColumnLimit: 120</div><pre><code>class Example {
+
+    Order create() {
+        return Order.builder().account(clientAccount).instrument(instrument).quantity(quantity).build();
     }
 
 }</code></pre></div>
