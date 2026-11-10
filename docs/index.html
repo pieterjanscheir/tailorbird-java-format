@@ -156,7 +156,7 @@ export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add
 tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
     --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
 <p>The <code>JAVA_OPTS</code> line is needed on JDK 16 and later: the formatter uses the JDK's own Java parser, which the JDK only opens up with these flags. An invalid settings file stops with a one-line error and exit code 2.</p>
-<p><code>--palantir</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults.</p>
+<p><code>--tailorbird</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults. <code>--palantir</code> does the same and is there for the upstream plugins, which pass it; it doesn't give Palantir's style. For that, use a settings file with <a href="#presets"><code>preset: palantir</code></a>.</p>
 
 <p>Gradle, Spotless and IntelliJ all load the formatter from the <code>palantirJavaFormat</code> dependencies, so they all read the same file; that's why it goes there. Spotless also notices when the file changes and formats again. A few things to know:</p>
 <ul>
