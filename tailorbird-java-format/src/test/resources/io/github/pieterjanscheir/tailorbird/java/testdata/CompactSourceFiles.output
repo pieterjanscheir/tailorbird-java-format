@@ -1,0 +1,19 @@
+import java.util.List;
+
+/** The greeting. */
+final String greeting = "hello";
+
+int count;
+
+record Point(int x, int y) {}
+
+void main() {
+    for (String name : List.of("a", "b")) {
+        IO.println(greeting + " " + name);
+    }
+    count++;
+}
+
+String describe(Point p) {
+    return p.x() + "," + p.y();
+}

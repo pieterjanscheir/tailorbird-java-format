@@ -114,6 +114,7 @@ import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.tree.TreeScanner;
 import io.github.pieterjanscheir.tailorbird.BreakBehaviours;
 import io.github.pieterjanscheir.tailorbird.CloseOp;
@@ -447,7 +448,15 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
                 builder.blankLineWanted(BlankLineWanted.YES);
             }
             markForPartialFormat();
-            scan(type, null);
+            if (isImplicitClass(type)) {
+                // Tailorbird: a compact source file (JDK 25) has methods and fields without a class declaration. javac
+                // wraps them in an implicit class, which isn't in the source, so print its members at the top level
+                // (issue #58).
+                topLevelBody = true;
+                addBodyDeclarations(((ClassTree) type).getMembers(), BracesOrNot.NO, FirstDeclarationsOrNot.YES);
+            } else {
+                scan(type, null);
+            }
             builder.forcedBreak();
             first = false;
             dropEmptyDeclarations();
@@ -461,6 +470,23 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
     }
 
     protected void handleModule(boolean first, CompilationUnitTree node) {}
+
+    /** Tailorbird: set just before {@link #addBodyDeclarations} prints an implicit class's members, without indent. */
+    private boolean topLevelBody = false;
+
+    /**
+     * Tailorbird: whether {@code tree} is the implicit class javac wraps around a compact source file's members (JDK 25,
+     * issue #58). It has no header, so it starts where its first member starts, while a real class starts before its
+     * members. This avoids javac's IMPLICIT_CLASS flag, which would need com.sun.tools.javac.code exported.
+     */
+    private static boolean isImplicitClass(Tree tree) {
+        if (!(tree instanceof JCTree.JCClassDecl)) {
+            return false;
+        }
+        JCTree.JCClassDecl classDecl = (JCTree.JCClassDecl) tree;
+        return !classDecl.defs.isEmpty()
+                && TreeInfo.getStartPos(classDecl) == TreeInfo.getStartPos(classDecl.defs.head);
+    }
 
     /** Skips over extra semi-colons at the top-level, or in a class member declaration lists. */
     protected void dropEmptyDeclarations() {
@@ -3880,7 +3906,9 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
                 tokenBreakTrailingComment("{", plusTwo);
                 builder.open(ZERO, BreakBehaviours.breakThisLevel(), LastLevelBreakability.ACCEPT_INLINE_CHAIN);
             }
-            builder.open(plusTwo);
+            // Tailorbird: an implicit class's members are top-level declarations, so they get no indent.
+            builder.open(topLevelBody ? ZERO : plusTwo);
+            topLevelBody = false;
             boolean first = first0.isYes();
             boolean lastOneGotBlankLineBefore = false;
             boolean lastOneWasField = false;
