@@ -1,1 +1,0 @@
-../../../../bowerbird-java-format/src/test/resources/io/github/pieterjanscheir/bowerbird/java/testdata/palantir-deeply-nested-calls.input
