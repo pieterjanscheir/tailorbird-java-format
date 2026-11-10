@@ -8,16 +8,16 @@ buildscript {
     }
 }
 apply plugin: 'com.palantir.jdks.settings'
-rootProject.name = 'bowerbird-java-format-parent'
+rootProject.name = 'tailorbird-java-format-parent'
 
-include ':gradle-bowerbird-java-format'
+include ':gradle-tailorbird-java-format'
 include ':eclipse_plugin'
 include ':idea-plugin'
-include ':bowerbird-java-format-spi'
-include ':bowerbird-java-format'
-include ':bowerbird-java-format-jdk-bootstrap'
-include ':bowerbird-java-format-benchmarks'
-include ':bowerbird-java-format-native'
+include ':tailorbird-java-format-spi'
+include ':tailorbird-java-format'
+include ':tailorbird-java-format-jdk-bootstrap'
+include ':tailorbird-java-format-benchmarks'
+include ':tailorbird-java-format-native'
 
 boolean isCiServer = System.getenv().containsKey('CI')
 buildCache {
