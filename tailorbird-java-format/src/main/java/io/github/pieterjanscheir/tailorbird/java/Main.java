@@ -127,6 +127,13 @@ public final class Main {
         } else {
             this.rules = parameters.palantirStyle() ? TailorbirdConfig.load(Main.class.getClassLoader()) : null;
         }
+        if (parameters.export().isPresent()) {
+            // Tailorbird: the export always describes Tailorbird's rules, also without --palantir or --config.
+            TailorbirdRules exported = rules != null ? rules : TailorbirdConfig.load(Main.class.getClassLoader());
+            outWriter.write(
+                    IntellijCodeStyle.export(exported, parameters.export().get()));
+            return 0;
+        }
 
         if (parameters.stdin()) {
             return formatStdin(parameters, options);
@@ -268,7 +275,13 @@ public final class Main {
         if (parameters.offsets().size() != parameters.lengths().size()) {
             throw new UsageException("-offsets and -lengths flags must be provided in matching pairs");
         }
-        if (filesToFormat <= 0 && !parameters.version() && !parameters.help()) {
+        if (parameters.export().isPresent() && (filesToFormat > 0 || parameters.inPlace())) {
+            throw new UsageException("--export-intellij-style and --export-editorconfig take no files to format");
+        }
+        if (filesToFormat <= 0
+                && !parameters.version()
+                && !parameters.help()
+                && parameters.export().isEmpty()) {
             throw new UsageException("no files were provided");
         }
         if (parameters.stdin() && !parameters.files().isEmpty()) {

@@ -35,6 +35,11 @@ That example is Palantir's style with 2-space indentation, which upstream [can't
 and the command line takes `--config tailorbird.yml`. An unknown setting or a wrong type stops formatting with a
 message that names it. See [all settings](https://pieterjanscheir.github.io/tailorbird-java-format/#settings).
 
+So that IntelliJ's own *Reformat Code* agrees with Tailorbird, export a matching code style from the same file:
+`--export-intellij-style` prints a code style XML to import, and `--export-editorconfig` prints the settings for an
+`.editorconfig`. Two settings have no IntelliJ equivalent; see
+[IntelliJ code style](https://pieterjanscheir.github.io/tailorbird-java-format/#intellij-style).
+
 ## The default style
 
 Without a `tailorbird.yml`, Tailorbird changes these things compared to upstream; each is a setting:
@@ -110,13 +115,16 @@ It fails when the build changes tracked files.
    `tailorbird-java-format/src/test/resources/io/github/pieterjanscheir/tailorbird/java/tailorbird-testdata/`.
    `TailorbirdIntegrationTest` picks them up.
 2. Add the setting to `TailorbirdRules` (with its default, and its value in the `palantir` preset) and to the
-   table in `TailorbirdConfig`.
+   table in `TailorbirdConfig`. Map it to IntelliJ's option in `IntellijCodeStyle`, or list it in `unsupported` when
+   IntelliJ has none.
 3. Change the formatter, usually in `JavaInputAstVisitor.java`, behind `rule(TailorbirdRules::yourSetting)`, so
    upstream styles and their tests are unaffected. `TailorbirdPalantirPresetTest` checks that `preset: palantir`
    still matches upstream.
 4. To test a non-default value, add a `YourRule.yml` next to the input and output files.
 5. Run the tests. `./gradlew test -Drecreate=true` regenerates expected outputs, so review that diff carefully.
-6. Check the output against IntelliJ's formatter with the target code style: IntelliJ should leave it unchanged.
+6. Check that IntelliJ, with the exported code style, leaves the output unchanged. Build the launcher with
+   `./gradlew :tailorbird-java-format:installDist`, then run
+   `IDEA_HOME=/path/to/IntelliJ .github/scripts/intellij-style-check.sh YourRule`. CI runs it for every case.
 
 Keep one rule per commit, so upstream merge conflicts are easy to trace. When a rule changes, update
 [docs/index.html](./docs/index.html) and [docs/zh/index.html](./docs/zh/index.html) too.

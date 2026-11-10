@@ -44,6 +44,7 @@
       <li><a href="#configure">Settings file</a></li>
       <li><a href="#presets">Presets</a></li>
       <li><a href="#command-line">Command line</a></li>
+      <li><a href="#intellij-style">IntelliJ code style</a></li>
       <li><a href="#settings">All settings</a></li>
       <li><a href="#reference">Rules reference</a></li>
     </ul>
@@ -164,6 +165,19 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
   <li><strong>One file.</strong> If <code>tailorbird.yml</code> is on the formatter classpath more than once, formatting fails instead of guessing which one wins.</li>
   <li><strong>IntelliJ</strong> reads the file each time it formats, so edits apply on the next <em>Reformat Code</em>. Run <code>./gradlew idea</code> or reload the Gradle project once after adding the file.</li>
   <li><strong>Native formatter:</strong> the native-image formatter can't read a settings file. Leave <code>palantir.native.formatter</code> off.</li>
+</ul>
+
+<h3 id="intellij-style">Matching IntelliJ's own formatter</h3>
+<p>People who don't use the palantir-java-format plugin still format with IntelliJ's <em>Reformat Code</em>. So that it doesn't undo Tailorbird's layout, give IntelliJ a code style that matches your <code>tailorbird.yml</code>. With the <a href="#command-line">command-line launcher</a>, export one as a code style scheme or as <code>.editorconfig</code> settings:</p>
+<pre><code>bin/tailorbird-java-format --config tailorbird.yml --export-intellij-style &gt; tailorbird-intellij.xml
+tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format --config tailorbird.yml --export-editorconfig &gt;&gt; .editorconfig</code></pre>
+<p>Import the XML under <em>Settings | Editor | Code Style | Java</em>, from the gear menu: <em>Import Scheme | IntelliJ IDEA code style XML</em>. IntelliJ reads an <code>.editorconfig</code> on its own. Without <code>--config</code>, the export uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults. Export again when you change <code>tailorbird.yml</code>.</p>
+<p>With the exported style, IntelliJ leaves Tailorbird's output for every Tailorbird test case unchanged; CI checks this with IntelliJ's command-line formatter. Some limits:</p>
+<ul>
+  <li><strong>Two settings have no IntelliJ equivalent.</strong> With <code>javadoc.singleSpaceAfterTagName: false</code>, IntelliJ puts one space after a <code>@param</code> or <code>@throws</code> name instead of keeping your spacing. With <code>blankLines.aroundFieldsWithJavadoc: true</code>, IntelliJ removes those blank lines, unless <code>keepTyped</code> or <code>betweenFields</code> is on. The export names them in a comment when your settings use them.</li>
+  <li><strong>Wrapping.</strong> IntelliJ keeps the line breaks it finds, so it doesn't undo Tailorbird's wrapping, but it doesn't wrap new code the way Tailorbird does. Format with Tailorbird to get its wrapping.</li>
+  <li><strong>Unusual code.</strong> In upstream's larger set of examples, IntelliJ still changes some of Tailorbird's output: deeply nested wrapped expressions, comments in unusual places, and blank lines between record components or next to comments.</li>
+  <li><strong>Blank lines before <code>}</code>.</strong> To keep Tailorbird's blank line before a class's closing brace, the export lets IntelliJ keep one blank line before any closing brace.</li>
 </ul>
 
 <h3 id="settings">All settings</h3>
@@ -1423,11 +1437,11 @@ void check(int x) {
 <h2 id="adding-rules">Adding a formatting rule</h2>
 <ol>
   <li>Add a <code>YourRule.input</code> and <code>YourRule.output</code> pair to <code>tailorbird-java-format/src/test/resources/io/github/pieterjanscheir/tailorbird/java/tailorbird-testdata/</code>. <code>TailorbirdIntegrationTest</code> picks them up.</li>
-  <li>Add the setting to <code>TailorbirdRules</code> (with its default) and to the table in <code>TailorbirdConfig</code>, so <code>tailorbird.yml</code> can set it.</li>
+  <li>Add the setting to <code>TailorbirdRules</code> (with its default) and to the table in <code>TailorbirdConfig</code>, so <code>tailorbird.yml</code> can set it. Map it to IntelliJ's option in <code>IntellijCodeStyle</code>, or list it in <code>unsupported</code> when IntelliJ has none.</li>
   <li>Change the formatter, usually in <code>JavaInputAstVisitor.java</code>, behind <code>rule(TailorbirdRules::yourSetting)</code>, so upstream styles and their tests are unaffected.</li>
   <li>To test the non-default value, add a <code>YourRule.yml</code> next to the input and output files; <code>TailorbirdIntegrationTest</code> applies it to that test case.</li>
   <li>Run the tests. <code>./gradlew test -Drecreate=true</code> regenerates the expected outputs, so review that diff carefully.</li>
-  <li>Check the output against IntelliJ's formatter with the target code style: IntelliJ should leave Tailorbird's output unchanged.</li>
+  <li>Check that IntelliJ, with the <a href="#intellij-style">exported code style</a>, leaves Tailorbird's output unchanged: build the launcher with <code>./gradlew :tailorbird-java-format:installDist</code> and run <code>IDEA_HOME=/path/to/IntelliJ .github/scripts/intellij-style-check.sh YourRule</code>. CI runs it for every case.</li>
 </ol>
 <p>Keep one rule per commit, so upstream merge conflicts are easy to trace.</p>
 

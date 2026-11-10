@@ -1,0 +1,69 @@
+name: IntelliJ code style
+
+# Checks that IntelliJ IDEA, with the code style Tailorbird exports, leaves Tailorbird's output unchanged.
+# IntelliJ is a large download, so this only runs when the formatter, its test data or the check changes.
+on:
+  pull_request:
+    paths:
+      - "tailorbird-java-format/src/**"
+      - ".github/scripts/intellij-style-check.sh"
+      - ".github/workflows/intellij-style.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tailorbird-java-format/src/**"
+      - ".github/scripts/intellij-style-check.sh"
+      - ".github/workflows/intellij-style.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: intellij-style-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # Update both together; the checksum is published next to the download as <file>.sha256.
+  IDEA_VERSION: "2026.2.3"
+  IDEA_SHA256: "68751c8ae4d49407251cd197df795fbed91b6fdc85d10c73c4649a99e496ab37"
+
+jobs:
+  intellij-style:
+    name: IntelliJ leaves Tailorbird's output unchanged
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # the version is derived from git history
+
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+
+      - name: Build the command-line launcher
+        run: ./gradlew :tailorbird-java-format:installDist --stacktrace
+
+      - name: Cache IntelliJ IDEA
+        id: idea-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/idea
+          key: idea-${{ env.IDEA_VERSION }}-${{ env.IDEA_SHA256 }}
+
+      - name: Download IntelliJ IDEA
+        if: steps.idea-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL -o idea.tar.gz "https://download.jetbrains.com/idea/idea-${IDEA_VERSION}.tar.gz"
+          echo "${IDEA_SHA256}  idea.tar.gz" | sha256sum --check
+          mkdir -p ~/idea
+          tar -xzf idea.tar.gz -C ~/idea --strip-components=1
+          rm idea.tar.gz
+
+      - name: Check the exported code style with IntelliJ's formatter
+        run: IDEA_HOME=~/idea .github/scripts/intellij-style-check.sh
