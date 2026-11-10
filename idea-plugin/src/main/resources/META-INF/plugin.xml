@@ -11,13 +11,13 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <formattingService
-            implementation="io.github.pieterjanscheir.bowerbird.intellij.PalantirJavaFormatFormattingService"/>
-    <projectConfigurable instance="io.github.pieterjanscheir.bowerbird.intellij.PalantirJavaFormatConfigurable"
+            implementation="io.github.pieterjanscheir.tailorbird.intellij.PalantirJavaFormatFormattingService"/>
+    <projectConfigurable instance="io.github.pieterjanscheir.tailorbird.intellij.PalantirJavaFormatConfigurable"
                          id="palantir-java-format.settings"
                          displayName="palantir-java-format Settings"
                          nonDefaultProject="true"/>
-    <projectService serviceImplementation="io.github.pieterjanscheir.bowerbird.intellij.PalantirJavaFormatSettings"/>
-    <postStartupActivity implementation="io.github.pieterjanscheir.bowerbird.intellij.InitialConfigurationStartupActivity"/>
+    <projectService serviceImplementation="io.github.pieterjanscheir.tailorbird.intellij.PalantirJavaFormatSettings"/>
+    <postStartupActivity implementation="io.github.pieterjanscheir.tailorbird.intellij.InitialConfigurationStartupActivity"/>
     <notificationGroup displayType="BALLOON" id="palantir-java-format parsing error"
                        isLogByDefault="false"/>
   </extensions>
