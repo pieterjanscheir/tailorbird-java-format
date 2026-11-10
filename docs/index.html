@@ -37,6 +37,7 @@
       <li><a href="#overview">Overview</a></li>
       <li><a href="#install">Install</a></li>
       <li><a href="#gradle">Gradle</a></li>
+      <li><a href="#maven">Maven</a></li>
       <li><a href="#intellij">IntelliJ</a></li>
     </ul>
     <div class="group">Configure</div>
@@ -97,6 +98,7 @@
     <tr><td>Formatter</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format</code></td></tr>
     <tr><td>SPI</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-spi</code></td></tr>
     <tr><td>JDK bootstrap</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-jdk-bootstrap</code></td></tr>
+    <tr><td>Maven plugin</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-maven-plugin</code></td></tr>
   </tbody>
 </table>
 <p>GitHub Packages needs authentication, even for public packages. Create a <a href="https://github.com/settings/tokens">personal access token (classic)</a> with the <code>read:packages</code> scope and add the repository to your build:</p>
@@ -125,6 +127,48 @@ dependencies {
 <p>The plugin configures IntelliJ to use that formatter. For a command-line <code>./gradlew format</code> task, add the <a href="https://github.com/palantir/gradle-baseline#compalantirbaseline-format">com.palantir.baseline-format</a> plugin. With <a href="https://github.com/diffplug/spotless/tree/main/plugin-gradle#palantir-java-format">Spotless</a>, configure <code>palantirJavaFormat()</code> to use Tailorbird's artifact and run <code>./gradlew spotlessApply</code>.</p>
 <div class="callout warn"><strong>Do not enable the native formatter</strong> (<code>palantir.native.formatter</code>). It downloads Palantir's precompiled binary, which does not contain Tailorbird's rules.</div>
 
+<h2 id="maven">Using it with Maven</h2>
+<p>Tailorbird has its own Maven plugin. Add GitHub Packages as a plugin repository in your <code>pom.xml</code>, and your token to <code>~/.m2/settings.xml</code> under the same <code>id</code>:</p>
+<pre><code>&lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;tailorbird&lt;/id&gt;
+        &lt;url&gt;https://maven.pkg.github.com/pieterjanscheir/tailorbird-java-format&lt;/url&gt;
+    &lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;</code></pre>
+<pre><code>&lt;!-- ~/.m2/settings.xml --&gt;
+&lt;servers&gt;
+    &lt;server&gt;
+        &lt;id&gt;tailorbird&lt;/id&gt;
+        &lt;username&gt;your GitHub user name&lt;/username&gt;
+        &lt;password&gt;your token&lt;/password&gt;
+    &lt;/server&gt;
+&lt;/servers&gt;</code></pre>
+<p>Then add the plugin. The <code>check</code> goal runs in the <code>verify</code> phase and fails the build when a file is not formatted; <code>mvn tailorbird:apply</code> formats the sources in place:</p>
+<pre><code>&lt;plugin&gt;
+    &lt;groupId&gt;io.github.pieterjanscheir.tailorbird&lt;/groupId&gt;
+    &lt;artifactId&gt;tailorbird-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;&lt;tailorbird version&gt;&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;check&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+<table>
+  <thead><tr><th>Parameter</th><th>Property</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td><code>configFile</code></td><td><code>tailorbird.config</code></td><td>the nearest <code>tailorbird.yml</code> in the module's directory or a parent module's directory; Tailorbird's defaults when there is none</td></tr>
+    <tr><td><code>skip</code></td><td><code>tailorbird.skip</code></td><td><code>false</code></td></tr>
+    <tr><td><code>sourceDirectories</code></td><td></td><td>the main and test source roots, without generated sources</td></tr>
+    <tr><td><code>excludes</code></td><td></td><td>none; glob patterns relative to the module's directory, such as <code>**/generated/**</code></td></tr>
+    <tr><td><code>javaExecutable</code></td><td><code>tailorbird.java</code></td><td>the <code>java</code> of the JVM running Maven</td></tr>
+  </tbody>
+</table>
+<p>The plugin needs Maven 3.6.3 or later running on Java 17 or later. It runs the formatter in a separate JVM with the <code>--add-exports</code> flags it needs, so you don't need a <code>.mvn/jvm.config</code>. That JVM must support the Java version of your code: to format Java 21 syntax, run Maven on JDK 21 or point <code>javaExecutable</code> at one. See <a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/compatibility.md">compatibility</a> for the tested versions.</p>
+<p>The formatter reads and writes UTF-8 only. In a module whose <code>project.build.sourceEncoding</code> is anything else, the plugin stops with an error instead of formatting, because rewriting the files would replace their non-ASCII characters.</p>
+
 <h2 id="intellij">Using it in IntelliJ IDEA</h2>
 <p>Install the upstream <a href="https://plugins.jetbrains.com/plugin/13180-palantir-java-format">palantir-java-format IntelliJ plugin</a>. It uses the formatter version that the Gradle plugin resolves for your project, so once the <code>palantirJavaFormat</code> dependency points at Tailorbird, import the project in IntelliJ or run:</p>
 <pre><code>./gradlew idea</code></pre>
@@ -136,6 +180,7 @@ dependencies {
     palantirJavaFormat 'io.github.pieterjanscheir.tailorbird:tailorbird-java-format:&lt;tailorbird version&gt;'
     palantirJavaFormat files('config/tailorbird.yml')
 }</code></pre>
+<p>With <a href="#maven">Maven</a>, put <code>tailorbird.yml</code> next to the root <code>pom.xml</code> instead, or set the plugin's <code>configFile</code>.</p>
 <p>Every setting is optional: list only what you want to change, and everything else keeps its <a href="#settings">default</a>. For example, to keep Tailorbird's style but write <code>if (x)</code>, indent by 2 spaces and keep the blank lines you type:</p>
 <pre><code># config/tailorbird.yml
 indent: 2
