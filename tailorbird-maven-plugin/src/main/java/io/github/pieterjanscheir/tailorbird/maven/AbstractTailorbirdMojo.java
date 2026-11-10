@@ -172,11 +172,12 @@ abstract class AbstractTailorbirdMojo extends AbstractMojo {
                 ? sourceEncoding
                 : Charset.defaultCharset().name();
         if (!JavaSources.isUtf8(encoding)) {
-            throw new MojoExecutionException(
-                    "Tailorbird only formats UTF-8 sources, but this module's source encoding is "
-                            + encoding
-                            + ". Formatting would replace non-ASCII characters. Convert the sources to UTF-8 and set"
-                            + " project.build.sourceEncoding to UTF-8, or skip Tailorbird for this module.");
+            String found = sourceEncoding != null
+                    ? "this module's source encoding is " + encoding
+                    : "project.build.sourceEncoding is not set, so the platform encoding " + encoding + " applies";
+            throw new MojoExecutionException("Tailorbird only formats UTF-8 sources, but " + found
+                    + ". Formatting would replace non-ASCII characters. Convert the sources to UTF-8 and set"
+                    + " project.build.sourceEncoding to UTF-8, or skip Tailorbird for this module.");
         }
     }
 
