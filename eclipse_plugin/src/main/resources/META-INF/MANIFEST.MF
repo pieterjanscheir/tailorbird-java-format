@@ -11,5 +11,5 @@ Import-Package: org.eclipse.jdt.core.dom,
 Bundle-ClassPath: .,
  lib/functionaljava.jar,
  lib/guava.jar,
- lib/bowerbird-java-format.jar,
- lib/bowerbird-java-format-spi.jar
+ lib/tailorbird-java-format.jar,
+ lib/tailorbird-java-format-spi.jar
