@@ -49,6 +49,7 @@ import javax.annotation.Nullable;
  * lineLength: 120
  * indent: 4
  * continuationIndent: 4
+ * indentWithTabs: false
  * spaceAfterControlKeyword: false
  * arrayInitializerBraceSpaces: true
  * closingParenOnOwnLine: true
@@ -103,6 +104,7 @@ public final class TailorbirdConfig {
                     .put("wrapping.methodChainColumnLimit", (b, v) -> b.methodChainColumnLimit(v.integer()))
                     .put("indent", (b, v) -> b.indent(v.integer()))
                     .put("continuationIndent", (b, v) -> b.continuationIndent(v.integer()))
+                    .put("indentWithTabs", (b, v) -> b.indentWithTabs(v.bool()))
                     .put("spaceAfterControlKeyword", (b, v) -> b.spaceAfterControlKeyword(v.bool()))
                     .put("arrayInitializerBraceSpaces", (b, v) -> b.arrayInitializerBraceSpaces(v.bool()))
                     .put("closingParenOnOwnLine", (b, v) -> b.closingParenOnOwnLine(v.bool()))

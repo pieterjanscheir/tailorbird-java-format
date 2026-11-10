@@ -175,6 +175,7 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-linelength"><code>lineLength</code></a></td><td><code>120</code></td><td>最大行宽，不能小于 40。</td></tr>
     <tr><td><a href="#rule-indent"><code>indent</code></a></td><td><code>4</code></td><td>每级代码块缩进的空格数。</td></tr>
     <tr><td><a href="#rule-continuationindent"><code>continuationIndent</code></a></td><td><code>4</code></td><td><a href="#wrapping">换行后的续行</a>相对于其所接续的行缩进的空格数。上游使用 8。</td></tr>
+    <tr><td><a href="#rule-indentwithtabs"><code>indentWithTabs</code></a></td><td><code>false</code></td><td>使用制表符而不是空格缩进，每个 <code>indent</code> 一个制表符。</td></tr>
     <tr><td><a href="#rule-spaceaftercontrolkeyword"><code>spaceAfterControlKeyword</code></a></td><td><code>false</code></td><td>为 true 时写作 <code>if (x)</code>，为 false 时写作 <code>if(x)</code>。同样适用于 <code>for</code>、<code>while</code>、<code>switch</code>、<code>try</code>、<code>catch</code> 和 <code>synchronized</code>。<a href="#control-keywords">示例</a>。</td></tr>
     <tr><td><a href="#rule-arrayinitializerbracespaces"><code>arrayInitializerBraceSpaces</code></a></td><td><code>true</code></td><td>为 true 时写作 <code>{ 1, 2 }</code>，为 false 时写作 <code>{1, 2}</code>。<a href="#arrays">示例</a>。</td></tr>
     <tr><td><a href="#rule-closingparenonownline"><code>closingParenOnOwnLine</code></a></td><td><code>true</code></td><td>当形参或实参按每行一个换行时，<code>)</code> 单独占一行。为 false 时，<code>)</code> 留在最后一行，作为最后一个实参传入的 lambda 也留在调用所在的行：<code>execute(account, () -&gt; {</code>。<a href="#wrapping">示例</a>。</td></tr>
@@ -207,6 +208,7 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
 lineLength: 120
 indent: 4
 continuationIndent: 4
+indentWithTabs: false
 spaceAfterControlKeyword: false
 arrayInitializerBraceSpaces: true
 closingParenOnOwnLine: true
@@ -404,6 +406,41 @@ class Orders {
         OrderResult result =
                 orderService.placeOrderWithAVeryLongName(firstAccountArgument, secondInstrumentArgument, third);
     }
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-indentwithtabs">
+<h4><code>indentWithTabs</code></h4>
+<p>使用制表符而不是空格缩进：每个 <code>indent</code> 一个制表符，剩余部分用空格（“smart tabs”），因此 JavaDoc 中 <code>*</code> 前的空格仍是空格。计算 <code>lineLength</code> 时一个制表符按 <code>indent</code> 列计算，所以换行位置与使用空格时完全相同。用制表符、空格或两者混合缩进的输入都会被同样读取。文本块中的行保留空格，因为这些空白是字符串的一部分。</p>
+<table class="rule-facts"><tr><th>取值</th><td><code>true</code> 或 <code>false</code></td></tr><tr><th>默认值</th><td><code>false</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">示例中 <code>→</code> 表示一个制表符。使用制表符时，部分格式化（<code>--lines</code> 或编辑器中的选区）也会把文件其余部分改为制表符缩进，<code>@formatter:off</code> 区域内的缩进也会变成制表符。</p>
+<details><summary>输入</summary><pre><code>class Example {
+    /**
+     * Checks an order.
+     */
+    boolean check(Order order) {
+        return order.quantity() &gt; 0 &amp;&amp; order.price().compareTo(BigDecimal.ZERO) &gt; 0 &amp;&amp; order.account() != null;
+    }
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">indentWithTabs: false</div><pre><code>class Example {
+
+    /**
+     * Checks an order.
+     */
+    boolean check(Order order) {
+        return order.quantity() &gt; 0 &amp;&amp; order.price().compareTo(BigDecimal.ZERO) &gt; 0 &amp;&amp; order.account() != null;
+    }
+
+}</code></pre></div>
+<div><div class="label yaml">indentWithTabs: true</div><pre><code>class Example {
+
+→   /**
+→    * Checks an order.
+→    */
+→   boolean check(Order order) {
+→   →   return order.quantity() &gt; 0 &amp;&amp; order.price().compareTo(BigDecimal.ZERO) &gt; 0 &amp;&amp; order.account() != null;
+→   }
 
 }</code></pre></div>
 </div></div>

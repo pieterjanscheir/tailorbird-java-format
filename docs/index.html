@@ -175,6 +175,7 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-linelength"><code>lineLength</code></a></td><td><code>120</code></td><td>Maximum line length. At least 40.</td></tr>
     <tr><td><a href="#rule-indent"><code>indent</code></a></td><td><code>4</code></td><td>Spaces per block indent.</td></tr>
     <tr><td><a href="#rule-continuationindent"><code>continuationIndent</code></a></td><td><code>4</code></td><td>Spaces a <a href="#wrapping">wrapped line</a> is indented by, relative to the line it continues. Upstream uses 8.</td></tr>
+    <tr><td><a href="#rule-indentwithtabs"><code>indentWithTabs</code></a></td><td><code>false</code></td><td>Indent with tabs instead of spaces, one tab per <code>indent</code>.</td></tr>
     <tr><td><a href="#rule-spaceaftercontrolkeyword"><code>spaceAfterControlKeyword</code></a></td><td><code>false</code></td><td><code>if (x)</code> when true, <code>if(x)</code> when false. Also <code>for</code>, <code>while</code>, <code>switch</code>, <code>try</code>, <code>catch</code> and <code>synchronized</code>. <a href="#control-keywords">Example</a>.</td></tr>
     <tr><td><a href="#rule-arrayinitializerbracespaces"><code>arrayInitializerBraceSpaces</code></a></td><td><code>true</code></td><td><code>{ 1, 2 }</code> when true, <code>{1, 2}</code> when false. <a href="#arrays">Example</a>.</td></tr>
     <tr><td><a href="#rule-closingparenonownline"><code>closingParenOnOwnLine</code></a></td><td><code>true</code></td><td><code>)</code> on its own line when parameters or arguments wrap one per line. When false, <code>)</code> stays on the last line and a lambda passed as the last argument stays on the call's line: <code>execute(account, () -&gt; {</code>. <a href="#wrapping">Example</a>.</td></tr>
@@ -207,6 +208,7 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
 lineLength: 120
 indent: 4
 continuationIndent: 4
+indentWithTabs: false
 spaceAfterControlKeyword: false
 arrayInitializerBraceSpaces: true
 closingParenOnOwnLine: true
@@ -404,6 +406,41 @@ class Orders {
         OrderResult result =
                 orderService.placeOrderWithAVeryLongName(firstAccountArgument, secondInstrumentArgument, third);
     }
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-indentwithtabs">
+<h4><code>indentWithTabs</code></h4>
+<p>Indent with tabs instead of spaces: one tab per <code>indent</code>, with the rest as spaces (&quot;smart tabs&quot;), so the space before a JavaDoc <code>*</code> stays a space. A tab counts as <code>indent</code> columns for <code>lineLength</code>, so lines wrap exactly as they would with spaces. Input indented with tabs, spaces or a mix is read the same way. Lines inside a text block keep their spaces, because that whitespace is part of the string.</p>
+<table class="rule-facts"><tr><th>Values</th><td><code>true</code> or <code>false</code></td></tr><tr><th>Default</th><td><code>false</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">In the example, <code>→</code> marks a tab. With tabs, partial formatting (<code>--lines</code>, or a selection in an editor) also re-indents the rest of the file with tabs, and indentation inside <code>@formatter:off</code> regions becomes tabs too.</p>
+<details><summary>Input</summary><pre><code>class Example {
+    /**
+     * Checks an order.
+     */
+    boolean check(Order order) {
+        return order.quantity() &gt; 0 &amp;&amp; order.price().compareTo(BigDecimal.ZERO) &gt; 0 &amp;&amp; order.account() != null;
+    }
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">indentWithTabs: false</div><pre><code>class Example {
+
+    /**
+     * Checks an order.
+     */
+    boolean check(Order order) {
+        return order.quantity() &gt; 0 &amp;&amp; order.price().compareTo(BigDecimal.ZERO) &gt; 0 &amp;&amp; order.account() != null;
+    }
+
+}</code></pre></div>
+<div><div class="label yaml">indentWithTabs: true</div><pre><code>class Example {
+
+→   /**
+→    * Checks an order.
+→    */
+→   boolean check(Order order) {
+→   →   return order.quantity() &gt; 0 &amp;&amp; order.price().compareTo(BigDecimal.ZERO) &gt; 0 &amp;&amp; order.account() != null;
+→   }
 
 }</code></pre></div>
 </div></div>

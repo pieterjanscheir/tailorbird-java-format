@@ -71,6 +71,9 @@ class FormatFileCallable implements Callable<String> {
 
         Formatter formatter =
                 rules != null ? Formatter.createFormatter(options, rules) : Formatter.createFormatter(options);
+        if (formatter.indentsWithTabs()) {
+            return formatWithTabs(formatter);
+        }
         if (parameters.outputReplacements()) {
             RangeSet<Integer> characterRanges = characterRanges(input);
             Set<Range<Integer>> rangesToChange = characterRanges.asRanges();
@@ -102,8 +105,31 @@ class FormatFileCallable implements Callable<String> {
         }
     }
 
+    /**
+     * Tailorbird: with {@code indentWithTabs}, the file is formatted with spaces and its indentation turned into tabs
+     * afterwards (issue #20), so replacements are one replacement of the whole file.
+     */
+    private String formatWithTabs(Formatter formatter) throws FormatterException {
+        String spaced = formatter.toSpaces(input);
+        RangeSet<Integer> ranges = TreeRangeSet.create();
+        for (Range<Integer> range : characterRanges(input).asRanges()) {
+            ranges.add(TabIndentation.mapRange(input, spaced, range));
+        }
+        String formatted = formatter.toTabs(formatFile(formatter, spaced, ranges));
+        if (!parameters.outputReplacements()) {
+            return formatted;
+        }
+        return writeFormatReplacements(
+                formatted.equals(input) ? List.of() : List.of(Replacement.create(0, input.length(), formatted)));
+    }
+
     private String formatFile(Formatter formatter) throws FormatterException {
-        String formatted = formatter.formatSource(input, characterRanges(input).asRanges());
+        return formatFile(formatter, input, characterRanges(input));
+    }
+
+    private String formatFile(Formatter formatter, String input, RangeSet<Integer> characterRanges)
+            throws FormatterException {
+        String formatted = formatter.formatSourceWithSpaces(input, characterRanges.asRanges());
         formatted = fixImports(formatted);
         if (parameters.reflowLongStrings()) {
             formatted = StringWrapper.wrap(maxLineLength(), formatted, formatter);
