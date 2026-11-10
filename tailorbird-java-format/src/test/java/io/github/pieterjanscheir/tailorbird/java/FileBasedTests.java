@@ -60,6 +60,9 @@ public final class FileBasedTests {
                             "I880",
                             "I1309",
                             "Unnamed")
+                    // Tailorbird: Markdown doc comments are final in JDK 23, flexible constructor bodies in JDK 25.
+                    .putAll(23, "MarkdownDocComments")
+                    .putAll(25, "FlexibleConstructorBodies")
                     .build();
 
     private final Class<?> testClass;

@@ -1,0 +1,14 @@
+class FlexibleConstructorBodies extends Base {
+    final int x;
+
+    FlexibleConstructorBodies(int value) {
+        if (value < 0) throw new IllegalArgumentException("negative");
+        int doubled = value * 2;
+        this.x = doubled;
+        super(doubled);
+    }
+
+    FlexibleConstructorBodies() {
+        this(checkPositive(1));
+    }
+}

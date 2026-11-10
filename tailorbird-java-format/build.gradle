@@ -65,6 +65,18 @@ tasks.named("test") {
     systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
 }
 
+// Tailorbird: `./gradlew :tailorbird-java-format:test -PtestJdk=25` runs the tests on another JDK from gradle/jdks, so
+// syntax that only newer JDKs parse gets tested too (issue #49). Set after Baseline, which sets the launcher too.
+if (project.hasProperty('testJdk')) {
+    afterEvaluate {
+        tasks.named('test') {
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(project.property('testJdk') as int)
+            }
+        }
+    }
+}
+
 javaVersion {
     target = 21
 }
