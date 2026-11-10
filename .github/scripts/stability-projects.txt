@@ -1,0 +1,7 @@
+# Projects that check-stability.sh formats: name, Git URL, commit. Pin a commit, not a branch or tag, so the
+# check only changes when this file does. "local" instead of a URL means a folder in this repository whose
+# *.input test files are formatted as Java files.
+formatter-testdata local bowerbird-java-format/src/test/resources/io/github/pieterjanscheir/bowerbird/java
+commons-lang https://github.com/apache/commons-lang.git 29ccc7665f3bc5d84155a3092ab2209a053324e6
+jackson-databind https://github.com/FasterXML/jackson-databind.git 287af92705039b2afaa5ce2680026a3f6c25a8e9
+guava https://github.com/google/guava.git 5c71d2a15435399fa62508d807d5cc83506f7496

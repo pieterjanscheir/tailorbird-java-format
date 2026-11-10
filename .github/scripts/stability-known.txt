@@ -1,0 +1,21 @@
+# Files that check-stability.sh knows are unstable: project, preset, path in the project, then the issue.
+# They are reported as warnings instead of failing the check. Remove a line once its issue is fixed; the check
+# says when a listed file has become stable.
+jackson-databind bowerbird src/test/java/com/fasterxml/jackson/databind/node/JsonNodeFindMethodsTest.java #53
+jackson-databind palantir src/test/java/com/fasterxml/jackson/databind/node/JsonNodeFindMethodsTest.java #53
+jackson-databind palantir src/test-jdk17/java/com/fasterxml/jackson/databind/records/RecordExplicitCreatorsTest.java #53
+jackson-databind google src/main/java/com/fasterxml/jackson/databind/introspect/POJOPropertiesCollector.java #53
+jackson-databind google src/test/java/com/fasterxml/jackson/databind/deser/BeanDeserializerTest.java #53
+jackson-databind google src/test/java/com/fasterxml/jackson/databind/node/JsonNodeFindMethodsTest.java #53
+jackson-databind google src/test-jdk17/java/com/fasterxml/jackson/databind/records/RecordExplicitCreatorsTest.java #53
+jackson-databind google src/test/java/com/fasterxml/jackson/databind/views/MultipleViewsDeser437Test.java #54
+formatter-testdata bowerbird bowerbird-testdata/Wrapping.java #40
+formatter-testdata palantir bowerbird-testdata/Wrapping.java #40
+formatter-testdata google bowerbird-testdata/Wrapping.java #40
+formatter-testdata bowerbird bowerbird-testdata/WrappingParenInline.java #40
+formatter-testdata palantir bowerbird-testdata/WrappingParenInline.java #40
+formatter-testdata google bowerbird-testdata/WrappingParenInline.java #40
+formatter-testdata bowerbird testdata/B21647014.java #40
+formatter-testdata palantir testdata/B21647014.java #40
+formatter-testdata google testdata/B21647014.java #40
+formatter-testdata bowerbird testdata/A.java #55
