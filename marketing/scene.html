@@ -1,0 +1,226 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#0b0b0c;--card:#141416;--line:#26262a;--text:#f5f5f4;--muted:#9a9aa0;--red:#e5322d;--green:#3ecf8e;
+--kw:#ff6b5e;--type:#6cb6ff;--num:#f0a35e;--com:#6e6e73;--key:#6cb6ff;}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1350px;background:var(--bg);overflow:hidden;font-family:Inter,sans-serif;color:var(--text)}
+#stage{position:relative;width:1080px;height:1350px;overflow:hidden;
+  background:radial-gradient(900px 700px at 85% -10%,rgba(229,50,45,.18),transparent 60%),radial-gradient(800px 600px at -10% 110%,rgba(229,50,45,.10),transparent 60%),var(--bg)}
+.scene{position:absolute;inset:0;opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 72px}
+.serif{font-family:"Instrument Serif",serif;font-weight:400;letter-spacing:-.01em}
+h1{font-size:104px;line-height:1.02;text-align:center}
+h2{font-size:76px;line-height:1.05;text-align:center}
+em{font-style:italic;color:var(--red)}
+.sub{font-size:34px;color:var(--muted);text-align:center;line-height:1.35;margin-top:28px;font-weight:450}
+.eyebrow{font-size:24px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);font-weight:650;margin-bottom:26px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;width:1000px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.card-head{height:58px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 24px;gap:10px;font:500 20px "JetBrains Mono";color:var(--muted)}
+.dot{width:13px;height:13px;border-radius:50%;background:#3a3a3e}
+.card-head .name{margin-left:14px}
+.badge{margin-left:auto;font:600 17px Inter;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+.code{position:relative;font-variant-ligatures:none;font:400 20px/1.75 "JetBrains Mono",monospace;padding:26px 40px;white-space:pre;height:var(--h)}
+.code .ln{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;position:absolute;left:40px;right:0;white-space:pre}
+.kw{color:var(--kw)}.ty{color:var(--type)}.nu{color:var(--num)}.co{color:var(--com)}.ke{color:var(--key)}
+.fade-r{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.scan{position:absolute;left:0;right:0;height:120px;background:linear-gradient(180deg,transparent,rgba(229,50,45,.22),transparent);pointer-events:none}
+.yml .code{padding:22px 36px}
+.caret{display:inline-block;width:11px;height:24px;background:var(--red);vertical-align:-4px;margin-left:2px}
+.feat{display:flex;gap:28px;align-items:flex-start;width:900px;padding:30px 0;border-bottom:1px solid var(--line)}
+.feat:last-child{border-bottom:0}
+.ico{flex:none;width:72px;height:72px;border-radius:18px;background:rgba(229,50,45,.14);display:grid;place-items:center;color:var(--red)}
+.ico svg{width:36px;height:36px}
+.feat b{display:block;font-size:40px;font-weight:650;letter-spacing:-.01em}
+.feat span{display:block;font-size:28px;color:var(--muted);margin-top:8px;line-height:1.35}
+code.i{font:500 .9em "JetBrains Mono";color:var(--text);background:#1f1f22;padding:2px 8px;border-radius:6px}
+.chips{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:40px}
+.chip{font-size:26px;font-weight:550;padding:12px 24px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
+.url{margin-top:44px;font:500 28px "JetBrains Mono";color:var(--text);padding:18px 30px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.brandrow{display:flex;align-items:center;gap:22px}
+.foot{position:absolute;bottom:56px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:12px;font-size:22px;color:var(--muted);font-weight:500}
+.progress{position:absolute;left:0;bottom:0;height:6px;background:var(--red)}
+</style></head>
+<body><div id="stage">
+
+<!-- S1 hook -->
+<section class="scene" id="s1">
+  <h1 class="serif" id="s1a">Every Java team<br>has a <em>style.</em></h1>
+  <p class="sub" id="s1b" style="font-size:40px;margin-top:44px">Most formatters only know one.</p>
+</section>
+
+<!-- S2 intro -->
+<section class="scene" id="s2">
+  <div id="s2logo"></div>
+  <h1 class="serif" style="margin-top:46px">Meet <em>Bowerbird</em></h1>
+  <p class="sub" id="s2b">A Java formatter that arranges your code the way a bowerbird arranges its nest:<br><span style="color:var(--text)">carefully, and always the same way.</span></p>
+</section>
+
+<!-- S3 format demo -->
+<section class="scene" id="s3" style="justify-content:flex-start;padding-top:250px">
+  <div class="eyebrow">One command</div>
+  <h2 class="serif" style="margin-bottom:56px">Messy in. <em>Consistent</em> out.</h2>
+  <div class="card" id="s3card">
+    <div class="card-head"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="name">Checkout.java</span>
+      <span class="badge" id="s3badge"></span></div>
+    <div class="code" id="s3code" style="--h:520px"><div class="scan" id="scan"></div></div>
+  </div>
+</section>
+
+<!-- S4 config demo -->
+<section class="scene" id="s4" style="justify-content:flex-start;padding-top:110px">
+  <div class="eyebrow">Your rules</div>
+  <h2 class="serif" style="margin-bottom:44px">Every rule is a <em>setting.</em></h2>
+  <div class="card yml" style="width:1000px;margin-bottom:26px">
+    <div class="card-head"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="name">config/bowerbird.yml</span></div>
+    <div class="code" id="ymlcode" style="--h:178px"></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="name">Checkout.java</span></div>
+    <div class="code" id="s4code" style="--h:520px"></div>
+  </div>
+</section>
+
+<!-- S5 features -->
+<section class="scene" id="s5">
+  <div class="eyebrow">Why teams pick it</div>
+  <h2 class="serif" style="margin-bottom:40px">Built to fit <em>your</em> codebase</h2>
+  <div class="feat" id="f1"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></div>
+    <div><b>One <code class="i">bowerbird.yml</code></b><span>Change only the rules you care about. Typos stop the build with a clear message.</span></div></div>
+  <div class="feat" id="f2"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <div><b>Matches IntelliJ IDEA</b><span>The default style lines up with IntelliJ's own formatter.</span></div></div>
+  <div class="feat" id="f3"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg></div>
+    <div><b>Palantir &amp; Google presets</b><span>Start from a familiar style and tweak from there.</span></div></div>
+  <div class="feat" id="f4"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></div>
+    <div><b>One file, every tool</b><span>Gradle, Spotless, IntelliJ and the CLI all read the same config.</span></div></div>
+</section>
+
+<!-- S6 CTA -->
+<section class="scene" id="s6">
+  <div id="s6logo"></div>
+  <h1 class="serif" style="margin-top:40px">Bowerbird <em>Java Format</em></h1>
+  <p class="sub">Open source · Apache 2.0 · Based on palantir-java-format</p>
+  <div class="chips"><span class="chip">Gradle</span><span class="chip">Spotless</span><span class="chip">IntelliJ</span><span class="chip">CLI</span></div>
+  <div class="url">github.com/pieterjanscheir/bowerbird-java-format</div>
+</section>
+
+<div class="foot" id="foot"></div>
+<div class="progress" id="prog"></div>
+</div>
+<script>
+const LOGO = (s)=>`<svg width="${s}" height="${s}" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="7" fill="#e5322d"/><path d="M12.5 8.5c-2 0-3 1-3 3v2.2c0 1.2-.7 2-2 2.3 1.3.3 2 1.1 2 2.3v2.2c0 2 1 3 3 3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.5 8.5c2 0 3 1 3 3v2.2c0 1.2-.7 2-2 2.3-1.3.3-2 1.1-2 2.3v2.2c0 2-1 3-3 3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="16" r="2.1" fill="#fff"/></svg>`;
+document.getElementById('s2logo').innerHTML = LOGO(180);
+document.getElementById('s6logo').innerHTML = LOGO(130);
+document.getElementById('foot').innerHTML = LOGO(30)+'<span>Bowerbird Java Format</span>';
+
+const TOTAL = 32;
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const ease=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2};
+const out=x=>1-Math.pow(1-clamp(x),3);
+const prog=(t,a,d)=>clamp((t-a)/d);
+// opacity window with fades
+const win=(t,a,b,f=.45)=>Math.min(out((t-a)/f), out((b-t)/f));
+
+const KW=/\b(public|class|private|final|return|if)\b/g;
+function hl(s){
+  s=s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return s.replace(/(\b(?:public|class|private|final|return|if)\b)|(\b[A-Z][A-Za-z]*\b)/g,(m,k,ty)=>k?`<span class="kw">${m}</span>`:`<span class="ty">${m}</span>`);
+}
+const LH = 35; // 20px * 1.75
+const MESSY = [
+ 'public class Checkout{',
+ '      private final TaxService taxes;',
+ '  public Money total(List<Order> orders)',
+ '  {',
+ ' if (orders.isEmpty()){return ZERO;}',
+ '        return orders.stream().filter(Order::isPaid).map(order -> taxes.apply(order.price(), order.region())).reduce(ZERO, Money::add);',
+ '}',
+ '}',
+];
+// [depth, continuation?, text]
+const CLEAN = [
+ [0,0,'public class Checkout {'],
+ [1,0,'private final TaxService taxes;'],
+ [1,0,''],
+ [1,0,'public Money total(List<Order> orders) {'],
+ [2,0,'if(orders.isEmpty()) {'],
+ [3,0,'return ZERO;'],
+ [2,0,'}'],
+ [2,0,'return orders.stream()'],
+ [2,1,'.filter(Order::isPaid)'],
+ [2,1,'.map(order -> taxes.apply(order.price(), order.region()))'],
+ [2,1,'.reduce(ZERO, Money::add);'],
+ [1,0,'}'],
+ [0,0,'}'],
+];
+function build(el, lines, cls){
+  return lines.map((l,i)=>{const d=document.createElement('div');d.className='ln '+(cls||'');d.style.top=(26+i*LH)+'px';d.innerHTML=typeof l==='string'?hl(l):hl(l[2]);el.appendChild(d);return d;});
+}
+const s3=document.getElementById('s3code');
+const messyEls=build(s3,MESSY,'fade-r');
+const cleanEls=build(s3,CLEAN);
+const s4=document.getElementById('s4code');
+const s4Els=build(s4,CLEAN);
+const scan=document.getElementById('scan');
+const badge=document.getElementById('s3badge');
+const yml=document.getElementById('ymlcode');
+
+function setIndent(els, ind, cont){
+  els.forEach((e,i)=>{const [d,c]=CLEAN[i];e.style.paddingLeft=(d*ind+c*cont)+'ch';});
+}
+function typed(str,t,a,cps=14){const n=Math.floor(clamp((t-a)*cps,0,str.length));return str.slice(0,n);}
+
+function S(id,o,extra=''){const e=document.getElementById(id);e.style.opacity=o;e.style.transform=extra;}
+
+function render(t){
+  // S1 0-4.2
+  let o=win(t,0,4.2);
+  S('s1',o>0?1:0);
+  S('s1a',win(t,0.1,4.2),`translateY(${(1-out((t-0.1)/.7))*30}px)`);
+  S('s1b',win(t,1.7,4.2),`translateY(${(1-out((t-1.7)/.7))*20}px)`);
+  // S2 4.2-9
+  o=win(t,4.4,9.2);
+  S('s2',o,`scale(${0.96+0.04*out((t-4.4)/1)})`);
+  document.getElementById('s2logo').style.transform=`scale(${0.7+0.3*out((t-4.5)/.8)}) rotate(${(1-out((t-4.5)/.9))*-12}deg)`;
+  document.getElementById('s2b').style.opacity=out((t-5.6)/.7);
+  // S3 9.2-15.6
+  o=win(t,9.4,15.8);
+  S('s3',o,`translateY(${(1-out((t-9.4)/.8))*40}px)`);
+  const sw=prog(t,11.4,1.4); // scan sweep
+  scan.style.top=(-120+sw*640)+'px';scan.style.opacity=(sw>0&&sw<1)?1:0;
+  const done=t>12.1;
+  messyEls.forEach((e,i)=>{const lt=11.4+i*0.13;e.style.opacity=1-prog(t,lt,.25);e.style.transform=`translateX(${-prog(t,lt,.25)*20}px)`;});
+  cleanEls.forEach((e,i)=>{const lt=11.65+i*0.1;e.style.opacity=prog(t,lt,.3);e.style.transform=`translateX(${(1-out(prog(t,lt,.35)))*20}px)`;});
+  setIndent(cleanEls,4,4);
+  if(t<11.4){badge.textContent='Before';badge.style.background='rgba(229,50,45,.16)';badge.style.color='#ff6b5e';}
+  else if(t<12.9){badge.textContent='Formatting…';badge.style.background='#222226';badge.style.color='#9a9aa0';}
+  else{badge.textContent='✓ Formatted';badge.style.background='rgba(62,207,142,.14)';badge.style.color='#3ecf8e';}
+  // S4 15.8-23
+  o=win(t,16.0,23.4);
+  S('s4',o,`translateY(${(1-out((t-16)/.8))*40}px)`);
+  const L1='indent: 2', L2='continuationIndent: 8';
+  const a1=17.4, a2=19.9;
+  const t1=typed(L1,t,a1), t2=typed(L2,t,a2);
+  const caretOn=Math.floor(t*2.2)%2===0;
+  const c=(on)=>on&&caretOn?'<span class="caret"></span>':'';
+  const kv=s=>s.replace(/^([A-Za-z]+)(:?)(.*)$/,(m,k,col,v)=>`<span class="ke">${k}</span>${col}<span class="nu">${v}</span>`);
+  const typing1=t<a2;
+  yml.innerHTML=`<div><span class="co"># list only what you want to change</span></div><div>${kv(t1)}${c(typing1)}</div><div>${kv(t2)}${c(!typing1)}</div>`;
+  const ind=4-2*ease(prog(t,a1+0.8,.8));
+  const cont=4+4*ease(prog(t,a2+1.6,.8));
+  setIndent(s4Els,ind,cont);
+  s4Els.forEach((e,i)=>{const [d,cc]=CLEAN[i];const flash=cc?prog(t,a2+1.6,.2)*(1-prog(t,a2+2.6,.6)):(d>0?prog(t,a1+.8,.2)*(1-prog(t,a1+1.8,.6)):0);e.style.background=`rgba(229,50,45,${.16*flash})`;});
+  // S5 23.4-28
+  o=win(t,23.6,28.4);
+  S('s5',o);
+  ['f1','f2','f3','f4'].forEach((id,i)=>{const a=23.8+i*.35;const e=document.getElementById(id);e.style.opacity=out((t-a)/.5);e.style.transform=`translateY(${(1-out((t-a)/.6))*26}px)`;});
+  // S6 28.4-32
+  o=out((t-28.6)/.6);
+  S('s6',o,`scale(${0.97+0.03*out((t-28.6)/1)})`);
+  document.getElementById('foot').style.opacity=t<28.4?Math.min(out((t-4.6)/.6),1):1-out((t-28.2)/.4);
+  document.getElementById('prog').style.width=(t/TOTAL*1080)+'px';
+}
+window.render=render;window.TOTAL=TOTAL;
+render(0);
+</script>
+</body></html>
