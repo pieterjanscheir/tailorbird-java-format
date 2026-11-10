@@ -187,12 +187,13 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-blanklines-aroundinterfacemethods"><code>blankLines.aroundInterfaceMethods</code></a></td><td><code>false</code></td><td>A blank line around each method of an interface or annotation type.</td></tr>
     <tr><td><a href="#rule-imports-groups"><code>imports.groups</code></a></td><td><code>[static, java, javax, org, com, "*"]</code></td><td>Import groups, in order. Each entry is a package prefix (<code>java</code>, <code>com.example</code>), <code>static</code> for all static imports, or <code>"*"</code> for everything else. An import goes in the group with the longest matching prefix; imports that match nothing go last. <a href="#imports">Example</a>.</td></tr>
     <tr><td><a href="#rule-imports-blanklinebetweengroups"><code>imports.blankLineBetweenGroups</code></a></td><td><code>true</code></td><td>A blank line between import groups.</td></tr>
-    <tr><td><a href="#rule-javadoc-enabled"><code>javadoc.enabled</code></a></td><td><code>true</code></td><td>Apply the JavaDoc settings below. When false, JavaDoc is left exactly as written. <a href="#javadoc">Example</a>.</td></tr>
+    <tr><td><a href="#rule-javadoc-enabled"><code>javadoc.enabled</code></a></td><td><code>true</code></td><td>Apply the JavaDoc settings below, except <code>javadoc.wrap</code>. When false, JavaDoc is left exactly as written. <a href="#javadoc">Example</a>.</td></tr>
     <tr><td><a href="#rule-javadoc-removeblanklinesindescription"><code>javadoc.removeBlankLinesInDescription</code></a></td><td><code>true</code></td><td>Remove blank lines inside the description. When false, paragraph breaks are kept (one blank line each).</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterdescription"><code>javadoc.blankLineAfterDescription</code></a></td><td><code>true</code></td><td>One blank line between the description and the first tag.</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterparams"><code>javadoc.blankLineAfterParams</code></a></td><td><code>true</code></td><td>One blank line after the block of <code>@param</code> tags, when more tags follow.</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterreturn"><code>javadoc.blankLineAfterReturn</code></a></td><td><code>true</code></td><td>One blank line after <code>@return</code>, when more tags follow.</td></tr>
     <tr><td><a href="#rule-javadoc-singlespaceaftertagname"><code>javadoc.singleSpaceAfterTagName</code></a></td><td><code>true</code></td><td>Exactly one space between a <code>@param</code> or <code>@throws</code> name and its description.</td></tr>
+    <tr><td><a href="#rule-javadoc-wrap"><code>javadoc.wrap</code></a></td><td><code>false</code></td><td>Re-wrap JavaDoc text at the line length. <code>&lt;pre&gt;</code> blocks are never wrapped.</td></tr>
     <tr><td><a href="#rule-formattertags-enabled"><code>formatterTags.enabled</code></a></td><td><code>false</code></td><td>Leave code between <code>// @formatter:off</code> and <code>// @formatter:on</code> as written.</td></tr>
     <tr><td><a href="#rule-formattertags-off"><code>formatterTags.off</code></a></td><td><code>"@formatter:off"</code></td><td>The text in a comment that starts such a region.</td></tr>
     <tr><td><a href="#rule-formattertags-on"><code>formatterTags.on</code></a></td><td><code>"@formatter:on"</code></td><td>The text in a comment that ends it.</td></tr>
@@ -224,6 +225,7 @@ javadoc:
   blankLineAfterParams: true
   blankLineAfterReturn: true
   singleSpaceAfterTagName: true
+  wrap: false
 formatterTags:
   enabled: false
   off: "@formatter:off"
@@ -879,7 +881,7 @@ class Example {
 </div></div>
 <div class="rule" id="rule-javadoc-enabled">
 <h4><code>javadoc.enabled</code></h4>
-<p>Apply the <code>javadoc</code> settings below. When false, JavaDoc is left exactly as written. One-line JavaDoc and JavaDoc containing <code>&lt;pre&gt;</code> are never changed.</p>
+<p>Apply the <code>javadoc</code> settings below, except <code>javadoc.wrap</code>. When false, JavaDoc is left exactly as written. One-line JavaDoc and JavaDoc containing <code>&lt;pre&gt;</code> are never changed.</p>
 <table class="rule-facts"><tr><th>Values</th><td><code>true</code> or <code>false</code></td></tr><tr><th>Default</th><td><code>true</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
 <details><summary>Input</summary><pre><code>class Example {
     /**
@@ -1211,6 +1213,56 @@ class Example {
     String place(String account, String order) {
         return account + order;
     }
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-javadoc-wrap">
+<h4><code>javadoc.wrap</code></h4>
+<p>Re-wrap JavaDoc text at the line length: long lines are broken and short lines are joined. Text inside <code>&lt;pre&gt;</code> is never wrapped. It runs before the other <code>javadoc</code> settings, which still decide the blank lines; with <code>removeBlankLinesInDescription: true</code>, a second paragraph starts with <code>&lt;p&gt;</code> on the next line. This setting works on its own, also when <code>javadoc.enabled</code> is false.</p>
+<table class="rule-facts"><tr><th>Values</th><td><code>true</code> or <code>false</code></td></tr><tr><th>Default</th><td><code>false</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">This is upstream&#39;s JavaDoc formatter, which the Palantir plugins don&#39;t expose. It is off by default because it rewrites text people wrote by hand.</p>
+<details><summary>Input</summary><pre><code>class Example {
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is open.
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /**
+     * Short lines
+     * are joined.
+     */
+    void joined() {}
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">javadoc:<br>&nbsp;&nbsp;wrap: true</div><pre><code>class Example {
+
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is
+     * open.
+     *
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /** Short lines are joined. */
+    void joined() {}
+
+}</code></pre></div>
+<div><div class="label yaml">javadoc:<br>&nbsp;&nbsp;wrap: false</div><pre><code>class Example {
+
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is open.
+     *
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /**
+     * Short lines
+     * are joined.
+     */
+    void joined() {}
 
 }</code></pre></div>
 </div></div>

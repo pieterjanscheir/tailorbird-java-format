@@ -50,7 +50,8 @@ public final class JavaCommentsHelper implements CommentsHelper {
         this.options = options;
         this.rules = rules;
         this.maxLineLength = rules != null ? rules.lineLength() : options.maxLineLength();
-        this.javadocFormatter = options.formatJavadoc() ? new JavadocFormatter(maxLineLength) : null;
+        boolean wrapJavadoc = options.formatJavadoc() || (rules != null && rules.javadocWrap());
+        this.javadocFormatter = wrapJavadoc ? new JavadocFormatter(maxLineLength) : null;
     }
 
     @Override

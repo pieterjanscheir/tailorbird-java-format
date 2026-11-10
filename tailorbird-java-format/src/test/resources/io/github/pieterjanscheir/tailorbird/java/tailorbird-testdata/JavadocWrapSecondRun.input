@@ -1,0 +1,48 @@
+package example;
+
+class JavadocWrapSecondRun {
+
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left for the order and that
+     * the market is open.
+     * <p>Second paragraph of the description, which is also long enough that it has to be wrapped at the line length
+     * limit.
+     *
+     * @param account the client account
+     * @param order the order to place, which can have a very long description that goes past the right margin of the
+     *     line
+     *
+     * @return the placement result, which tells the caller whether the order was accepted, refused or only partly
+     *     filled
+     *
+     * @throws IllegalStateException when the order is refused
+     */
+    String place(String account, String order) {
+        return account + order;
+    }
+
+    /** Short lines are joined into one. */
+    void joined() {}
+
+    /**
+     * An example that keeps its layout:
+     *
+     * <pre>{@code
+     * Order order = Order.builder().account("client-account").quantity(100).price(new BigDecimal("12.50")).build();
+     * }</pre>
+     */
+    void example() {}
+
+    /**
+     * The order goes through these steps, each of which can fail and leave the order in an earlier state than expected:
+     * <ul>
+     *   <li>validation of the account, the instrument, the quantity and the price against the exchange's trading rules
+     *   <li>placement
+     * </ul>
+     */
+    void steps() {}
+
+    /** One-line comment that is quite long and would go past the right margin if it were not wrapped at all here. */
+    void oneLine() {}
+
+}

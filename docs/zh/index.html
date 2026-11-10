@@ -187,12 +187,13 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-blanklines-aroundinterfacemethods"><code>blankLines.aroundInterfaceMethods</code></a></td><td><code>false</code></td><td>在接口或注解类型的每个方法前后添加空行。</td></tr>
     <tr><td><a href="#rule-imports-groups"><code>imports.groups</code></a></td><td><code>[static, java, javax, org, com, "*"]</code></td><td>按顺序排列的导入分组。每一项可以是包名前缀（<code>java</code>、<code>com.example</code>）、表示所有静态导入的 <code>static</code>，或表示其余所有导入的 <code>"*"</code>。每个导入归入前缀匹配最长的分组；没有任何匹配的导入放在最后。<a href="#imports">示例</a>。</td></tr>
     <tr><td><a href="#rule-imports-blanklinebetweengroups"><code>imports.blankLineBetweenGroups</code></a></td><td><code>true</code></td><td>在导入分组之间添加空行。</td></tr>
-    <tr><td><a href="#rule-javadoc-enabled"><code>javadoc.enabled</code></a></td><td><code>true</code></td><td>应用下面的 JavaDoc 配置项。为 false 时，JavaDoc 完全保持原样。<a href="#javadoc">示例</a>。</td></tr>
+    <tr><td><a href="#rule-javadoc-enabled"><code>javadoc.enabled</code></a></td><td><code>true</code></td><td>应用下面的 JavaDoc 配置项（<code>javadoc.wrap</code> 除外）。为 false 时，JavaDoc 完全保持原样。<a href="#javadoc">示例</a>。</td></tr>
     <tr><td><a href="#rule-javadoc-removeblanklinesindescription"><code>javadoc.removeBlankLinesInDescription</code></a></td><td><code>true</code></td><td>删除描述部分内的空行。为 false 时保留段落分隔（每处一个空行）。</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterdescription"><code>javadoc.blankLineAfterDescription</code></a></td><td><code>true</code></td><td>在描述与第一个标签之间保留一个空行。</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterparams"><code>javadoc.blankLineAfterParams</code></a></td><td><code>true</code></td><td>当后面还有其他标签时，在 <code>@param</code> 标签块之后保留一个空行。</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterreturn"><code>javadoc.blankLineAfterReturn</code></a></td><td><code>true</code></td><td>当后面还有其他标签时，在 <code>@return</code> 之后保留一个空行。</td></tr>
     <tr><td><a href="#rule-javadoc-singlespaceaftertagname"><code>javadoc.singleSpaceAfterTagName</code></a></td><td><code>true</code></td><td><code>@param</code> 或 <code>@throws</code> 的名称与其描述之间恰好保留一个空格。</td></tr>
+    <tr><td><a href="#rule-javadoc-wrap"><code>javadoc.wrap</code></a></td><td><code>false</code></td><td>按行长度重新折行 JavaDoc 文本。<code>&lt;pre&gt;</code> 块永远不会被折行。</td></tr>
     <tr><td><a href="#rule-formattertags-enabled"><code>formatterTags.enabled</code></a></td><td><code>false</code></td><td>保留 <code>// @formatter:off</code> 与 <code>// @formatter:on</code> 之间代码的原样。</td></tr>
     <tr><td><a href="#rule-formattertags-off"><code>formatterTags.off</code></a></td><td><code>"@formatter:off"</code></td><td>注释中开始此类区域的文本。</td></tr>
     <tr><td><a href="#rule-formattertags-on"><code>formatterTags.on</code></a></td><td><code>"@formatter:on"</code></td><td>注释中结束此类区域的文本。</td></tr>
@@ -224,6 +225,7 @@ javadoc:
   blankLineAfterParams: true
   blankLineAfterReturn: true
   singleSpaceAfterTagName: true
+  wrap: false
 formatterTags:
   enabled: false
   off: "@formatter:off"
@@ -879,7 +881,7 @@ class Example {
 </div></div>
 <div class="rule" id="rule-javadoc-enabled">
 <h4><code>javadoc.enabled</code></h4>
-<p>应用下面的 <code>javadoc</code> 配置项。为 false 时，JavaDoc 会原样保留。单行 JavaDoc 和包含 <code>&lt;pre&gt;</code> 的 JavaDoc 永远不会被修改。</p>
+<p>应用下面的 <code>javadoc</code> 配置项（<code>javadoc.wrap</code> 除外）。为 false 时，JavaDoc 会原样保留。单行 JavaDoc 和包含 <code>&lt;pre&gt;</code> 的 JavaDoc 永远不会被修改。</p>
 <table class="rule-facts"><tr><th>取值</th><td><code>true</code> 或 <code>false</code></td></tr><tr><th>默认值</th><td><code>true</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
 <details><summary>输入</summary><pre><code>class Example {
     /**
@@ -1211,6 +1213,56 @@ class Example {
     String place(String account, String order) {
         return account + order;
     }
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-javadoc-wrap">
+<h4><code>javadoc.wrap</code></h4>
+<p>按行长度重新折行 JavaDoc 文本：过长的行会被拆开，过短的行会被合并。<code>&lt;pre&gt;</code> 中的文本永远不会被折行。它在其他 <code>javadoc</code> 配置项之前运行，空行仍由那些配置项决定；在 <code>removeBlankLinesInDescription: true</code> 时，第二个段落会以 <code>&lt;p&gt;</code> 开头并紧接在下一行。此配置项独立生效，即使 <code>javadoc.enabled</code> 为 false 也一样。</p>
+<table class="rule-facts"><tr><th>取值</th><td><code>true</code> 或 <code>false</code></td></tr><tr><th>默认值</th><td><code>false</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">这是上游的 JavaDoc 格式化器，Palantir 插件没有提供它。它默认关闭，因为它会改写人工编写的文本。</p>
+<details><summary>输入</summary><pre><code>class Example {
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is open.
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /**
+     * Short lines
+     * are joined.
+     */
+    void joined() {}
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">javadoc:<br>&nbsp;&nbsp;wrap: true</div><pre><code>class Example {
+
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is
+     * open.
+     *
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /** Short lines are joined. */
+    void joined() {}
+
+}</code></pre></div>
+<div><div class="label yaml">javadoc:<br>&nbsp;&nbsp;wrap: false</div><pre><code>class Example {
+
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is open.
+     *
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /**
+     * Short lines
+     * are joined.
+     */
+    void joined() {}
 
 }</code></pre></div>
 </div></div>
