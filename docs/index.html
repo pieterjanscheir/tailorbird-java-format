@@ -150,12 +150,17 @@ continuationIndent: 4</code></pre>
 <p>The presets are <code>tailorbird</code> (the default), <code>palantir</code> (120 characters, 4-space indent, 8-space continuation) and <code>google</code> (upstream's Google style: like <code>palantir</code>, with 100 characters, 2-space indent and 4-space continuation).</p>
 
 <h3 id="command-line">On the command line</h3>
-<p>For pre-commit hooks, CI scripts and other tools that run the formatter directly, build the command-line launcher and pass the settings file with <code>--config</code>:</p>
+<p>For pre-commit hooks, CI scripts and other tools that run the formatter directly, use the <code>tailorbird</code> launcher and pass the settings file with <code>--config</code>. Each <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> from the first one on has a <code>tailorbird-&lt;version&gt;.zip</code> and its <code>SHA256SUMS</code>. Unzip it, then run:</p>
+<pre><code>tailorbird-&lt;version&gt;/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>It needs Java 21 or later, from <code>JAVA_HOME</code> or the <code>PATH</code>. On Windows, use <code>bin\tailorbird.bat</code>. To build the same launcher yourself:</p>
 <pre><code>./gradlew :tailorbird-java-format:installDist
-export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' $p; done)"
-tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
-    --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>The <code>JAVA_OPTS</code> line is needed on JDK 16 and later: the formatter uses the JDK's own Java parser, which the JDK only opens up with these flags. An invalid settings file stops with a one-line error and exit code 2.</p>
+tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>The launcher passes the flags that open up the JDK's own Java parser, so you don't need to set <code>JAVA_OPTS</code>. An invalid settings file stops with a one-line error and exit code 2.</p>
+<p>As a Git pre-commit hook, saved as <code>.git/hooks/pre-commit</code> and made executable, it stops the commit when a staged Java file isn't formatted and lists the files:</p>
+<pre><code>#!/bin/sh
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
+[ -z "$files" ] || tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed $files</code></pre>
+<p>Run it again with <code>--replace</code> instead of <code>--dry-run --set-exit-if-changed</code> to fix them. The hook checks the files as they are on disk, not only the staged changes.</p>
 <p><code>--palantir</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults.</p>
 
 <p>Gradle, Spotless and IntelliJ all load the formatter from the <code>palantirJavaFormat</code> dependencies, so they all read the same file; that's why it goes there. Spotless also notices when the file changes and formats again. A few things to know:</p>

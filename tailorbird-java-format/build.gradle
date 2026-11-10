@@ -2,6 +2,8 @@ apply plugin: 'application'
 apply plugin: 'com.palantir.external-publish-jar'
 
 application.mainClass = 'io.github.pieterjanscheir.tailorbird.java.Main'
+// Tailorbird: the launcher is called tailorbird, so the command matches the docs and the release zip.
+application.applicationName = 'tailorbird'
 
 description = 'Palantir Java Format'
 
@@ -31,16 +33,21 @@ dependencies {
     implementation 'com.google.code.findbugs:jsr305'
 }
 
+def javacExports = [
+        'jdk.compiler/com.sun.tools.javac.file',
+        'jdk.compiler/com.sun.tools.javac.main',
+        'jdk.compiler/com.sun.tools.javac.parser',
+        'jdk.compiler/com.sun.tools.javac.tree',
+        'jdk.compiler/com.sun.tools.javac.util',
+        'jdk.compiler/com.sun.tools.javac.code',
+        'jdk.compiler/com.sun.tools.javac.api']
+
 moduleJvmArgs {
-    exports().addAll(
-            'jdk.compiler/com.sun.tools.javac.file',
-            'jdk.compiler/com.sun.tools.javac.main',
-            'jdk.compiler/com.sun.tools.javac.parser',
-            'jdk.compiler/com.sun.tools.javac.tree',
-            'jdk.compiler/com.sun.tools.javac.util',
-            'jdk.compiler/com.sun.tools.javac.code',
-            'jdk.compiler/com.sun.tools.javac.api')
+    exports().addAll(javacExports)
 }
+
+// Tailorbird: the start scripts pass the same exports, so the launcher runs on JDK 16+ without JAVA_OPTS.
+application.applicationDefaultJvmArgs = javacExports.collect { "--add-exports=${it}=ALL-UNNAMED".toString() }
 
 // Baseline sets every JavaCompile task's compatibility to the javaVersion target in afterEvaluate
 afterEvaluate {

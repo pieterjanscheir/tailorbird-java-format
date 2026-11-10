@@ -150,12 +150,17 @@ continuationIndent: 4</code></pre>
 <p>可用的预设有 <code>tailorbird</code>（默认）、<code>palantir</code>（120 个字符、4 空格缩进、8 空格续行缩进）和 <code>google</code>（上游的 Google 风格：与 <code>palantir</code> 类似，但为 100 个字符、2 空格缩进、4 空格续行缩进）。</p>
 
 <h3 id="command-line">在命令行中使用</h3>
-<p>对于 pre-commit 钩子、CI 脚本以及其他直接运行格式化器的工具，请构建命令行启动器，并通过 <code>--config</code> 传入配置文件：</p>
+<p>对于 pre-commit 钩子、CI 脚本以及其他直接运行格式化器的工具，请使用 <code>tailorbird</code> 启动器，并通过 <code>--config</code> 传入配置文件。从第一个版本起，每个 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> 都附带 <code>tailorbird-&lt;version&gt;.zip</code> 及其 <code>SHA256SUMS</code>。解压后运行：</p>
+<pre><code>tailorbird-&lt;version&gt;/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>它需要 Java 21 或更高版本，从 <code>JAVA_HOME</code> 或 <code>PATH</code> 中查找。在 Windows 上请使用 <code>bin\tailorbird.bat</code>。也可以自己构建同样的启动器：</p>
 <pre><code>./gradlew :tailorbird-java-format:installDist
-export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' $p; done)"
-tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
-    --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>在 JDK 16 及更高版本上需要 <code>JAVA_OPTS</code> 这一行：格式化器使用 JDK 自带的 Java 解析器，而 JDK 只有在加上这些参数时才会开放它。配置文件无效时，会输出一行错误信息并以退出码 2 结束。</p>
+tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>启动器会自动传入开放 JDK 自带 Java 解析器所需的参数，因此无需设置 <code>JAVA_OPTS</code>。配置文件无效时，会输出一行错误信息并以退出码 2 结束。</p>
+<p>作为 Git pre-commit 钩子（保存为 <code>.git/hooks/pre-commit</code> 并设为可执行），当暂存的 Java 文件未格式化时，它会阻止提交并列出这些文件：</p>
+<pre><code>#!/bin/sh
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
+[ -z "$files" ] || tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed $files</code></pre>
+<p>将 <code>--dry-run --set-exit-if-changed</code> 换成 <code>--replace</code> 再运行一次即可修复。钩子检查的是磁盘上的文件内容，而不只是暂存的改动。</p>
 <p>只指定 <code>--palantir</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>tailorbird.yml</code>；如果没有，则使用 Tailorbird 的默认值。</p>
 
 <p>Gradle、Spotless 和 IntelliJ 都从 <code>palantirJavaFormat</code> 依赖中加载格式化器，因此读取的是同一个文件；这正是要把它放在那里的原因。文件修改后，Spotless 也会察觉并重新格式化。需要注意以下几点：</p>

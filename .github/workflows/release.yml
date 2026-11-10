@@ -44,11 +44,20 @@ jobs:
           :tailorbird-java-format-jdk-bootstrap:publishMavenPublicationToGitHubPackagesRepository
           :tailorbird-java-format:publishMavenPublicationToGitHubPackagesRepository
 
+      - name: Build the launcher zip and checksums
+        run: |
+          ./gradlew --stacktrace :tailorbird-java-format:distZip
+          cd tailorbird-java-format/build/distributions
+          sha256sum tailorbird-*.zip > SHA256SUMS
+          cat SHA256SUMS
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           generate_release_notes: true
           files: |
+            tailorbird-java-format/build/distributions/tailorbird-*.zip
+            tailorbird-java-format/build/distributions/SHA256SUMS
             tailorbird-java-format/build/libs/*.jar
             tailorbird-java-format-spi/build/libs/*.jar
             tailorbird-java-format-jdk-bootstrap/build/libs/*.jar
