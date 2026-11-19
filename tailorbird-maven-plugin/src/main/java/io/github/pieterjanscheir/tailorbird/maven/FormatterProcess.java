@@ -18,6 +18,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -29,7 +31,8 @@ import java.util.stream.Collectors;
  *
  * <p>The formatter uses javac internals, which need {@code --add-exports} flags on Java 16+. Forking means Maven users
  * don't have to put those flags in {@code .mvn/jvm.config}. All arguments go through a launcher argument file, so a
- * large number of source files never hits the OS command line length limit.
+ * large number of source files never hits the OS command line length limit. The file is written in the platform's
+ * native encoding, which is what the launcher reads it in.
  */
 final class FormatterProcess {
 
@@ -59,7 +62,7 @@ final class FormatterProcess {
         Path argFile = workDirectory.resolve("formatter.args");
         Path stdout = workDirectory.resolve("formatter.out");
         Path stderr = workDirectory.resolve("formatter.err");
-        Files.write(argFile, argFileLines(formatterArgs, files), UTF_8);
+        writeArgFile(argFile, argFileLines(formatterArgs, files), argFileCharset());
 
         Process process = new ProcessBuilder(javaExecutable.toString(), "@" + argFile)
                 .redirectOutput(stdout.toFile())
@@ -67,6 +70,33 @@ final class FormatterProcess {
                 .start();
         int exitCode = process.waitFor();
         return new Result(exitCode, Files.readAllLines(stdout, UTF_8), Files.readString(stderr, UTF_8));
+    }
+
+    /**
+     * The encoding the java launcher reads an argument file in: the platform's native encoding, not UTF-8. On Windows
+     * that is usually a code page such as windows-1252, so writing UTF-8 would garble a path like
+     * {@code C:\Users\Zoë\.m2}. {@code native.encoding} exists from Java 17; {@code sun.jnu.encoding} before that.
+     */
+    static Charset argFileCharset() {
+        for (String property : List.of("native.encoding", "sun.jnu.encoding")) {
+            String name = System.getProperty(property);
+            if (name != null && Charset.isSupported(name)) {
+                return Charset.forName(name);
+            }
+        }
+        return Charset.defaultCharset();
+    }
+
+    static void writeArgFile(Path argFile, List<String> lines, Charset charset) throws IOException {
+        CharsetEncoder encoder = charset.newEncoder();
+        for (String line : lines) {
+            if (!encoder.canEncode(line)) {
+                throw new IOException("Can't pass " + line + " to the formatter's JVM: the java launcher reads its"
+                        + " arguments in " + charset + ", which can't represent every character of it. Move the"
+                        + " project or the Maven repository to a path with only characters in " + charset + ".");
+            }
+        }
+        Files.write(argFile, lines, charset);
     }
 
     List<String> argFileLines(List<String> formatterArgs, List<Path> files) {

@@ -87,12 +87,14 @@ abstract class AbstractTailorbirdMojo extends AbstractMojo {
             getLog().info("Skipping Tailorbird");
             return;
         }
-        requireUtf8Sources();
         List<Path> files = javaFiles();
         if (files.isEmpty()) {
             getLog().debug("No Java files to format");
             return;
         }
+        // After the empty check: a module without Java sources, such as a pom-packaging parent, has nothing to
+        // rewrite, so its encoding doesn't matter.
+        requireUtf8Sources();
         execute(files);
     }
 
