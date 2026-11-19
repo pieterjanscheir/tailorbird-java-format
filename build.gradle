@@ -119,4 +119,6 @@ jdks {
     }
 
     jdkMajorVersionsToUse().add(JavaLanguageVersion.of("23"))
+    // Tailorbird: JDK 25, so the tests can also run on it (-PtestJdk=25); see issue #49.
+    jdkMajorVersionsToUse().add(JavaLanguageVersion.of("25"))
 }
