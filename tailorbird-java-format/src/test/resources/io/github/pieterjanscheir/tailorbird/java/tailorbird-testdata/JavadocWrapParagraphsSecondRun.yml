@@ -1,0 +1,3 @@
+javadoc:
+  wrap: true
+  removeBlankLinesInDescription: false

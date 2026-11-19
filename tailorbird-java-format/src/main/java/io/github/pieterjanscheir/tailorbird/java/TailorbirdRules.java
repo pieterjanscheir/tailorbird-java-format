@@ -59,6 +59,7 @@ public final class TailorbirdRules {
     private final boolean javadocBlankLineAfterParams;
     private final boolean javadocBlankLineAfterReturn;
     private final boolean javadocSingleSpaceAfterTagName;
+    private final boolean javadocWrap;
     private final boolean formatterTags;
     private final String formatterOffTag;
     private final String formatterOnTag;
@@ -85,6 +86,7 @@ public final class TailorbirdRules {
         this.javadocBlankLineAfterParams = b.javadocBlankLineAfterParams;
         this.javadocBlankLineAfterReturn = b.javadocBlankLineAfterReturn;
         this.javadocSingleSpaceAfterTagName = b.javadocSingleSpaceAfterTagName;
+        this.javadocWrap = b.javadocWrap;
         this.formatterTags = b.formatterTags;
         this.formatterOffTag = b.formatterOffTag;
         this.formatterOnTag = b.formatterOnTag;
@@ -240,7 +242,7 @@ public final class TailorbirdRules {
         return formatterOnTag;
     }
 
-    /** Apply the {@code javadoc} rules below; when false, JavaDoc is left as written. */
+    /** Apply the {@code javadoc} layout rules below; when false, their blank lines and spacing are left as written. */
     public boolean javadocLayout() {
         return javadocLayout;
     }
@@ -263,6 +265,14 @@ public final class TailorbirdRules {
 
     public boolean javadocSingleSpaceAfterTagName() {
         return javadocSingleSpaceAfterTagName;
+    }
+
+    /**
+     * Re-wrap JavaDoc text at {@link #lineLength()} with upstream's JavaDoc formatter, before the layout rules above.
+     * {@code <pre>} blocks are never wrapped. Off by default, also when {@link #javadocLayout()} is off.
+     */
+    public boolean javadocWrap() {
+        return javadocWrap;
     }
 
     @Override
@@ -295,6 +305,7 @@ public final class TailorbirdRules {
                 && javadocBlankLineAfterParams == o.javadocBlankLineAfterParams
                 && javadocBlankLineAfterReturn == o.javadocBlankLineAfterReturn
                 && javadocSingleSpaceAfterTagName == o.javadocSingleSpaceAfterTagName
+                && javadocWrap == o.javadocWrap
                 && formatterTags == o.formatterTags
                 && formatterOffTag.equals(o.formatterOffTag)
                 && formatterOnTag.equals(o.formatterOnTag);
@@ -324,6 +335,7 @@ public final class TailorbirdRules {
                 javadocBlankLineAfterParams,
                 javadocBlankLineAfterReturn,
                 javadocSingleSpaceAfterTagName,
+                javadocWrap,
                 formatterTags,
                 formatterOffTag,
                 formatterOnTag);
@@ -359,6 +371,7 @@ public final class TailorbirdRules {
         private boolean javadocBlankLineAfterParams = true;
         private boolean javadocBlankLineAfterReturn = true;
         private boolean javadocSingleSpaceAfterTagName = true;
+        private boolean javadocWrap = false;
         private boolean formatterTags = false;
         private String formatterOffTag = "@formatter:off";
         private String formatterOnTag = "@formatter:on";
@@ -508,6 +521,11 @@ public final class TailorbirdRules {
 
         public Builder javadocSingleSpaceAfterTagName(boolean value) {
             this.javadocSingleSpaceAfterTagName = value;
+            return this;
+        }
+
+        public Builder javadocWrap(boolean value) {
+            this.javadocWrap = value;
             return this;
         }
 
