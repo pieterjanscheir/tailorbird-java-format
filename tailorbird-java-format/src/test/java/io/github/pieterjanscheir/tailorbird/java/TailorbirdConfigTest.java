@@ -66,6 +66,10 @@ class TailorbirdConfigTest {
               blankLineAfterParams: false
               blankLineAfterReturn: false
               singleSpaceAfterTagName: false
+            formatterTags:
+              enabled: true
+              off: "fmt:off"
+              on: "fmt:on"
             """;
 
         TailorbirdRules rules = TailorbirdConfig.parse(yaml, "test");
@@ -93,8 +97,11 @@ class TailorbirdConfigTest {
                         .javadocBlankLineAfterParams(false)
                         .javadocBlankLineAfterReturn(false)
                         .javadocSingleSpaceAfterTagName(false)
+                        .formatterTags(true)
+                        .formatterOffTag("fmt:off")
+                        .formatterOnTag("fmt:on")
                         .build());
-        assertThat(TailorbirdConfig.settingNames()).hasSize(21);
+        assertThat(TailorbirdConfig.settingNames()).hasSize(24);
     }
 
     @Test
@@ -172,6 +179,21 @@ class TailorbirdConfigTest {
 
     @Test
     void invalid_values_are_errors() {
+        assertThatThrownBy(() -> TailorbirdConfig.parse("formatterTags:\n  off: \" \"\n", "test"))
+                .isInstanceOf(TailorbirdConfigException.class)
+                .hasMessageContaining("formatterTags.off must not be empty");
+        assertThatThrownBy(() -> TailorbirdConfig.parse("formatterTags:\n  off: \"// foo\"\n", "test"))
+                .isInstanceOf(TailorbirdConfigException.class)
+                .hasMessageContaining("formatterTags.off must not contain spaces, / or *");
+        assertThatThrownBy(() -> TailorbirdConfig.parse("formatterTags:\n  off: \"fmt\u00A0off\"\n", "test"))
+                .isInstanceOf(TailorbirdConfigException.class)
+                .hasMessageContaining("formatterTags.off must not contain spaces, / or *");
+        assertThatThrownBy(() -> TailorbirdConfig.parse("formatterTags:\n  on: \"fmt on\"\n", "test"))
+                .isInstanceOf(TailorbirdConfigException.class)
+                .hasMessageContaining("formatterTags.on must not contain spaces, / or *");
+        assertThatThrownBy(() -> TailorbirdConfig.parse("formatterTags:\n  on: 3\n", "test"))
+                .isInstanceOf(TailorbirdConfigException.class)
+                .hasMessageContaining("formatterTags.on must be text");
         assertThatThrownBy(() -> TailorbirdConfig.parse("lineLength: 10\n", "test"))
                 .isInstanceOf(TailorbirdConfigException.class)
                 .hasMessageContaining("lineLength must be at least 40");

@@ -1,0 +1,7 @@
+class FormatterTagsDisabled {
+
+    // @formatter:off
+    int x = 1;
+
+    // @formatter:on
+}

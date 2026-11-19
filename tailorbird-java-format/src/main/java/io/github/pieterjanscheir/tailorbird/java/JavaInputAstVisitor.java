@@ -641,14 +641,45 @@ public class JavaInputAstVisitor extends TreePathScanner<Void, Void> {
     }
 
     private boolean hasOnlyShortItems(List<? extends ExpressionTree> expressions) {
+        // Tailorbird: with arrayInitializerBraceSpaces, the spaces just inside a nested initializer's braces don't
+        // count.
+        // They're added by the formatter, so counting them made { 10, 11 } (10 characters) too long on the second run
+        // while {10, 11} (8) was short on the first, and the layout changed between runs (issue #55).
+        boolean ignoreBraceSpaces = rule(TailorbirdRules::arrayInitializerBraceSpaces);
         for (ExpressionTree expression : expressions) {
             int startPosition = getStartPosition(expression);
-            if (builder.actualSize(startPosition, getEndPosition(expression, getCurrentPath()) - startPosition)
-                    >= MAX_ITEM_LENGTH_FOR_FILLING) {
+            int length = getEndPosition(expression, getCurrentPath()) - startPosition;
+            int size = builder.actualSize(startPosition, length);
+            if (ignoreBraceSpaces) {
+                size -= braceSpaces(builder.getInput().getText().substring(startPosition, startPosition + length));
+            }
+            if (size >= MAX_ITEM_LENGTH_FOR_FILLING) {
                 return false;
             }
         }
         return true;
+    }
+
+    /** Tailorbird: the number of spaces in {@code text} right after an opening brace or right before a closing one. */
+    private static int braceSpaces(String text) {
+        int count = 0;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) != ' ') {
+                continue;
+            }
+            int before = i - 1;
+            while (before >= 0 && text.charAt(before) == ' ') {
+                before--;
+            }
+            int after = i + 1;
+            while (after < text.length() && text.charAt(after) == ' ') {
+                after++;
+            }
+            if ((before >= 0 && text.charAt(before) == '{') || (after < text.length() && text.charAt(after) == '}')) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
