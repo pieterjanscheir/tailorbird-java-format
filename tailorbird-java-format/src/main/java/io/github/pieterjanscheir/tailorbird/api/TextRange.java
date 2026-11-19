@@ -12,7 +12,7 @@
  * the License.
  */
 
-package io.github.pieterjanscheir.bowerbird.api;
+package io.github.pieterjanscheir.tailorbird.api;
 
 /**
  * A half-open range of characters in a source file, from {@link #start()} (inclusive) to {@link #end()} (exclusive),

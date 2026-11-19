@@ -12,16 +12,16 @@
  * the License.
  */
 
-package io.github.pieterjanscheir.bowerbird.api;
+package io.github.pieterjanscheir.tailorbird.api;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /** Thrown when a source file can't be formatted, usually because it doesn't parse. */
-public final class BowerbirdFormatException extends Exception {
+public final class TailorbirdFormatException extends Exception {
     private final List<Diagnostic> diagnostics;
 
-    BowerbirdFormatException(List<Diagnostic> diagnostics, Throwable cause) {
+    TailorbirdFormatException(List<Diagnostic> diagnostics, Throwable cause) {
         super(diagnostics.stream().map(Diagnostic::toString).collect(Collectors.joining("\n")), cause);
         this.diagnostics = List.copyOf(diagnostics);
     }

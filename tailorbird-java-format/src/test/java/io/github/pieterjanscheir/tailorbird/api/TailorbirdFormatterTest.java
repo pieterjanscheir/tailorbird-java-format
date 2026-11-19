@@ -12,7 +12,7 @@
  * the License.
  */
 
-package io.github.pieterjanscheir.bowerbird.api;
+package io.github.pieterjanscheir.tailorbird.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,7 +26,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-class BowerbirdFormatterTest {
+class TailorbirdFormatterTest {
 
     private static final String UNFORMATTED = "import java.util.List;\nimport java.util.Map;\n"
             + "class A {\n  Map<String, String> m;\n  void f() { int x=1; }\n}\n";
@@ -36,7 +36,7 @@ class BowerbirdFormatterTest {
 
     @Test
     void defaults_format_the_whole_file() throws Exception {
-        assertThat(BowerbirdFormatter.defaults().format(UNFORMATTED))
+        assertThat(TailorbirdFormatter.defaults().format(UNFORMATTED))
                 .isEqualTo("import java.util.Map;\n\n"
                         + "class A {\n\n"
                         + "    Map<String, String> m;\n\n"
@@ -48,32 +48,32 @@ class BowerbirdFormatterTest {
 
     @Test
     void config_text_is_used() throws Exception {
-        BowerbirdFormatter formatter = BowerbirdFormatter.fromConfigText("preset: google\n", "inline");
+        TailorbirdFormatter formatter = TailorbirdFormatter.fromConfigText("preset: google\n", "inline");
         assertThat(formatter.format("class A {\n    int x;\n}\n")).isEqualTo("class A {\n  int x;\n}\n");
     }
 
     @Test
     void config_file_is_used() throws Exception {
-        Path config = Files.writeString(folder.resolve("bowerbird.yml"), "preset: google\n");
-        assertThat(BowerbirdFormatter.fromConfig(config).format("class A {\n    int x;\n}\n"))
+        Path config = Files.writeString(folder.resolve("tailorbird.yml"), "preset: google\n");
+        assertThat(TailorbirdFormatter.fromConfig(config).format("class A {\n    int x;\n}\n"))
                 .isEqualTo("class A {\n  int x;\n}\n");
     }
 
     @Test
     void classpath_config_is_used() throws Exception {
-        Files.writeString(folder.resolve("bowerbird.yml"), "preset: google\n");
+        Files.writeString(folder.resolve("tailorbird.yml"), "preset: google\n");
         try (URLClassLoader loader =
                 new URLClassLoader(new URL[] {folder.toUri().toURL()}, null)) {
-            assertThat(BowerbirdFormatter.fromClasspath(loader).format("class A {\n    int x;\n}\n"))
+            assertThat(TailorbirdFormatter.fromClasspath(loader).format("class A {\n    int x;\n}\n"))
                     .isEqualTo("class A {\n  int x;\n}\n");
         }
     }
 
     @Test
     void invalid_setting_names_the_file_and_the_setting() throws Exception {
-        Path config = Files.writeString(folder.resolve("bowerbird.yml"), "lineLength: wide\n");
-        assertThatThrownBy(() -> BowerbirdFormatter.fromConfig(config))
-                .isInstanceOf(BowerbirdConfigException.class)
+        Path config = Files.writeString(folder.resolve("tailorbird.yml"), "lineLength: wide\n");
+        assertThatThrownBy(() -> TailorbirdFormatter.fromConfig(config))
+                .isInstanceOf(TailorbirdConfigException.class)
                 .hasMessageContaining(config.toString())
                 .hasMessageContaining("lineLength");
     }
@@ -81,17 +81,17 @@ class BowerbirdFormatterTest {
     @Test
     void missing_config_file() {
         Path config = folder.resolve("missing.yml");
-        assertThatThrownBy(() -> BowerbirdFormatter.fromConfig(config))
-                .isInstanceOf(BowerbirdConfigException.class)
+        assertThatThrownBy(() -> TailorbirdFormatter.fromConfig(config))
+                .isInstanceOf(TailorbirdConfigException.class)
                 .hasMessageContaining(config.toString());
     }
 
     @Test
     void source_that_does_not_parse() {
-        assertThatThrownBy(() -> BowerbirdFormatter.defaults().format("class A {\n  int x\n}\n"))
-                .isInstanceOfSatisfying(BowerbirdFormatException.class, e -> {
+        assertThatThrownBy(() -> TailorbirdFormatter.defaults().format("class A {\n  int x\n}\n"))
+                .isInstanceOfSatisfying(TailorbirdFormatException.class, e -> {
                     assertThat(e.diagnostics()).isNotEmpty();
-                    BowerbirdFormatException.Diagnostic diagnostic =
+                    TailorbirdFormatException.Diagnostic diagnostic =
                             e.diagnostics().get(0);
                     assertThat(diagnostic.line()).isEqualTo(2);
                     assertThat(diagnostic.column()).isGreaterThan(0);
@@ -105,28 +105,28 @@ class BowerbirdFormatterTest {
         String source = "class A {\n  int a=1;\n  int b=2;\n}\n";
         int line3 = source.indexOf("  int b");
         List<TextEdit> edits =
-                BowerbirdFormatter.defaults().formatRanges(source, List.of(TextRange.of(line3, line3 + 3)));
+                TailorbirdFormatter.defaults().formatRanges(source, List.of(TextRange.of(line3, line3 + 3)));
         assertThat(edits).isNotEmpty();
         assertThat(TextEdit.apply(source, edits)).isEqualTo("class A {\n  int a=1;\n    int b = 2;\n\n}\n");
     }
 
     @Test
     void no_edits_for_formatted_code() throws Exception {
-        String source = BowerbirdFormatter.defaults().format(UNFORMATTED);
-        assertThat(BowerbirdFormatter.defaults().formatRanges(source, List.of(TextRange.of(0, source.length()))))
+        String source = TailorbirdFormatter.defaults().format(UNFORMATTED);
+        assertThat(TailorbirdFormatter.defaults().formatRanges(source, List.of(TextRange.of(0, source.length()))))
                 .isEmpty();
     }
 
     @Test
     void fix_imports_changes_nothing_else() throws Exception {
-        assertThat(BowerbirdFormatter.defaults().fixImports(UNFORMATTED))
+        assertThat(TailorbirdFormatter.defaults().fixImports(UNFORMATTED))
                 .isEqualTo("import java.util.Map;\n\n"
                         + "class A {\n  Map<String, String> m;\n  void f() { int x=1; }\n}\n");
     }
 
     @Test
     void required_jvm_arguments_open_the_compiler_packages() {
-        assertThat(BowerbirdFormatter.requiredJvmArguments())
+        assertThat(TailorbirdFormatter.requiredJvmArguments())
                 .hasSize(6)
                 .allMatch(argument -> argument.startsWith("--add-exports=jdk.compiler/com.sun.tools.javac."));
     }
@@ -145,8 +145,8 @@ class BowerbirdFormatterTest {
     @Test
     void config_file_in_utf8_is_read() throws Exception {
         Path config =
-                Files.write(folder.resolve("bowerbird.yml"), "# é\npreset: google\n".getBytes(StandardCharsets.UTF_8));
-        assertThat(BowerbirdFormatter.fromConfig(config).format("class A {\n    int x;\n}\n"))
+                Files.write(folder.resolve("tailorbird.yml"), "# é\npreset: google\n".getBytes(StandardCharsets.UTF_8));
+        assertThat(TailorbirdFormatter.fromConfig(config).format("class A {\n    int x;\n}\n"))
                 .isEqualTo("class A {\n  int x;\n}\n");
     }
 }

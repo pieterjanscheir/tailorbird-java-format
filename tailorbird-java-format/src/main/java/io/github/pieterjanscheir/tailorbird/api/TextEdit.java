@@ -12,7 +12,7 @@
  * the License.
  */
 
-package io.github.pieterjanscheir.bowerbird.api;
+package io.github.pieterjanscheir.tailorbird.api;
 
 import java.util.List;
 import java.util.Objects;
@@ -44,7 +44,7 @@ public final class TextEdit {
 
     /**
      * Applies {@code edits} to {@code source}. The edits must be sorted and not overlap, as
-     * {@link BowerbirdFormatter#formatRanges} returns them.
+     * {@link TailorbirdFormatter#formatRanges} returns them.
      */
     public static String apply(String source, List<TextEdit> edits) {
         StringBuilder result = new StringBuilder(source.length());

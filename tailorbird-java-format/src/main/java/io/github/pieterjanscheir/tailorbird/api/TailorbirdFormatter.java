@@ -12,7 +12,7 @@
  * the License.
  */
 
-package io.github.pieterjanscheir.bowerbird.api;
+package io.github.pieterjanscheir.tailorbird.api;
 
 import com.google.common.collect.Range;
 import com.palantir.javaformat.java.FormatterDiagnostic;
@@ -20,9 +20,9 @@ import com.palantir.javaformat.java.FormatterException;
 import com.palantir.javaformat.java.JavaFormatterOptions;
 import com.palantir.javaformat.java.JavaFormatterOptions.Style;
 import com.palantir.javaformat.java.Replacement;
-import io.github.pieterjanscheir.bowerbird.java.BowerbirdConfig;
-import io.github.pieterjanscheir.bowerbird.java.BowerbirdRules;
-import io.github.pieterjanscheir.bowerbird.java.Formatter;
+import io.github.pieterjanscheir.tailorbird.java.TailorbirdConfig;
+import io.github.pieterjanscheir.tailorbird.java.TailorbirdRules;
+import io.github.pieterjanscheir.tailorbird.java.Formatter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +30,12 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * The supported way to format Java code with Bowerbird from another tool, such as a build plugin, an IDE plugin or a
+ * The supported way to format Java code with Tailorbird from another tool, such as a build plugin, an IDE plugin or a
  * Spotless step (issue #6). Everything else in this library may change with any upstream merge; this class, and the
  * other public types in this package, won't change incompatibly within a major version.
  *
  * <pre>{@code
- * BowerbirdFormatter formatter = BowerbirdFormatter.fromConfig(Path.of("bowerbird.yml"));
+ * TailorbirdFormatter formatter = TailorbirdFormatter.fromConfig(Path.of("tailorbird.yml"));
  * String formatted = formatter.format(source);
  * }</pre>
  *
@@ -45,7 +45,7 @@ import java.util.function.Supplier;
  * {@link #requiredJvmArguments()}. A tool that formats in its own JVM, such as a Maven plugin, needs them on that
  * JVM's command line, or must run the formatter in a JVM it starts with them.
  */
-public final class BowerbirdFormatter {
+public final class TailorbirdFormatter {
 
     private static final List<String> REQUIRED_JVM_ARGUMENTS = List.of(
             "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
@@ -57,55 +57,55 @@ public final class BowerbirdFormatter {
 
     private final Formatter formatter;
 
-    private BowerbirdFormatter(BowerbirdRules rules) {
+    private TailorbirdFormatter(TailorbirdRules rules) {
         // Style.PALANTIR only sets what the rules don't cover.
         this.formatter = Formatter.createFormatter(
                 JavaFormatterOptions.builder().style(Style.PALANTIR).build(), rules);
     }
 
-    /** Formats with Bowerbird's defaults, as with an empty {@code bowerbird.yml}. */
-    public static BowerbirdFormatter defaults() {
-        return new BowerbirdFormatter(BowerbirdRules.defaults());
+    /** Formats with Tailorbird's defaults, as with an empty {@code tailorbird.yml}. */
+    public static TailorbirdFormatter defaults() {
+        return new TailorbirdFormatter(TailorbirdRules.defaults());
     }
 
     /**
-     * Formats with the settings in {@code file}, a {@code bowerbird.yml}.
+     * Formats with the settings in {@code file}, a {@code tailorbird.yml}.
      *
-     * @throws BowerbirdConfigException if the file can't be read or has an invalid setting
+     * @throws TailorbirdConfigException if the file can't be read or has an invalid setting
      */
-    public static BowerbirdFormatter fromConfig(Path file) {
+    public static TailorbirdFormatter fromConfig(Path file) {
         Objects.requireNonNull(file, "file");
-        return withConfig(() -> BowerbirdConfig.load(file));
+        return withConfig(() -> TailorbirdConfig.load(file));
     }
 
     /**
-     * Formats with the settings in {@code yaml}, the contents of a {@code bowerbird.yml}. {@code source} names where
+     * Formats with the settings in {@code yaml}, the contents of a {@code tailorbird.yml}. {@code source} names where
      * the text came from, for error messages; for example, its path.
      *
-     * @throws BowerbirdConfigException if the text has an invalid setting
+     * @throws TailorbirdConfigException if the text has an invalid setting
      */
-    public static BowerbirdFormatter fromConfigText(String yaml, String source) {
+    public static TailorbirdFormatter fromConfigText(String yaml, String source) {
         Objects.requireNonNull(yaml, "yaml");
         Objects.requireNonNull(source, "source");
-        return withConfig(() -> BowerbirdConfig.parse(yaml, source));
+        return withConfig(() -> TailorbirdConfig.parse(yaml, source));
     }
 
     /**
-     * Formats with the {@code bowerbird.yml} at the root of {@code classLoader}'s classpath, or Bowerbird's defaults
+     * Formats with the {@code tailorbird.yml} at the root of {@code classLoader}'s classpath, or Tailorbird's defaults
      * without one. This is how the Gradle, Spotless and IntelliJ plugins find the settings.
      *
-     * @throws BowerbirdConfigException if the file has an invalid setting, or there's more than one
+     * @throws TailorbirdConfigException if the file has an invalid setting, or there's more than one
      */
-    public static BowerbirdFormatter fromClasspath(ClassLoader classLoader) {
+    public static TailorbirdFormatter fromClasspath(ClassLoader classLoader) {
         Objects.requireNonNull(classLoader, "classLoader");
-        return withConfig(() -> BowerbirdConfig.load(classLoader));
+        return withConfig(() -> TailorbirdConfig.load(classLoader));
     }
 
-    private static BowerbirdFormatter withConfig(Supplier<BowerbirdRules> rules) {
+    private static TailorbirdFormatter withConfig(Supplier<TailorbirdRules> rules) {
         try {
-            return new BowerbirdFormatter(rules.get());
-        } catch (BowerbirdConfig.BowerbirdConfigException e) {
-            throw new BowerbirdConfigException(e.getMessage(), e);
+            return new TailorbirdFormatter(rules.get());
+        } catch (TailorbirdConfig.TailorbirdConfigException e) {
+            throw new TailorbirdConfigException(e.getMessage(), e);
         }
     }
 
@@ -121,9 +121,9 @@ public final class BowerbirdFormatter {
      * Formats a whole Java source file: orders imports and removes unused ones, lays out the code, and wraps long
      * string literals. This is what the command line does.
      *
-     * @throws BowerbirdFormatException if the source can't be formatted, usually because it doesn't parse
+     * @throws TailorbirdFormatException if the source can't be formatted, usually because it doesn't parse
      */
-    public String format(String source) throws BowerbirdFormatException {
+    public String format(String source) throws TailorbirdFormatException {
         Objects.requireNonNull(source, "source");
         try {
             return formatter.formatSourceAndFixImports(source);
@@ -135,9 +135,9 @@ public final class BowerbirdFormatter {
     /**
      * Orders imports and removes unused ones, and changes nothing else.
      *
-     * @throws BowerbirdFormatException if the source doesn't parse
+     * @throws TailorbirdFormatException if the source doesn't parse
      */
-    public String fixImports(String source) throws BowerbirdFormatException {
+    public String fixImports(String source) throws TailorbirdFormatException {
         Objects.requireNonNull(source, "source");
         try {
             return formatter.fixImports(source);
@@ -152,9 +152,9 @@ public final class BowerbirdFormatter {
      * {@code source} as it is; {@link TextEdit#apply} applies them. There are none when the lines are already
      * formatted.
      *
-     * @throws BowerbirdFormatException if the source can't be formatted, usually because it doesn't parse
+     * @throws TailorbirdFormatException if the source can't be formatted, usually because it doesn't parse
      */
-    public List<TextEdit> formatRanges(String source, List<TextRange> ranges) throws BowerbirdFormatException {
+    public List<TextEdit> formatRanges(String source, List<TextRange> ranges) throws TailorbirdFormatException {
         Objects.requireNonNull(source, "source");
         List<Range<Integer>> characterRanges = new ArrayList<>(ranges.size());
         for (TextRange range : ranges) {
@@ -179,15 +179,15 @@ public final class BowerbirdFormatter {
         return List.copyOf(edits);
     }
 
-    private static BowerbirdFormatException formatException(FormatterException e) {
-        List<BowerbirdFormatException.Diagnostic> diagnostics = new ArrayList<>();
+    private static TailorbirdFormatException formatException(FormatterException e) {
+        List<TailorbirdFormatException.Diagnostic> diagnostics = new ArrayList<>();
         for (FormatterDiagnostic diagnostic : e.diagnostics()) {
-            diagnostics.add(new BowerbirdFormatException.Diagnostic(
+            diagnostics.add(new TailorbirdFormatException.Diagnostic(
                     diagnostic.line(), diagnostic.column() >= 0 ? diagnostic.column() + 1 : -1, diagnostic.message()));
         }
         if (diagnostics.isEmpty()) {
-            diagnostics.add(new BowerbirdFormatException.Diagnostic(-1, -1, String.valueOf(e.getMessage())));
+            diagnostics.add(new TailorbirdFormatException.Diagnostic(-1, -1, String.valueOf(e.getMessage())));
         }
-        return new BowerbirdFormatException(diagnostics, e);
+        return new TailorbirdFormatException(diagnostics, e);
     }
 }

@@ -12,14 +12,14 @@
  * the License.
  */
 
-package io.github.pieterjanscheir.bowerbird.api;
+package io.github.pieterjanscheir.tailorbird.api;
 
 /**
- * Thrown when a {@code bowerbird.yml} can't be read or has an invalid setting. The message names the file and the
+ * Thrown when a {@code tailorbird.yml} can't be read or has an invalid setting. The message names the file and the
  * setting, and is meant to be shown to the user as it is.
  */
-public final class BowerbirdConfigException extends RuntimeException {
-    BowerbirdConfigException(String message, Throwable cause) {
+public final class TailorbirdConfigException extends RuntimeException {
+    TailorbirdConfigException(String message, Throwable cause) {
         super(message, cause);
     }
 }
