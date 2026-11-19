@@ -1,0 +1,1 @@
+../../../../tailorbird-java-format/src/test/resources/io/github/pieterjanscheir/tailorbird/java/testdata/palantir-deeply-nested-calls.input

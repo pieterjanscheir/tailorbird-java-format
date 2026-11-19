@@ -15,8 +15,8 @@
 #   - merges cleanly: pushes branch upstream-sync/<ref>, opens a pull request into main, starts CI on it
 #   - conflicts: opens an issue listing the conflicting files
 #
-# Bowerbird renamed upstream's packages and modules (#27), so the merge goes through upstream-merge.sh, which
-# merges upstream's code in Bowerbird's names.
+# Tailorbird renamed upstream's packages and modules (#27), so the merge goes through upstream-merge.sh, which
+# merges upstream's code in Tailorbird's names.
 set -euo pipefail
 
 UPSTREAM_URL=${UPSTREAM_URL:-https://github.com/palantir/palantir-java-format.git}
@@ -35,7 +35,7 @@ run() {
 }
 
 git remote get-url "$UPSTREAM_REMOTE" >/dev/null 2>&1 || git remote add "$UPSTREAM_REMOTE" "$UPSTREAM_URL"
-# Upstream tags go into their own namespace so they never mix with Bowerbird's own release tags.
+# Upstream tags go into their own namespace so they never mix with Tailorbird's own release tags.
 git fetch --quiet --no-tags "$UPSTREAM_REMOTE" \
     "+refs/tags/*:refs/upstream-tags/*" "+refs/heads/*:refs/remotes/upstream/*"
 
@@ -93,11 +93,11 @@ elif [ "$merge_status" -eq 0 ]; then
             echo "Formatted upstream changes."
         fi
     fi
-    # Only the SPI package and the forwarding Main may keep upstream's package (see bowerbird-rename.sh).
+    # Only the SPI package and the forwarding Main may keep upstream's package (see tailorbird-rename.sh).
     leftovers=$(git ls-files \
         | grep -e '^palantir-java-format' -e '^gradle-palantir-java-format' -e '/com/palantir/javaformat/' \
-        | grep -vE '^bowerbird-java-format-spi/src/main/java/com/palantir/javaformat/java/[^/]+$' \
-        | grep -vxF 'bowerbird-java-format/src/main/java/com/palantir/javaformat/java/Main.java' || true)
+        | grep -vE '^tailorbird-java-format-spi/src/main/java/com/palantir/javaformat/java/[^/]+$' \
+        | grep -vxF 'tailorbird-java-format/src/main/java/com/palantir/javaformat/java/Main.java' || true)
     if [ -n "$leftovers" ]; then
         echo "::error::Files are still under upstream's names after renaming:"
         echo "$leftovers"
@@ -109,8 +109,8 @@ elif [ "$merge_status" -eq 0 ]; then
 Merges upstream [palantir-java-format $ref](https://github.com/palantir/palantir-java-format/releases/tag/$ref) into \`$BASE_BRANCH\`.
 
 - Upstream changes: https://github.com/palantir/palantir-java-format/compare/$(git merge-base "$sha" "origin/$BASE_BRANCH")...$sha
-- The merge had no conflicts. Upstream's code was merged in Bowerbird's package and module names (\`upstream-merge.sh\`).
-- CI shows whether the Bowerbird rules still work with these changes.
+- The merge had no conflicts. Upstream's code was merged in Tailorbird's package and module names (\`upstream-merge.sh\`).
+- CI shows whether the Tailorbird rules still work with these changes.
 
 Opened by the upstream sync workflow.
 EOF
