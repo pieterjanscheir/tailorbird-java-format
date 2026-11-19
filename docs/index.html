@@ -163,7 +163,7 @@ tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbi
 files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
 [ -z "$files" ] || tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed $files</code></pre>
 <p>Run it again with <code>--replace</code> instead of <code>--dry-run --set-exit-if-changed</code> to fix them. The hook checks the files as they are on disk, not only the staged changes.</p>
-<p><code>--palantir</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults.</p>
+<p><code>--tailorbird</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults. <code>--palantir</code> does the same and is there for the upstream plugins, which pass it; it doesn't give Palantir's style. For that, use a settings file with <a href="#presets"><code>preset: palantir</code></a>.</p>
 
 <p>Gradle, Spotless and IntelliJ all load the formatter from the <code>palantirJavaFormat</code> dependencies, so they all read the same file; that's why it goes there. Spotless also notices when the file changes and formats again. A few things to know:</p>
 <ul>
