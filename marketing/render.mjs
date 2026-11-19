@@ -21,7 +21,7 @@ if (mode === 'stills') {
     await page.screenshot({ path: path.join(dir, `still_${t}.png`) });
   }
 } else {
-  const out = outArg || path.join(dir, 'bowerbird.mp4');
+  const out = outArg || path.join(dir, 'tailorbird.mp4');
   const ff = spawn('ffmpeg', ['-y', '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-',
     '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'slow', '-crf', '18', '-movflags', '+faststart', out],
     { stdio: ['pipe', 'ignore', 'inherit'] });

@@ -52,8 +52,8 @@ code.i{font:500 .9em "JetBrains Mono";color:var(--text);background:#1f1f22;paddi
 <!-- S2 intro -->
 <section class="scene" id="s2">
   <div id="s2logo"></div>
-  <h1 class="serif" style="margin-top:46px">Meet <em>Bowerbird</em></h1>
-  <p class="sub" id="s2b">A Java formatter that arranges your code the way a bowerbird arranges its nest:<br><span style="color:var(--text)">carefully, and always the same way.</span></p>
+  <h1 class="serif" style="margin-top:46px">Meet <em>Tailorbird</em></h1>
+  <p class="sub" id="s2b">A Java formatter that stitches your code the way a tailorbird stitches its nest:<br><span style="color:var(--text)">carefully, and always the same way.</span></p>
 </section>
 
 <!-- S3 format demo -->
@@ -72,7 +72,7 @@ code.i{font:500 .9em "JetBrains Mono";color:var(--text);background:#1f1f22;paddi
   <div class="eyebrow">Your rules</div>
   <h2 class="serif" style="margin-bottom:44px">Every rule is a <em>setting.</em></h2>
   <div class="card yml" style="width:1000px;margin-bottom:26px">
-    <div class="card-head"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="name">config/bowerbird.yml</span></div>
+    <div class="card-head"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="name">config/tailorbird.yml</span></div>
     <div class="code" id="ymlcode" style="--h:178px"></div>
   </div>
   <div class="card">
@@ -86,7 +86,7 @@ code.i{font:500 .9em "JetBrains Mono";color:var(--text);background:#1f1f22;paddi
   <div class="eyebrow">Why teams pick it</div>
   <h2 class="serif" style="margin-bottom:40px">Built to fit <em>your</em> codebase</h2>
   <div class="feat" id="f1"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></div>
-    <div><b>One <code class="i">bowerbird.yml</code></b><span>Change only the rules you care about. Typos stop the build with a clear message.</span></div></div>
+    <div><b>One <code class="i">tailorbird.yml</code></b><span>Change only the rules you care about. Typos stop the build with a clear message.</span></div></div>
   <div class="feat" id="f2"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
     <div><b>Matches IntelliJ IDEA</b><span>The default style lines up with IntelliJ's own formatter.</span></div></div>
   <div class="feat" id="f3"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg></div>
@@ -98,10 +98,10 @@ code.i{font:500 .9em "JetBrains Mono";color:var(--text);background:#1f1f22;paddi
 <!-- S6 CTA -->
 <section class="scene" id="s6">
   <div id="s6logo"></div>
-  <h1 class="serif" style="margin-top:40px">Bowerbird <em>Java Format</em></h1>
+  <h1 class="serif" style="margin-top:40px">Tailorbird <em>Java Format</em></h1>
   <p class="sub">Open source · Apache 2.0 · Based on palantir-java-format</p>
   <div class="chips"><span class="chip">Gradle</span><span class="chip">Spotless</span><span class="chip">IntelliJ</span><span class="chip">CLI</span></div>
-  <div class="url">github.com/pieterjanscheir/bowerbird-java-format</div>
+  <div class="url">github.com/pieterjanscheir/tailorbird-java-format</div>
 </section>
 
 <div class="foot" id="foot"></div>
@@ -111,7 +111,7 @@ code.i{font:500 .9em "JetBrains Mono";color:var(--text);background:#1f1f22;paddi
 const LOGO = (s)=>`<svg width="${s}" height="${s}" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="7" fill="#e5322d"/><path d="M12.5 8.5c-2 0-3 1-3 3v2.2c0 1.2-.7 2-2 2.3 1.3.3 2 1.1 2 2.3v2.2c0 2 1 3 3 3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.5 8.5c2 0 3 1 3 3v2.2c0 1.2-.7 2-2 2.3-1.3.3-2 1.1-2 2.3v2.2c0 2-1 3-3 3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="16" r="2.1" fill="#fff"/></svg>`;
 document.getElementById('s2logo').innerHTML = LOGO(180);
 document.getElementById('s6logo').innerHTML = LOGO(130);
-document.getElementById('foot').innerHTML = LOGO(30)+'<span>Bowerbird Java Format</span>';
+document.getElementById('foot').innerHTML = LOGO(30)+'<span>Tailorbird Java Format</span>';
 
 const TOTAL = 32;
 const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
