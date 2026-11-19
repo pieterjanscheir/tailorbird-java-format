@@ -144,6 +144,16 @@ public class CommandLineOptionsParserTest {
     }
 
     @Test
+    public void diff() {
+        assertThat(CommandLineOptionsParser.parse(Arrays.asList("--diff")).diff())
+                .isTrue();
+        assertThat(CommandLineOptionsParser.parse(Arrays.asList("-diff")).diff())
+                .isTrue();
+        assertThat(CommandLineOptionsParser.parse(Arrays.asList("A.java")).diff())
+                .isFalse();
+    }
+
+    @Test
     public void dryRun() {
         assertThat(CommandLineOptionsParser.parse(Arrays.asList("--dry-run")).dryRun())
                 .isTrue();

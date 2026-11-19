@@ -135,6 +135,10 @@ final class CommandLineOptionsParser {
                 case "--dry-run":
                     optionsBuilder.dryRun(true);
                     break;
+                case "--diff":
+                case "-diff":
+                    optionsBuilder.diff(true);
+                    break;
                 case "--set-exit-if-changed":
                     optionsBuilder.setExitIfChanged(true);
                     break;
