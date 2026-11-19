@@ -1,0 +1,36 @@
+apply plugin: 'java-library'
+apply plugin: 'org.gradlex.maven-plugin-development'
+apply plugin: 'com.palantir.external-publish-jar'
+
+description = 'Maven plugin that formats Java sources with Tailorbird'
+
+dependencies {
+    // The formatter is not loaded into Maven's JVM: the mojos resolve this dependency's jars from the
+    // plugin descriptor and run the formatter's CLI in a forked JVM with the required --add-exports flags.
+    implementation project(':tailorbird-java-format')
+
+    compileOnly 'org.apache.maven:maven-plugin-api'
+    compileOnly 'org.apache.maven:maven-core'
+    compileOnly 'org.apache.maven.plugin-tools:maven-plugin-annotations'
+    compileOnly 'com.google.code.findbugs:jsr305'
+
+    testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+// Baseline sets every JavaCompile task's compatibility to the javaVersion target in afterEvaluate.
+// Java 11, like the formatter it forks, so the plugin also loads in Maven running on JDK 11.
+afterEvaluate {
+    tasks.withType(JavaCompile).named('compileJava') {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+mavenPlugin {
+    goalPrefix = 'tailorbird'
+}
+
+publishing.publications.withType(MavenPublication).configureEach {
+    pom.packaging = 'maven-plugin'
+}

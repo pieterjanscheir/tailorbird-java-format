@@ -85,7 +85,7 @@ jobs:
           cache-read-only: true
 
       - name: Test
-        run: ./gradlew :tailorbird-java-format-spi:check :tailorbird-java-format-jdk-bootstrap:check :tailorbird-java-format:check --stacktrace
+        run: ./gradlew :tailorbird-java-format-spi:check :tailorbird-java-format-jdk-bootstrap:check :tailorbird-java-format:check :tailorbird-maven-plugin:check --stacktrace
 
       - name: Publish to GitHub Packages
         env:
@@ -96,6 +96,7 @@ jobs:
           :tailorbird-java-format-spi:publishMavenPublicationToGitHubPackagesRepository
           :tailorbird-java-format-jdk-bootstrap:publishMavenPublicationToGitHubPackagesRepository
           :tailorbird-java-format:publishMavenPublicationToGitHubPackagesRepository
+          :tailorbird-maven-plugin:publishMavenPublicationToGitHubPackagesRepository
 
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -122,3 +123,4 @@ jobs:
             tailorbird-java-format/build/libs/*.jar
             tailorbird-java-format-spi/build/libs/*.jar
             tailorbird-java-format-jdk-bootstrap/build/libs/*.jar
+            tailorbird-maven-plugin/build/libs/*.jar
