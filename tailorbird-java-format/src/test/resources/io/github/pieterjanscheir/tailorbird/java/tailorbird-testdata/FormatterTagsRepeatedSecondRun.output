@@ -1,0 +1,13 @@
+class FormatterTagsRepeated {
+
+    // @formatter:off
+  int   a   =   1;
+  // @formatter:on
+    void m() {
+        // @formatter:off
+          int   b   =   2;
+          // @formatter:on
+        int c = 3;
+    }
+
+}
