@@ -39,6 +39,7 @@ public final class TailorbirdRules {
     private static final TailorbirdRules DEFAULTS = builder().build();
 
     private final int lineLength;
+    private final int methodChainColumnLimit;
     private final int indent;
     private final int continuationIndent;
     private final boolean spaceAfterControlKeyword;
@@ -66,6 +67,7 @@ public final class TailorbirdRules {
 
     private TailorbirdRules(Builder b) {
         this.lineLength = b.lineLength;
+        this.methodChainColumnLimit = b.methodChainColumnLimit;
         this.indent = b.indent;
         this.continuationIndent = b.continuationIndent;
         this.spaceAfterControlKeyword = b.spaceAfterControlKeyword;
@@ -148,6 +150,15 @@ public final class TailorbirdRules {
     /** Maximum line length. */
     public int lineLength() {
         return lineLength;
+    }
+
+    /**
+     * A method chain stays on one line only if its last {@code .} comes before this column; otherwise it is split one
+     * call per line. 80 by default and in both presets, whatever {@link #lineLength()} is. A value at or above
+     * {@link #lineLength()} splits a chain only when it doesn't fit.
+     */
+    public int methodChainColumnLimit() {
+        return methodChainColumnLimit;
     }
 
     /** Spaces per block indent. */
@@ -285,6 +296,7 @@ public final class TailorbirdRules {
         }
         TailorbirdRules o = (TailorbirdRules) other;
         return lineLength == o.lineLength
+                && methodChainColumnLimit == o.methodChainColumnLimit
                 && indent == o.indent
                 && continuationIndent == o.continuationIndent
                 && spaceAfterControlKeyword == o.spaceAfterControlKeyword
@@ -315,6 +327,7 @@ public final class TailorbirdRules {
     public int hashCode() {
         return Objects.hash(
                 lineLength,
+                methodChainColumnLimit,
                 indent,
                 continuationIndent,
                 spaceAfterControlKeyword,
@@ -350,6 +363,7 @@ public final class TailorbirdRules {
     /** Builder for {@link TailorbirdRules}; starts from {@link #defaults()}. */
     public static final class Builder {
         private int lineLength = 120;
+        private int methodChainColumnLimit = 80;
         private int indent = 4;
         private int continuationIndent = 4;
         private boolean spaceAfterControlKeyword = false;
@@ -526,6 +540,11 @@ public final class TailorbirdRules {
 
         public Builder javadocWrap(boolean value) {
             this.javadocWrap = value;
+            return this;
+        }
+
+        public Builder methodChainColumnLimit(int value) {
+            this.methodChainColumnLimit = requireAtLeast("wrapping.methodChainColumnLimit", value, 1);
             return this;
         }
 

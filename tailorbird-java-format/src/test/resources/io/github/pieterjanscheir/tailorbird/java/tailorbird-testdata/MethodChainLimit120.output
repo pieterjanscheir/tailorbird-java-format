@@ -1,0 +1,14 @@
+package example;
+
+class MethodChainLimit120 {
+
+    void chains() {
+        Order order = Order.builder().account(account).quantity(quantity).build();
+        Order shortOne = Order.builder().account(account).build();
+        Order wide = Order.builder().account(clientAccount).instrument(instrument).quantity(quantity).build();
+        Order tooWide =
+            Order.builder().account(clientAccount).instrument(instrument).quantity(quantity).price(price).build();
+        String text = values.stream().map(String::valueOf).filter(value -> !value.isEmpty()).collect(joining(", "));
+    }
+
+}
