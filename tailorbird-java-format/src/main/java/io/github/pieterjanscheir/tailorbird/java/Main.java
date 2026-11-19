@@ -79,7 +79,9 @@ public final class Main {
             result = formatter.format(args);
         } catch (UsageException e) {
             err.print(e.getMessage());
-            result = 0;
+            // Tailorbird: a usage error exits with 2, like an invalid tailorbird.yml, so a mistyped command fails a CI
+            // step instead of passing without checking anything (#52). --help still exits with 0.
+            result = e.isError() ? 2 : 0;
         } catch (TailorbirdConfig.TailorbirdConfigException e) {
             // Tailorbird: an invalid tailorbird.yml is the user's to fix, so print the message, not a stack trace.
             err.println("error: " + e.getMessage());

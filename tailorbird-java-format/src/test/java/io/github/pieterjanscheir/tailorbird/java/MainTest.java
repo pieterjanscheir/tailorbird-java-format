@@ -113,8 +113,42 @@ public class MainTest {
         Process process = formatterMain().start();
         process.waitFor();
         String err = new String(ByteStreams.toByteArray(process.getErrorStream()), UTF_8);
+        assertThat(err).contains("no files were provided");
+        assertThat(err).contains("Usage: palantir-java-format");
+        assertThat(process.exitValue()).isEqualTo(2);
+    }
+
+    @Test
+    public void help_exits_with_zero() throws Exception {
+        Process process = formatterMain("--help").start();
+        process.waitFor();
+        String err = new String(ByteStreams.toByteArray(process.getErrorStream()), UTF_8);
         assertThat(err).contains("Usage: palantir-java-format");
         assertThat(process.exitValue()).isEqualTo(0);
+    }
+
+    @Test
+    public void version_exits_with_zero() throws Exception {
+        Process process = formatterMain("--version").start();
+        process.waitFor();
+        assertThat(process.exitValue()).isEqualTo(0);
+    }
+
+    @Test
+    public void unknown_flag_exits_with_two() throws Exception {
+        Path path = Files.createFile(testFolder.resolve("Example.java"));
+        Files.write(path, "class Example {}\n".getBytes(UTF_8));
+        Process process = formatterMain("--no-such-flag", path.toString()).start();
+        process.waitFor();
+        String err = new String(ByteStreams.toByteArray(process.getErrorStream()), UTF_8);
+        assertThat(err).contains("--no-such-flag");
+        assertThat(process.exitValue()).isEqualTo(2);
+    }
+
+    @Test
+    public void usage_exception_tells_help_from_errors() {
+        assertThat(new UsageException().isError()).isFalse();
+        assertThat(new UsageException("no files were provided").isError()).isTrue();
     }
 
     // end to end javadoc formatting test

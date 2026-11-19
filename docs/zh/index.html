@@ -155,7 +155,7 @@ continuationIndent: 4</code></pre>
 export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' $p; done)"
 tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
     --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>在 JDK 16 及更高版本上需要 <code>JAVA_OPTS</code> 这一行：格式化器使用 JDK 自带的 Java 解析器，而 JDK 只有在加上这些参数时才会开放它。配置文件无效时，会输出一行错误信息并以退出码 2 结束。</p>
+<p>在 JDK 16 及更高版本上需要 <code>JAVA_OPTS</code> 这一行：格式化器使用 JDK 自带的 Java 解析器，而 JDK 只有在加上这些参数时才会开放它。配置文件无效时，会输出一行错误信息并以退出码 2 结束；命令写错时（例如未知选项或没有给出文件）也以退出码 2 结束，而 <code>--help</code> 和 <code>--version</code> 以 0 结束。</p>
 <p>只指定 <code>--palantir</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>tailorbird.yml</code>；如果没有，则使用 Tailorbird 的默认值。</p>
 
 <p>Gradle、Spotless 和 IntelliJ 都从 <code>palantirJavaFormat</code> 依赖中加载格式化器，因此读取的是同一个文件；这正是要把它放在那里的原因。文件修改后，Spotless 也会察觉并重新格式化。需要注意以下几点：</p>
