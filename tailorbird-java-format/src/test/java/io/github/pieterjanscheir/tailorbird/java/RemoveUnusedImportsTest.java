@@ -255,6 +255,91 @@ public class RemoveUnusedImportsTest {
                     "interface Test { private static void foo() {} }",
                 },
             },
+            // Tailorbird: removing a whole group leaves one blank line, not two (issue #40).
+            {
+                {
+                    "package p;", //
+                    "",
+                    "import java.util.Map;",
+                    "",
+                    "class Test {}",
+                },
+                {
+                    "package p;", //
+                    "",
+                    "class Test {}",
+                },
+            },
+            {
+                {
+                    "package p;",
+                    "",
+                    "import static java.util.Objects.requireNonNull;",
+                    "",
+                    "import java.util.List;",
+                    "",
+                    "class Test { List<String> xs; }",
+                },
+                {
+                    "package p;", //
+                    "",
+                    "import java.util.List;",
+                    "",
+                    "class Test { List<String> xs; }",
+                },
+            },
+            {
+                {
+                    "package p;",
+                    "",
+                    "import static java.util.Objects.requireNonNull;",
+                    "import static java.util.Objects.isNull;",
+                    "",
+                    "import java.util.List;",
+                    "",
+                    "class Test { List<String> xs; }",
+                },
+                {
+                    "package p;", //
+                    "",
+                    "import java.util.List;",
+                    "",
+                    "class Test { List<String> xs; }",
+                },
+            },
+            {
+                {
+                    "package p;", //
+                    "",
+                    "import java.util.Map;",
+                    "",
+                    "/** Doc. */",
+                    "class Test {}",
+                },
+                {
+                    "package p;", //
+                    "",
+                    "/** Doc. */",
+                    "class Test {}",
+                },
+            },
+            {
+                {
+                    "package p;",
+                    "",
+                    "import java.util.List;",
+                    "import java.util.Map;",
+                    "",
+                    "class Test { List<String> xs; }",
+                },
+                {
+                    "package p;", //
+                    "",
+                    "import java.util.List;",
+                    "",
+                    "class Test { List<String> xs; }",
+                },
+            },
         };
         ImmutableList.Builder<Object[]> builder = ImmutableList.builder();
         for (String[][] inputAndOutput : inputsOutputs) {

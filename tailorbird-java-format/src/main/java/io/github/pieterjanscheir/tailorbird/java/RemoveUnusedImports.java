@@ -296,6 +296,7 @@ public class RemoveUnusedImports {
         // needed so we can reformat fixed regions, otherwise the fixes could just
         // be applied in descending order without adjusting offsets.
         StringBuilder sb = new StringBuilder(source);
+        String sep = Newlines.guessLineSeparator(source);
         int offset = 0;
         for (Map.Entry<Range<Integer>, String> replacement :
                 replacements.asMapOfRanges().entrySet()) {
@@ -308,7 +309,29 @@ public class RemoveUnusedImports {
                 fixedRanges.add(Range.closedOpen(start, end));
             }
             offset += replaceWith.length() - (range.upperEndpoint() - range.lowerEndpoint());
+            if (replaceWith.isEmpty()) {
+                offset -= removeDoubleBlankLine(sb, start, sep);
+            }
         }
         return sb.toString();
+    }
+
+    /**
+     * Tailorbird: removing the last import of a group leaves the blank lines that surrounded the group next to each
+     * other, which the next formatter run would collapse. Collapses them now, so one run reaches a fixed point.
+     *
+     * @return the number of characters removed
+     */
+    private static int removeDoubleBlankLine(StringBuilder sb, int position, String sep) {
+        boolean blankLineBefore = position >= 2 * sep.length()
+                && sb.substring(position - 2 * sep.length(), position).equals(sep + sep);
+        int removed = 0;
+        while (blankLineBefore
+                && position + sep.length() <= sb.length()
+                && sb.substring(position, position + sep.length()).equals(sep)) {
+            sb.delete(position, position + sep.length());
+            removed += sep.length();
+        }
+        return removed;
     }
 }
