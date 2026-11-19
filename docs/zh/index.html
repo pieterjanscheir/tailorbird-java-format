@@ -155,7 +155,7 @@ continuationIndent: 4</code></pre>
 export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' $p; done)"
 tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
     --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>在 JDK 16 及更高版本上需要 <code>JAVA_OPTS</code> 这一行：格式化器使用 JDK 自带的 Java 解析器，而 JDK 只有在加上这些参数时才会开放它。配置文件无效时，会输出一行错误信息并以退出码 2 结束。</p>
+<p>在 JDK 16 及更高版本上需要 <code>JAVA_OPTS</code> 这一行：格式化器使用 JDK 自带的 Java 解析器，而 JDK 只有在加上这些参数时才会开放它。配置文件无效时，会输出一行错误信息并以退出码 2 结束；命令写错时（例如未知选项或没有给出文件）也以退出码 2 结束，而 <code>--help</code> 和 <code>--version</code> 以 0 结束。</p>
 <p>只指定 <code>--tailorbird</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>tailorbird.yml</code>；如果没有，则使用 Tailorbird 的默认值。<code>--palantir</code> 的效果相同，保留它是因为上游插件会传入这个参数；它不会生成 Palantir 风格。如需 Palantir 风格，请使用包含 <a href="#presets"><code>preset: palantir</code></a> 的设置文件。</p>
 
 <p>Gradle、Spotless 和 IntelliJ 都从 <code>palantirJavaFormat</code> 依赖中加载格式化器，因此读取的是同一个文件；这正是要把它放在那里的原因。文件修改后，Spotless 也会察觉并重新格式化。需要注意以下几点：</p>
@@ -193,6 +193,9 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-javadoc-blanklineafterparams"><code>javadoc.blankLineAfterParams</code></a></td><td><code>true</code></td><td>当后面还有其他标签时，在 <code>@param</code> 标签块之后保留一个空行。</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterreturn"><code>javadoc.blankLineAfterReturn</code></a></td><td><code>true</code></td><td>当后面还有其他标签时，在 <code>@return</code> 之后保留一个空行。</td></tr>
     <tr><td><a href="#rule-javadoc-singlespaceaftertagname"><code>javadoc.singleSpaceAfterTagName</code></a></td><td><code>true</code></td><td><code>@param</code> 或 <code>@throws</code> 的名称与其描述之间恰好保留一个空格。</td></tr>
+    <tr><td><a href="#rule-formattertags-enabled"><code>formatterTags.enabled</code></a></td><td><code>false</code></td><td>保留 <code>// @formatter:off</code> 与 <code>// @formatter:on</code> 之间代码的原样。</td></tr>
+    <tr><td><a href="#rule-formattertags-off"><code>formatterTags.off</code></a></td><td><code>"@formatter:off"</code></td><td>注释中开始此类区域的文本。</td></tr>
+    <tr><td><a href="#rule-formattertags-on"><code>formatterTags.on</code></a></td><td><code>"@formatter:on"</code></td><td>注释中结束此类区域的文本。</td></tr>
   </tbody>
 </table>
 <p>下面是一个包含所有配置项及其默认值的完整文件，可直接复制后修改：</p>
@@ -220,7 +223,11 @@ javadoc:
   blankLineAfterDescription: true
   blankLineAfterParams: true
   blankLineAfterReturn: true
-  singleSpaceAfterTagName: true</code></pre>
+  singleSpaceAfterTagName: true
+formatterTags:
+  enabled: false
+  off: "@formatter:off"
+  on: "@formatter:on"</code></pre>
 
 <!-- rules-reference:start -->
 <h3 id="reference">规则参考</h3>
@@ -1207,6 +1214,56 @@ class Example {
 
 }</code></pre></div>
 </div></div>
+<div class="rule" id="rule-formattertags-enabled">
+<h4><code>formatterTags.enabled</code></h4>
+<p>保留包含 <code>@formatter:off</code> 的注释与包含 <code>@formatter:on</code> 的注释之间代码的原样，适用于手动对齐的表格、DSL 和测试数据。这与 IntelliJ 使用的标记相同，IntelliJ 默认同样关闭此功能。</p>
+<table class="rule-facts"><tr><th>取值</th><td><code>true</code> 或 <code>false</code></td></tr><tr><th>默认值</th><td><code>false</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">区域从 <code>off</code> 注释的开头延伸到 <code>on</code> 注释的结尾；格式化器仍会调整 <code>off</code> 注释本身的缩进。只有 <code>off</code> 而没有 <code>on</code> 时，区域延伸到文件末尾；区域内的 <code>off</code> 会被忽略。标记只在注释中生效，在字符串中无效。区域内的 import 不会被排序或删除，区域内的字符串也不会重新换行。</p>
+<details><summary>输入</summary><pre><code>class Example {
+    // @formatter:off
+    int[][] scores = {
+        {  10, 200,  3 },
+        { 400,   5, 60 },
+    };
+    // @formatter:on
+    int   size  =  2;
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">formatterTags:<br>&nbsp;&nbsp;enabled: true</div><pre><code>class Example {
+
+    // @formatter:off
+    int[][] scores = {
+        {  10, 200,  3 },
+        { 400,   5, 60 },
+    };
+    // @formatter:on
+    int size = 2;
+
+}</code></pre></div>
+<div><div class="label yaml">formatterTags:<br>&nbsp;&nbsp;enabled: false</div><pre><code>class Example {
+
+    // @formatter:off
+    int[][] scores = {
+        { 10, 200, 3 },
+        { 400, 5, 60 },
+    };
+    // @formatter:on
+    int size = 2;
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-formattertags-off">
+<h4><code>formatterTags.off</code></h4>
+<p>注释中开始格式化器不处理区域的文本。</p>
+<table class="rule-facts"><tr><th>取值</th><td>不含空格、<code>/</code> 或 <code>*</code> 的文本</td></tr><tr><th>默认值</th><td><code>"@formatter:off"</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>"@formatter:off"</code> · <code>google</code>: <code>"@formatter:off"</code></td></tr></table>
+<p class="note">仅在 <code>formatterTags.enabled</code> 为 true 时使用。</p>
+</div>
+<div class="rule" id="rule-formattertags-on">
+<h4><code>formatterTags.on</code></h4>
+<p>注释中结束此类区域的文本。</p>
+<table class="rule-facts"><tr><th>取值</th><td>不含空格、<code>/</code> 或 <code>*</code> 的文本</td></tr><tr><th>默认值</th><td><code>"@formatter:on"</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>"@formatter:on"</code> · <code>google</code>: <code>"@formatter:on"</code></td></tr></table>
+<p class="note">仅在 <code>formatterTags.enabled</code> 为 true 时使用。</p>
+</div>
 <!-- rules-reference:end -->
 
 <h2 id="rules">默认风格</h2>
