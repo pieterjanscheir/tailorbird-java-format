@@ -9,8 +9,61 @@ permissions:
   contents: read
 
 jobs:
+  # Native binaries of the command-line launcher, one per platform, built with the GraalVM from gradle/jdks.
+  native:
+    name: Native binary (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { name: linux-x86-64, runner: ubuntu-latest }
+          - { name: linux-aarch64, runner: ubuntu-24.04-arm }
+          - { name: macos-aarch64, runner: macos-latest }
+          - { name: windows-x86-64, runner: windows-latest }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # the version comes from the tag
+
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          cache-read-only: true
+
+      - name: Build
+        shell: bash
+        run: ./gradlew --stacktrace :tailorbird-java-format-native:nativeCompile
+
+      - name: Name the binary after the version and platform
+        shell: bash
+        env:
+          PLATFORM: ${{ matrix.name }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          mkdir dist
+          binary=$(find tailorbird-java-format-native/build/native/nativeCompile -maxdepth 1 -type f -name 'tailorbird-*' | head -1)
+          extension=""
+          case "$binary" in *.exe) extension=".exe" ;; esac
+          cp "$binary" "dist/tailorbird-$VERSION-$PLATFORM$extension"
+          ls -la dist
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-${{ matrix.name }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
   release:
     name: Publish ${{ github.ref_name }}
+    needs: native
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
@@ -44,11 +97,19 @@ jobs:
           :tailorbird-java-format-jdk-bootstrap:publishMavenPublicationToGitHubPackagesRepository
           :tailorbird-java-format:publishMavenPublicationToGitHubPackagesRepository
 
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: native-*
+          path: dist
+          merge-multiple: true
+
       - name: Build the launcher zip and checksums
         run: |
           ./gradlew --stacktrace :tailorbird-java-format:distZip
-          cd tailorbird-java-format/build/distributions
-          sha256sum tailorbird-*.zip > SHA256SUMS
+          cp tailorbird-java-format/build/distributions/tailorbird-*.zip dist/
+          chmod +x dist/tailorbird-*-linux-* dist/tailorbird-*-macos-*
+          cd dist
+          sha256sum tailorbird-* > SHA256SUMS
           cat SHA256SUMS
 
       - name: Create GitHub Release
@@ -56,8 +117,8 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            tailorbird-java-format/build/distributions/tailorbird-*.zip
-            tailorbird-java-format/build/distributions/SHA256SUMS
+            dist/tailorbird-*
+            dist/SHA256SUMS
             tailorbird-java-format/build/libs/*.jar
             tailorbird-java-format-spi/build/libs/*.jar
             tailorbird-java-format-jdk-bootstrap/build/libs/*.jar
