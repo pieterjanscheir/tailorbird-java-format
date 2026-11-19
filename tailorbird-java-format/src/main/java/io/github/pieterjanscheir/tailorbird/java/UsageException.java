@@ -78,6 +78,7 @@ final class UsageException extends Exception {
 
     private static final String[] ADDITIONAL_USAGE = {
         "If -i is given with -, the result is sent to stdout.",
+        "A folder is searched for .java files, skipping hidden folders and folders named build or target.",
         "The --lines, --offset, and --length flags may be given more than once.",
         "The --offset and --length flags must be given an equal number of times.",
         "If --lines, --offset, or --length are given, only one file (or -) may be given."
