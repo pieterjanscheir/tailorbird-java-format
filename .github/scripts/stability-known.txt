@@ -9,13 +9,6 @@ jackson-databind google src/test/java/com/fasterxml/jackson/databind/deser/BeanD
 jackson-databind google src/test/java/com/fasterxml/jackson/databind/node/JsonNodeFindMethodsTest.java #53
 jackson-databind google src/test-jdk17/java/com/fasterxml/jackson/databind/records/RecordExplicitCreatorsTest.java #53
 jackson-databind google src/test/java/com/fasterxml/jackson/databind/views/MultipleViewsDeser437Test.java #54
-formatter-testdata tailorbird tailorbird-testdata/Wrapping.java #40
-formatter-testdata palantir tailorbird-testdata/Wrapping.java #40
-formatter-testdata google tailorbird-testdata/Wrapping.java #40
-formatter-testdata tailorbird tailorbird-testdata/WrappingParenInline.java #40
-formatter-testdata palantir tailorbird-testdata/WrappingParenInline.java #40
-formatter-testdata google tailorbird-testdata/WrappingParenInline.java #40
 formatter-testdata tailorbird testdata/B21647014.java #40
 formatter-testdata palantir testdata/B21647014.java #40
 formatter-testdata google testdata/B21647014.java #40
-formatter-testdata tailorbird testdata/A.java #55
