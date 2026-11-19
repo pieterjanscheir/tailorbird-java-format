@@ -51,7 +51,9 @@ import io.github.pieterjanscheir.tailorbird.doc.State;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javax.annotation.Nullable;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -339,13 +341,15 @@ public final class Formatter {
      */
     public String formatSourceAndFixImports(String input) throws FormatterException {
         // Tailorbird: imports inside a @formatter:off region are left as written (issue #22).
+        // Tailorbird: everything works with spaces; tabs only go in at the end (issue #20).
+        input = toSpaces(input);
         if (!FormatterTags.coversImports(input, rules)) {
             input = reorderImports(input);
             input = RemoveUnusedImports.removeUnusedImports(input);
         }
-        String formatted = formatSource(input);
+        String formatted = formatSourceWithSpaces(input, ImmutableList.of(Range.closedOpen(0, input.length())));
         formatted = StringWrapper.wrap(maxLineLength(), formatted, this);
-        return formatted;
+        return toTabs(formatted);
     }
 
     /**
@@ -387,6 +391,47 @@ public final class Formatter {
      * @throws FormatterException if the input string cannot be parsed
      */
     public ImmutableList<Replacement> getFormatReplacements(String input, Collection<Range<Integer>> characterRanges)
+            throws FormatterException {
+        if (!indentsWithTabs()) {
+            return getFormatReplacementsWithSpaces(input, characterRanges);
+        }
+        // Tailorbird: with indentWithTabs, the file is formatted with spaces and its indentation turned into tabs
+        // afterwards, so the result is one replacement of the whole file (issue #20).
+        String spaced = toSpaces(input);
+        List<Range<Integer>> spacedRanges = new ArrayList<>();
+        for (Range<Integer> range : characterRanges) {
+            spacedRanges.add(TabIndentation.mapRange(input, spaced, range));
+        }
+        String formatted = toTabs(formatSourceWithSpaces(spaced, spacedRanges));
+        return formatted.equals(input)
+                ? ImmutableList.of()
+                : ImmutableList.of(Replacement.create(0, input.length(), formatted));
+    }
+
+    /** Tailorbird: true when the rules indent with tabs. */
+    boolean indentsWithTabs() {
+        return rules != null && rules.indentWithTabs();
+    }
+
+    /** Tailorbird: {@code text} with its indentation in spaces, when the rules indent with tabs. */
+    String toSpaces(String text) {
+        TailorbirdRules r = rules;
+        return r != null && r.indentWithTabs() ? TabIndentation.toSpaces(text, r.indent()) : text;
+    }
+
+    /** Tailorbird: {@code text} with its indentation in tabs, when the rules indent with tabs. */
+    String toTabs(String text) {
+        TailorbirdRules r = rules;
+        return r != null && r.indentWithTabs() ? TabIndentation.toTabs(text, r.indent()) : text;
+    }
+
+    /** Tailorbird: {@link #formatSource(String, Collection)} for input indented with spaces, giving spaces. */
+    String formatSourceWithSpaces(String input, Collection<Range<Integer>> characterRanges) throws FormatterException {
+        return Utils.applyReplacements(input, getFormatReplacementsWithSpaces(input, characterRanges));
+    }
+
+    /** Tailorbird: {@link #getFormatReplacements} for input indented with spaces, giving spaces. */
+    ImmutableList<Replacement> getFormatReplacementsWithSpaces(String input, Collection<Range<Integer>> characterRanges)
             throws FormatterException {
         JavaInput javaInput = new JavaInput(input);
 

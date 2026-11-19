@@ -59,14 +59,23 @@ public final class StringWrapper {
 
     /** Reflows string literals in the given Java source code that extend past the given column limit. */
     static String wrap(final int columnLimit, String input, Formatter formatter) throws FormatterException {
+        // Tailorbird: columns are counted with spaces, so tab indentation is turned into spaces and back (issue #20).
+        if (formatter.indentsWithTabs()) {
+            return formatter.toTabs(wrapWithSpaces(columnLimit, formatter.toSpaces(input), formatter));
+        }
+        return wrapWithSpaces(columnLimit, input, formatter);
+    }
+
+    private static String wrapWithSpaces(final int columnLimit, String input, Formatter formatter)
+            throws FormatterException {
         if (!needWrapping(columnLimit, input)) {
             // fast path
             return input;
         }
 
         TreeRangeMap<Integer, String> replacements = reflowOutsideOffRegions(columnLimit, input, formatter);
-        String firstPass =
-                formatter.formatSource(input, replacements.asMapOfRanges().keySet());
+        String firstPass = formatter.formatSourceWithSpaces(
+                input, replacements.asMapOfRanges().keySet());
 
         if (!firstPass.equals(input)) {
             // If formatting the replacement ranges resulted in a change, recalculate the replacements on
@@ -78,7 +87,7 @@ public final class StringWrapper {
         String result = applyReplacements(input, replacements);
 
         // Format again, because broken strings might now fit on the first line in case of assignments
-        String secondPass = formatter.formatSource(result, rangesAfterAppliedReplacements(replacements));
+        String secondPass = formatter.formatSourceWithSpaces(result, rangesAfterAppliedReplacements(replacements));
 
         if (!secondPass.equals(result)) {
             replacements = reflowOutsideOffRegions(columnLimit, secondPass, formatter);

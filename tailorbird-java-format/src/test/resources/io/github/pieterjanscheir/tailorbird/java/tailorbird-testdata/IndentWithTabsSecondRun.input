@@ -1,0 +1,27 @@
+class IndentWithTabsSecondRun {
+
+	/**
+	 * Places an order.
+	 *
+	 * @param account the account
+	 */
+	String place(String account, String order) {
+		if(account.isEmpty()) {
+			return "an empty account, which is not allowed by the exchange, so the order is refused before it is"
+				+ " placed: "
+				+ order;
+		}
+		String json = """
+            {
+              "account": "%s",
+              "spaces": true
+            }
+            """;
+		return String.format(json, account)
+			+ someVeryLongMethodName(account, order, account, order, account, order, account);
+	}
+
+	// mixed indentation in the input
+	int mixed;
+
+}

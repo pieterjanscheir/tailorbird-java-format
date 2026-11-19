@@ -101,7 +101,7 @@ class TailorbirdConfigTest {
                         .formatterOffTag("fmt:off")
                         .formatterOnTag("fmt:on")
                         .build());
-        assertThat(TailorbirdConfig.settingNames()).hasSize(28);
+        assertThat(TailorbirdConfig.settingNames()).hasSize(29);
     }
 
     @Test

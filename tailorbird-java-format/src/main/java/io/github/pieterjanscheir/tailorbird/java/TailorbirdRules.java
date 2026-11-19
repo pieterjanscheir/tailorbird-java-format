@@ -43,6 +43,7 @@ public final class TailorbirdRules {
     private final int methodChainColumnLimit;
     private final int indent;
     private final int continuationIndent;
+    private final boolean indentWithTabs;
     private final boolean spaceAfterControlKeyword;
     private final boolean arrayInitializerBraceSpaces;
     private final boolean closingParenOnOwnLine;
@@ -73,6 +74,7 @@ public final class TailorbirdRules {
         this.methodChainColumnLimit = b.methodChainColumnLimit;
         this.indent = b.indent;
         this.continuationIndent = b.continuationIndent;
+        this.indentWithTabs = b.indentWithTabs;
         this.spaceAfterControlKeyword = b.spaceAfterControlKeyword;
         this.arrayInitializerBraceSpaces = b.arrayInitializerBraceSpaces;
         this.closingParenOnOwnLine = b.closingParenOnOwnLine;
@@ -127,6 +129,7 @@ public final class TailorbirdRules {
         return builder.lineLength(120)
                 .indent(4)
                 .continuationIndent(8)
+                .indentWithTabs(false)
                 .spaceAfterControlKeyword(true)
                 .arrayInitializerBraceSpaces(false)
                 .closingParenOnOwnLine(false)
@@ -195,6 +198,15 @@ public final class TailorbirdRules {
     /** Spaces a wrapped line is indented by, relative to the line it continues. */
     public int continuationIndent() {
         return continuationIndent;
+    }
+
+    /**
+     * Indent with tabs instead of spaces: one tab per {@link #indent()} columns, the remainder as spaces. A tab counts
+     * as {@link #indent()} columns for {@link #lineLength()}, so lines wrap exactly as with spaces. Off by default and
+     * in both presets.
+     */
+    public boolean indentWithTabs() {
+        return indentWithTabs;
     }
 
     /** {@code if (x)} when true, {@code if(x)} when false. Also for, while, switch, try, catch and synchronized. */
@@ -338,6 +350,7 @@ public final class TailorbirdRules {
                 && methodChainColumnLimit == o.methodChainColumnLimit
                 && indent == o.indent
                 && continuationIndent == o.continuationIndent
+                && indentWithTabs == o.indentWithTabs
                 && spaceAfterControlKeyword == o.spaceAfterControlKeyword
                 && arrayInitializerBraceSpaces == o.arrayInitializerBraceSpaces
                 && closingParenOnOwnLine == o.closingParenOnOwnLine
@@ -371,6 +384,7 @@ public final class TailorbirdRules {
                 methodChainColumnLimit,
                 indent,
                 continuationIndent,
+                indentWithTabs,
                 spaceAfterControlKeyword,
                 arrayInitializerBraceSpaces,
                 closingParenOnOwnLine,
@@ -409,6 +423,7 @@ public final class TailorbirdRules {
         private int methodChainColumnLimit = 80;
         private int indent = 4;
         private int continuationIndent = 4;
+        private boolean indentWithTabs = false;
         private boolean spaceAfterControlKeyword = false;
         private boolean arrayInitializerBraceSpaces = true;
         private boolean closingParenOnOwnLine = true;
@@ -474,6 +489,11 @@ public final class TailorbirdRules {
 
         public Builder indent(int value) {
             this.indent = requireAtLeast("indent", value, 1);
+            return this;
+        }
+
+        public Builder indentWithTabs(boolean value) {
+            this.indentWithTabs = value;
             return this;
         }
 
