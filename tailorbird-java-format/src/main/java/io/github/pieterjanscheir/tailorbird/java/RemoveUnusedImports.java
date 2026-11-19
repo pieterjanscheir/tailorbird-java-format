@@ -227,7 +227,13 @@ public class RemoveUnusedImports {
             Set<String> usedNames,
             Multimap<String, Range<Integer>> usedInJavadoc) {
         RangeMap<Integer, String> replacements = TreeRangeMap.create();
-        for (JCImport importTree : unit.getImports()) {
+        // Tailorbird: iterate as Object, since on JDK 25 a module import is a JCModuleImport, not a JCImport. A module
+        // import provides names that can't be checked here, so it is never removed (issue #57).
+        for (Object tree : unit.getImports()) {
+            if (!(tree instanceof JCImport) || ModuleImports.isModule((ImportTree) tree)) {
+                continue;
+            }
+            JCImport importTree = (JCImport) tree;
             String simpleName = getSimpleName(importTree);
             if (!isUnused(unit, usedNames, usedInJavadoc, importTree, simpleName)) {
                 continue;
