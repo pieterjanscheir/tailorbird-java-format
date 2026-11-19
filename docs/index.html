@@ -60,6 +60,7 @@
     </ul>
     <div class="group">Develop</div>
     <ul>
+      <li><a href="#embedding">Embedding</a></li>
       <li><a href="#building">Building</a></li>
       <li><a href="#adding-rules">Adding a rule</a></li>
       <li><a href="#upstream">Upstream sync</a></li>
@@ -150,13 +151,25 @@ continuationIndent: 4</code></pre>
 <p>The presets are <code>tailorbird</code> (the default), <code>palantir</code> (120 characters, 4-space indent, 8-space continuation) and <code>google</code> (upstream's Google style: like <code>palantir</code>, with 100 characters, 2-space indent and 4-space continuation).</p>
 
 <h3 id="command-line">On the command line</h3>
-<p>For pre-commit hooks, CI scripts and other tools that run the formatter directly, build the command-line launcher and pass the settings file with <code>--config</code>:</p>
+<p>For pre-commit hooks, CI scripts and other tools that run the formatter directly, use the <code>tailorbird</code> launcher and pass the settings file with <code>--config</code>. Each <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> from the first one on has a <code>tailorbird-&lt;version&gt;.zip</code> and its <code>SHA256SUMS</code>. Unzip it, then run:</p>
+<pre><code>tailorbird-&lt;version&gt;/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>Each release also has a native binary that needs no Java at all: <code>tailorbird-&lt;version&gt;-linux-x86-64</code>, <code>-linux-aarch64</code>, <code>-macos-aarch64</code> and <code>-windows-x86-64.exe</code>. It takes the same options and gives the same output, and starts faster, which helps in pre-commit hooks. On macOS, a downloaded binary may first need <code>xattr -d com.apple.quarantine</code>.</p>
+<p>The zip needs Java 21 or later, from <code>JAVA_HOME</code> or the <code>PATH</code>. On Windows, use <code>bin\tailorbird.bat</code>. To build the same launcher yourself:</p>
 <pre><code>./gradlew :tailorbird-java-format:installDist
-export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' $p; done)"
-tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
-    --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>The <code>JAVA_OPTS</code> line is needed on JDK 16 and later: the formatter uses the JDK's own Java parser, which the JDK only opens up with these flags. An invalid settings file stops with a one-line error and exit code 2.</p>
-<p><code>--palantir</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults.</p>
+tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>The launcher passes the flags that open up the JDK's own Java parser, so you don't need to set <code>JAVA_OPTS</code>. An invalid settings file stops with a one-line error and exit code 2, and so does a mistake in the command, such as an unknown option or no files; <code>--help</code> and <code>--version</code> exit with 0.</p>
+<p>A folder works too: it's searched for <code>.java</code> files, skipping hidden folders and folders named <code>build</code> or <code>target</code>, which hold generated code. So a CI step can check a whole project:</p>
+<pre><code>tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed src</code></pre>
+<p>As a Git pre-commit hook, saved as <code>.git/hooks/pre-commit</code> and made executable, it stops the commit when a staged Java file isn't formatted and lists the files:</p>
+<pre><code>#!/bin/sh
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
+[ -z "$files" ] || tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed $files</code></pre>
+<p>Run it again with <code>--replace</code> instead of <code>--dry-run --set-exit-if-changed</code> to fix them. The hook checks the files as they are on disk, not only the staged changes.</p>
+<p><code>--tailorbird</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults. <code>--palantir</code> does the same and is there for the upstream plugins, which pass it; it doesn't give Palantir's style. For that, use a settings file with <a href="#presets"><code>preset: palantir</code></a>.</p>
+<p>To check without changing anything, for example in CI or a pre-commit hook, use <code>--diff --set-exit-if-changed</code>. It prints a unified diff of what the formatter would change and exits with 1 if anything would. The diff can be applied with <code>patch -p0</code> or <code>git apply -p0</code>:</p>
+<pre><code>tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
+    --config tailorbird.yml --diff --set-exit-if-changed src/main/java/Example.java</code></pre>
+<p><code>--dry-run</code> (<code>-n</code>) lists only the names of the files that would change.</p>
 
 <p>Gradle, Spotless and IntelliJ all load the formatter from the <code>palantirJavaFormat</code> dependencies, so they all read the same file; that's why it goes there. Spotless also notices when the file changes and formats again. A few things to know:</p>
 <ul>
@@ -1551,6 +1564,21 @@ void check(int x) {
  * @throws IllegalArgumentException when invalid
  */</code></pre></div>
 </div>
+
+<h2 id="embedding">Embedding Tailorbird</h2>
+<p>Tools that format Java code with Tailorbird, such as build or IDE plugins, should use <code>io.github.pieterjanscheir.tailorbird.api.TailorbirdFormatter</code> from the formatter artifact. The public types in that package are the supported API: they won't change incompatibly within a major version, and they don't expose upstream's types. Everything else in the jar can change with any upstream merge.</p>
+<pre><code>TailorbirdFormatter formatter = TailorbirdFormatter.fromConfig(Path.of("tailorbird.yml"));
+String formatted = formatter.format(source);   // imports fixed, code laid out, long strings wrapped
+
+// For an editor that formats a selection: the edits for the lines the ranges touch.
+List&lt;TextEdit&gt; edits = formatter.formatRanges(source, List.of(TextRange.of(start, end)));
+String result = TextEdit.apply(source, edits);</code></pre>
+<ul>
+  <li><code>defaults()</code>, <code>fromConfig(Path)</code>, <code>fromConfigText(String, String)</code> and <code>fromClasspath(ClassLoader)</code> create a formatter. An invalid settings file throws <code>TailorbirdConfigException</code>, whose message names the file and the setting, ready to show to the user.</li>
+  <li><code>format</code>, <code>fixImports</code> and <code>formatRanges</code> throw <code>TailorbirdFormatException</code> when the source doesn't parse. Its <code>diagnostics()</code> give 1-based lines and columns.</li>
+  <li>A formatter can be shared between threads.</li>
+  <li>On JDK 16 and later, the JVM that formats needs the options in <code>TailorbirdFormatter.requiredJvmArguments()</code>, the same ones as <code>JAVA_OPTS</code> <a href="#command-line">on the command line</a>. A plugin that formats in its own process needs them there; otherwise, start a JVM for the formatter with them.</li>
+</ul>
 
 <h2 id="building">Building</h2>
 <p>You need JDK 21. The Gradle wrapper downloads everything else.</p>
