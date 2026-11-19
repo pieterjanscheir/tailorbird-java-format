@@ -1,0 +1,15 @@
+/// A class with **Markdown** documentation.
+///
+/// - one
+/// - two
+///
+/// ```java
+/// int x = 1;
+/// ```
+class MarkdownDocComments {
+  /// Returns the [String] value, which is described here in a sentence that is long enough to need wrapping at the column limit.
+  String value() { return ""; }
+
+  /// Short.
+  int x;
+}

@@ -2,8 +2,8 @@
 <?eclipse version="3.4"?>
 <plugin>
   <extension point="org.eclipse.jdt.core.javaFormatter">
-    <javaFormatter class="io.github.pieterjanscheir.bowerbird.java.PalantirJavaFormatter"
-                   id="io.github.pieterjanscheir.bowerbird.java.PalantirJavaFormatter"
+    <javaFormatter class="io.github.pieterjanscheir.tailorbird.java.PalantirJavaFormatter"
+                   id="io.github.pieterjanscheir.tailorbird.java.PalantirJavaFormatter"
                    name="palantir-java-format"/>
   </extension>
 </plugin>

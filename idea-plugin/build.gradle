@@ -78,7 +78,7 @@ dependencies {
         testFramework(TestFrameworkType.Plugin.Java.INSTANCE)
     }
 
-    implementation project(':bowerbird-java-format-jdk-bootstrap')
+    implementation project(':tailorbird-java-format-jdk-bootstrap')
     implementation 'com.github.ben-manes.caffeine:caffeine'
     implementation('com.palantir.sls.versions:sls-versions') {
         // Has class version conflicts with slf4j brought in by Intellij
@@ -86,7 +86,7 @@ dependencies {
     }
     implementation 'com.palantir.gradle.utils:platform'
 
-    formatter project(':bowerbird-java-format')
+    formatter project(':tailorbird-java-format')
 
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'junit:junit'

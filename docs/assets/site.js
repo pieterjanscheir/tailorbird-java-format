@@ -1,4 +1,4 @@
-/* Bowerbird docs: shared by docs/index.html and docs/zh/index.html.
+/* Tailorbird docs: shared by docs/index.html and docs/zh/index.html.
  * Everything here enhances the static page; without it the page still reads fine. */
 (function () {
   'use strict';
@@ -135,7 +135,7 @@
   }
   function detect(pre, src) {
     if (pre.closest('.compare') || pre.closest('details')) return 'java';
-    if (/^\s*(\.\/gradlew|git |export |palantir-java-format|bowerbird-java-format)/m.test(src) && !/;\s*$/m.test(src.replace(/; done\)"/, ''))) return 'bash';
+    if (/^\s*(\.\/gradlew|git |export |palantir-java-format|tailorbird-java-format)/m.test(src) && !/;\s*$/m.test(src.replace(/; done\)"/, ''))) return 'bash';
     if (/^\s*(\.\/gradlew|git )/.test(src)) return 'bash';
     if (/^\s*(repositories|dependencies|plugins)\s*\{/m.test(src)) return 'groovy';
     var lines = src.split('\n').filter(function (l) { return l.trim(); });
