@@ -37,6 +37,7 @@
       <li><a href="#overview">概述</a></li>
       <li><a href="#install">安装</a></li>
       <li><a href="#gradle">Gradle</a></li>
+      <li><a href="#maven">Maven</a></li>
       <li><a href="#intellij">IntelliJ</a></li>
     </ul>
     <div class="group">配置</div>
@@ -60,6 +61,7 @@
     </ul>
     <div class="group">开发</div>
     <ul>
+      <li><a href="#embedding">嵌入</a></li>
       <li><a href="#building">构建</a></li>
       <li><a href="#adding-rules">添加规则</a></li>
       <li><a href="#upstream">同步上游</a></li>
@@ -97,6 +99,7 @@
     <tr><td>格式化器</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format</code></td></tr>
     <tr><td>SPI</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-spi</code></td></tr>
     <tr><td>JDK 引导模块</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-java-format-jdk-bootstrap</code></td></tr>
+    <tr><td>Maven 插件</td><td><code>io.github.pieterjanscheir.tailorbird:tailorbird-maven-plugin</code></td></tr>
   </tbody>
 </table>
 <p>即使是公开包，GitHub Packages 也需要认证。请创建一个带有 <code>read:packages</code> 权限范围的<a href="https://github.com/settings/tokens">个人访问令牌（classic）</a>，并把该仓库添加到构建中：</p>
@@ -125,6 +128,48 @@ dependencies {
 <p>该插件会配置 IntelliJ 使用这个格式化器。如需命令行的 <code>./gradlew format</code> 任务，请添加 <a href="https://github.com/palantir/gradle-baseline#compalantirbaseline-format">com.palantir.baseline-format</a> 插件。如果使用 <a href="https://github.com/diffplug/spotless/tree/main/plugin-gradle#palantir-java-format">Spotless</a>，请将 <code>palantirJavaFormat()</code> 配置为使用 Tailorbird 的构件，然后运行 <code>./gradlew spotlessApply</code>。</p>
 <div class="callout warn"><strong>不要启用原生格式化器</strong>（<code>palantir.native.formatter</code>）。它会下载 Palantir 预编译的二进制文件，其中不包含 Tailorbird 的规则。</div>
 
+<h2 id="maven">在 Maven 中使用</h2>
+<p>Tailorbird 提供自己的 Maven 插件。在 <code>pom.xml</code> 中把 GitHub Packages 添加为插件仓库，并在 <code>~/.m2/settings.xml</code> 中用相同的 <code>id</code> 配置你的令牌：</p>
+<pre><code>&lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+        &lt;id&gt;tailorbird&lt;/id&gt;
+        &lt;url&gt;https://maven.pkg.github.com/pieterjanscheir/tailorbird-java-format&lt;/url&gt;
+    &lt;/pluginRepository&gt;
+&lt;/pluginRepositories&gt;</code></pre>
+<pre><code>&lt;!-- ~/.m2/settings.xml --&gt;
+&lt;servers&gt;
+    &lt;server&gt;
+        &lt;id&gt;tailorbird&lt;/id&gt;
+        &lt;username&gt;你的 GitHub 用户名&lt;/username&gt;
+        &lt;password&gt;你的令牌&lt;/password&gt;
+    &lt;/server&gt;
+&lt;/servers&gt;</code></pre>
+<p>然后添加插件。<code>check</code> 目标在 <code>verify</code> 阶段运行，只要有文件未格式化，构建就会失败；<code>mvn tailorbird:apply</code> 会直接格式化源文件：</p>
+<pre><code>&lt;plugin&gt;
+    &lt;groupId&gt;io.github.pieterjanscheir.tailorbird&lt;/groupId&gt;
+    &lt;artifactId&gt;tailorbird-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;&lt;tailorbird version&gt;&lt;/version&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;check&lt;/goal&gt;
+            &lt;/goals&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+<table>
+  <thead><tr><th>参数</th><th>属性</th><th>默认值</th></tr></thead>
+  <tbody>
+    <tr><td><code>configFile</code></td><td><code>tailorbird.config</code></td><td>在模块目录或其父模块目录中最近的 <code>tailorbird.yml</code>；都没有时使用 Tailorbird 的默认风格</td></tr>
+    <tr><td><code>skip</code></td><td><code>tailorbird.skip</code></td><td><code>false</code></td></tr>
+    <tr><td><code>sourceDirectories</code></td><td></td><td>main 和 test 源码目录，不包括生成的源码</td></tr>
+    <tr><td><code>excludes</code></td><td></td><td>无；相对于模块目录的 glob 模式，例如 <code>**/generated/**</code></td></tr>
+    <tr><td><code>javaExecutable</code></td><td><code>tailorbird.java</code></td><td>运行 Maven 的 JVM 的 <code>java</code></td></tr>
+  </tbody>
+</table>
+<p>该插件需要 Maven 3.6.3 或更高版本，并运行在 Java 11 或更高版本上。它会在单独的 JVM 中运行格式化器，并带上所需的 <code>--add-exports</code> 参数，因此不需要 <code>.mvn/jvm.config</code>。这个 JVM 必须支持你代码所用的 Java 版本：要格式化 Java 21 语法，请在 JDK 21 上运行 Maven，或让 <code>javaExecutable</code> 指向 JDK 21。经过测试的版本见<a href="https://github.com/pieterjanscheir/tailorbird-java-format/blob/main/docs/compatibility.md">兼容性</a>。</p>
+<p>格式化器只读写 UTF-8。如果模块的 <code>project.build.sourceEncoding</code> 不是 UTF-8，插件会报错并停止，而不会格式化，因为重写文件会替换掉其中的非 ASCII 字符。</p>
+
 <h2 id="intellij">在 IntelliJ IDEA 中使用</h2>
 <p>安装上游的 <a href="https://plugins.jetbrains.com/plugin/13180-palantir-java-format">palantir-java-format IntelliJ 插件</a>。它使用 Gradle 插件为项目解析出的格式化器版本，因此只要 <code>palantirJavaFormat</code> 依赖指向 Tailorbird，在 IntelliJ 中导入项目或运行以下命令即可：</p>
 <pre><code>./gradlew idea</code></pre>
@@ -136,6 +181,7 @@ dependencies {
     palantirJavaFormat 'io.github.pieterjanscheir.tailorbird:tailorbird-java-format:&lt;tailorbird version&gt;'
     palantirJavaFormat files('config/tailorbird.yml')
 }</code></pre>
+<p>使用 <a href="#maven">Maven</a> 时，请把 <code>tailorbird.yml</code> 放在根 <code>pom.xml</code> 旁边，或设置插件的 <code>configFile</code>。</p>
 <p>所有配置项都是可选的：只需列出想要修改的项，其余均保持<a href="#settings">默认值</a>。例如，保留 Tailorbird 的风格，但写成 <code>if (x)</code>、使用 2 个空格缩进，并保留你输入的空行：</p>
 <pre><code># config/tailorbird.yml
 indent: 2
@@ -150,13 +196,25 @@ continuationIndent: 4</code></pre>
 <p>可用的预设有 <code>tailorbird</code>（默认）、<code>palantir</code>（120 个字符、4 空格缩进、8 空格续行缩进）和 <code>google</code>（上游的 Google 风格：与 <code>palantir</code> 类似，但为 100 个字符、2 空格缩进、4 空格续行缩进）。</p>
 
 <h3 id="command-line">在命令行中使用</h3>
-<p>对于 pre-commit 钩子、CI 脚本以及其他直接运行格式化器的工具，请构建命令行启动器，并通过 <code>--config</code> 传入配置文件：</p>
+<p>对于 pre-commit 钩子、CI 脚本以及其他直接运行格式化器的工具，请使用 <code>tailorbird</code> 启动器，并通过 <code>--config</code> 传入配置文件。从第一个版本起，每个 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> 都附带 <code>tailorbird-&lt;version&gt;.zip</code> 及其 <code>SHA256SUMS</code>。解压后运行：</p>
+<pre><code>tailorbird-&lt;version&gt;/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>每个版本还附带无需 Java 的原生可执行文件：<code>tailorbird-&lt;version&gt;-linux-x86-64</code>、<code>-linux-aarch64</code>、<code>-macos-aarch64</code> 和 <code>-windows-x86-64.exe</code>。它接受相同的选项，输出也相同，而且启动更快，适合用在 pre-commit 钩子中。在 macOS 上，下载的文件可能需要先运行 <code>xattr -d com.apple.quarantine</code>。</p>
+<p>zip 包需要 Java 21 或更高版本，从 <code>JAVA_HOME</code> 或 <code>PATH</code> 中查找。在 Windows 上请使用 <code>bin\tailorbird.bat</code>。也可以自己构建同样的启动器：</p>
 <pre><code>./gradlew :tailorbird-java-format:installDist
-export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' $p; done)"
-tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
-    --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>在 JDK 16 及更高版本上需要 <code>JAVA_OPTS</code> 这一行：格式化器使用 JDK 自带的 Java 解析器，而 JDK 只有在加上这些参数时才会开放它。配置文件无效时，会输出一行错误信息并以退出码 2 结束。</p>
-<p>只指定 <code>--palantir</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>tailorbird.yml</code>；如果没有，则使用 Tailorbird 的默认值。</p>
+tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>启动器会自动传入开放 JDK 自带 Java 解析器所需的参数，因此无需设置 <code>JAVA_OPTS</code>。配置文件无效时，会输出一行错误信息并以退出码 2 结束；命令写错时（例如未知选项或没有给出文件）也以退出码 2 结束，而 <code>--help</code> 和 <code>--version</code> 以 0 结束。</p>
+<p>也可以传入文件夹：会在其中查找 <code>.java</code> 文件，并跳过隐藏文件夹以及名为 <code>build</code> 或 <code>target</code> 的文件夹，因为它们存放的是生成的代码。因此，CI 步骤可以检查整个项目：</p>
+<pre><code>tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed src</code></pre>
+<p>作为 Git pre-commit 钩子（保存为 <code>.git/hooks/pre-commit</code> 并设为可执行），当暂存的 Java 文件未格式化时，它会阻止提交并列出这些文件：</p>
+<pre><code>#!/bin/sh
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
+[ -z "$files" ] || tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed $files</code></pre>
+<p>将 <code>--dry-run --set-exit-if-changed</code> 换成 <code>--replace</code> 再运行一次即可修复。钩子检查的是磁盘上的文件内容，而不只是暂存的改动。</p>
+<p>只指定 <code>--tailorbird</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>tailorbird.yml</code>；如果没有，则使用 Tailorbird 的默认值。<code>--palantir</code> 的效果相同，保留它是因为上游插件会传入这个参数；它不会生成 Palantir 风格。如需 Palantir 风格，请使用包含 <a href="#presets"><code>preset: palantir</code></a> 的设置文件。</p>
+<p>如果只想检查而不修改任何内容（例如在 CI 或 pre-commit 钩子中），请使用 <code>--diff --set-exit-if-changed</code>。它会以统一 diff 格式输出格式化器将要做的修改；只要有任何修改，就以退出码 1 结束。这个 diff 可以用 <code>patch -p0</code> 或 <code>git apply -p0</code> 应用：</p>
+<pre><code>tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
+    --config tailorbird.yml --diff --set-exit-if-changed src/main/java/Example.java</code></pre>
+<p><code>--dry-run</code>（<code>-n</code>）只列出将被修改的文件名。</p>
 
 <p>Gradle、Spotless 和 IntelliJ 都从 <code>palantirJavaFormat</code> 依赖中加载格式化器，因此读取的是同一个文件；这正是要把它放在那里的原因。文件修改后，Spotless 也会察觉并重新格式化。需要注意以下几点：</p>
 <ul>
@@ -1664,13 +1722,29 @@ void check(int x) {
  */</code></pre></div>
 </div>
 
+<h2 id="embedding">嵌入 Tailorbird</h2>
+<p>需要用 Tailorbird 格式化 Java 代码的工具（例如构建插件或 IDE 插件）应使用格式化器构件中的 <code>io.github.pieterjanscheir.tailorbird.api.TailorbirdFormatter</code>。该包中的公共类型是受支持的 API：在同一个主版本内不会发生不兼容的修改，也不会暴露上游的类型。jar 中的其他内容都可能随任何一次上游合并而改变。</p>
+<pre><code>TailorbirdFormatter formatter = TailorbirdFormatter.fromConfig(Path.of("tailorbird.yml"));
+String formatted = formatter.format(source);   // 整理导入、排版代码、折行过长的字符串
+
+// 用于只格式化选中内容的编辑器：返回这些范围所涉及的行的修改。
+List&lt;TextEdit&gt; edits = formatter.formatRanges(source, List.of(TextRange.of(start, end)));
+String result = TextEdit.apply(source, edits);</code></pre>
+<ul>
+  <li><code>defaults()</code>、<code>fromConfig(Path)</code>、<code>fromConfigText(String, String)</code> 和 <code>fromClasspath(ClassLoader)</code> 用于创建格式化器。配置文件无效时会抛出 <code>TailorbirdConfigException</code>，其消息会指出文件和配置项，可以直接显示给用户。</li>
+  <li>源代码无法解析时，<code>format</code>、<code>fixImports</code> 和 <code>formatRanges</code> 会抛出 <code>TailorbirdFormatException</code>，其 <code>diagnostics()</code> 给出从 1 开始的行号和列号。</li>
+  <li>格式化器可以在多个线程之间共享。</li>
+  <li>在 JDK 16 及更高版本上，执行格式化的 JVM 需要 <code>TailorbirdFormatter.requiredJvmArguments()</code> 中的参数，与<a href="#command-line">命令行</a>中 <code>JAVA_OPTS</code> 的参数相同。在自身进程中格式化的插件需要在该进程上加上这些参数；否则，请用这些参数为格式化器单独启动一个 JVM。</li>
+</ul>
+
 <h2 id="building">构建</h2>
 <p>需要 JDK 21，其余依赖都由 Gradle wrapper 自动下载。</p>
 <pre><code>./gradlew :tailorbird-java-format:test</code></pre>
 <p>如需在其他项目中试用本地构建，请将其发布到 Maven Local，并在该项目的仓库列表中添加 <code>mavenLocal()</code>：</p>
 <pre><code>./gradlew :tailorbird-java-format-spi:publishToMavenLocal \
     :tailorbird-java-format-jdk-bootstrap:publishToMavenLocal \
-    :tailorbird-java-format:publishToMavenLocal</code></pre>
+    :tailorbird-java-format:publishToMavenLocal \
+    :tailorbird-maven-plugin:publishToMavenLocal</code></pre>
 <p>CI 会运行 <code>./gradlew build</code>，其中还包括 Error Prone 和项目自身的格式检查；如果构建修改了已跟踪的文件，CI 会失败。</p>
 
 <h2 id="adding-rules">添加格式化规则</h2>
@@ -1697,7 +1771,7 @@ void check(int x) {
 <p>推送一个版本标签即可构建、测试并发布该版本，版本号取自标签。</p>
 <pre><code>git tag 1.0.0
 git push origin 1.0.0</code></pre>
-<p>发布工作流会把格式化器、SPI 和 JDK 引导模块发布到 GitHub Packages，并创建一个包含 jar 包和自动生成的发布说明的 GitHub Release。</p>
+<p>发布工作流会把格式化器、SPI、JDK 引导模块和 Maven 插件发布到 GitHub Packages，并创建一个包含 jar 包和自动生成的发布说明的 GitHub Release。</p>
 
 <footer>
   <div class="foot-brand"><img src="../assets/logo.svg" alt="" width="22" height="22">Tailorbird Java Format</div>

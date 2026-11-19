@@ -2,6 +2,8 @@ apply plugin: 'application'
 apply plugin: 'com.palantir.external-publish-jar'
 
 application.mainClass = 'io.github.pieterjanscheir.tailorbird.java.Main'
+// Tailorbird: the launcher is called tailorbird, so the command matches the docs and the release zip.
+application.applicationName = 'tailorbird'
 
 description = 'Palantir Java Format'
 
@@ -31,16 +33,21 @@ dependencies {
     implementation 'com.google.code.findbugs:jsr305'
 }
 
+def javacExports = [
+        'jdk.compiler/com.sun.tools.javac.file',
+        'jdk.compiler/com.sun.tools.javac.main',
+        'jdk.compiler/com.sun.tools.javac.parser',
+        'jdk.compiler/com.sun.tools.javac.tree',
+        'jdk.compiler/com.sun.tools.javac.util',
+        'jdk.compiler/com.sun.tools.javac.code',
+        'jdk.compiler/com.sun.tools.javac.api']
+
 moduleJvmArgs {
-    exports().addAll(
-            'jdk.compiler/com.sun.tools.javac.file',
-            'jdk.compiler/com.sun.tools.javac.main',
-            'jdk.compiler/com.sun.tools.javac.parser',
-            'jdk.compiler/com.sun.tools.javac.tree',
-            'jdk.compiler/com.sun.tools.javac.util',
-            'jdk.compiler/com.sun.tools.javac.code',
-            'jdk.compiler/com.sun.tools.javac.api')
+    exports().addAll(javacExports)
 }
+
+// Tailorbird: the start scripts pass the same exports, so the launcher runs on JDK 16+ without JAVA_OPTS.
+application.applicationDefaultJvmArgs = javacExports.collect { "--add-exports=${it}=ALL-UNNAMED".toString() }
 
 // Baseline sets every JavaCompile task's compatibility to the javaVersion target in afterEvaluate
 afterEvaluate {
@@ -63,6 +70,18 @@ tasks.named("test") {
     // Run all classes and tests in parallel
     // https://junit.org/junit5/docs/current/user-guide/#writing-tests-parallel-execution
     systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
+}
+
+// Tailorbird: `./gradlew :tailorbird-java-format:test -PtestJdk=25` runs the tests on another JDK from gradle/jdks, so
+// syntax that only newer JDKs parse gets tested too (issue #49). Set after Baseline, which sets the launcher too.
+if (project.hasProperty('testJdk')) {
+    afterEvaluate {
+        tasks.named('test') {
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(project.property('testJdk') as int)
+            }
+        }
+    }
 }
 
 javaVersion {

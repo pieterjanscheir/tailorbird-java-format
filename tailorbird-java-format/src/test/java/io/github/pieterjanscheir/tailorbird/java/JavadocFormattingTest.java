@@ -1420,4 +1420,17 @@ public final class JavadocFormattingTest {
         };
         doFormatTest(input, expected);
     }
+
+    // Tailorbird: a JavaDoc closed by a Unicode escape (\\u002a/) can't be lexed, so javadoc.wrap leaves it alone
+    // instead of failing the whole file.
+    @Test
+    public void javadocWrap_keepsCommentClosedByUnicodeEscape() throws FormatterException {
+        Formatter formatter = Formatter.createFormatter(
+                JavaFormatterOptions.builder()
+                        .style(JavaFormatterOptions.Style.PALANTIR)
+                        .build(),
+                TailorbirdRules.builder().javadocWrap(true).build());
+        String input = "class A {\n    /** Doc. \\u002a/\n    void f() {}\n}\n";
+        assertThat(formatter.formatSource(input)).contains("/** Doc. \\u002a/");
+    }
 }

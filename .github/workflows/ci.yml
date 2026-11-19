@@ -27,7 +27,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # the version is derived from git history
 
-      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
         with:
           distribution: temurin
           java-version: 21
@@ -50,7 +50,7 @@ jobs:
 
       - name: Test report
         if: ${{ !cancelled() }}
-        uses: mikepenz/action-junit-report@4a26df3e2ae132254ba12a53f65a388d0961e786 # v6.7.0
+        uses: mikepenz/action-junit-report@a16be3a69023e9bd7e748ede768b3282ea7b30ce # v6.7.1
         with:
           report_paths: "**/build/test-results/test/TEST-*.xml"
           check_name: Test results
@@ -64,6 +64,30 @@ jobs:
             **/build/reports/
             **/build/test-results/
           retention-days: 14
+
+  test-newer-jdk:
+    name: Test on JDK 25
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # the version is derived from git history
+
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          cache-read-only: true
+
+      # Gradle still runs on 21; only the tests run on the JDK 25 from gradle/jdks. The formatter parses with the JDK it
+      # runs on, so this is where syntax that only newer JDKs know gets tested.
+      - name: Test
+        run: ./gradlew :tailorbird-java-format:test -PtestJdk=25 --stacktrace
 
   forbidden-words:
     name: No forbidden words
