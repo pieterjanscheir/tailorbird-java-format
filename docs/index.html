@@ -156,6 +156,8 @@ continuationIndent: 4</code></pre>
 <pre><code>./gradlew :tailorbird-java-format:installDist
 tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
 <p>The launcher passes the flags that open up the JDK's own Java parser, so you don't need to set <code>JAVA_OPTS</code>. An invalid settings file stops with a one-line error and exit code 2, and so does a mistake in the command, such as an unknown option or no files; <code>--help</code> and <code>--version</code> exit with 0.</p>
+<p>A folder works too: it's searched for <code>.java</code> files, skipping hidden folders and folders named <code>build</code> or <code>target</code>, which hold generated code. So a CI step can check a whole project:</p>
+<pre><code>tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed src</code></pre>
 <p>As a Git pre-commit hook, saved as <code>.git/hooks/pre-commit</code> and made executable, it stops the commit when a staged Java file isn't formatted and lists the files:</p>
 <pre><code>#!/bin/sh
 files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')

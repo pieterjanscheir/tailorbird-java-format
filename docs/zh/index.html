@@ -156,6 +156,8 @@ continuationIndent: 4</code></pre>
 <pre><code>./gradlew :tailorbird-java-format:installDist
 tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
 <p>启动器会自动传入开放 JDK 自带 Java 解析器所需的参数，因此无需设置 <code>JAVA_OPTS</code>。配置文件无效时，会输出一行错误信息并以退出码 2 结束；命令写错时（例如未知选项或没有给出文件）也以退出码 2 结束，而 <code>--help</code> 和 <code>--version</code> 以 0 结束。</p>
+<p>也可以传入文件夹：会在其中查找 <code>.java</code> 文件，并跳过隐藏文件夹以及名为 <code>build</code> 或 <code>target</code> 的文件夹，因为它们存放的是生成的代码。因此，CI 步骤可以检查整个项目：</p>
+<pre><code>tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed src</code></pre>
 <p>作为 Git pre-commit 钩子（保存为 <code>.git/hooks/pre-commit</code> 并设为可执行），当暂存的 Java 文件未格式化时，它会阻止提交并列出这些文件：</p>
 <pre><code>#!/bin/sh
 files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
