@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
+import com.google.common.collect.TreeRangeSet;
 import com.google.common.io.CharSink;
 import com.google.common.io.CharSource;
 import com.google.errorprone.annotations.Immutable;
@@ -128,6 +129,12 @@ public final class Formatter {
      */
     public static Formatter createFormatter(JavaFormatterOptions options, TailorbirdRules rules) {
         return new Formatter(options, false, rules);
+    }
+
+    /** Tailorbird: the rules this formatter applies, or {@code null} for an upstream style. */
+    @Nullable
+    TailorbirdRules rules() {
+        return rules;
     }
 
     /** Tailorbird: the maximum line length, from the rules when there are any. */
@@ -331,8 +338,11 @@ public final class Formatter {
      * Style Guide - 3.3.3 Import ordering and spacing</a>
      */
     public String formatSourceAndFixImports(String input) throws FormatterException {
-        input = reorderImports(input);
-        input = RemoveUnusedImports.removeUnusedImports(input);
+        // Tailorbird: imports inside a @formatter:off region are left as written (issue #22).
+        if (!FormatterTags.coversImports(input, rules)) {
+            input = reorderImports(input);
+            input = RemoveUnusedImports.removeUnusedImports(input);
+        }
         String formatted = formatSource(input);
         formatted = StringWrapper.wrap(maxLineLength(), formatted, this);
         return formatted;
@@ -348,6 +358,10 @@ public final class Formatter {
      * Style Guide - 3.3.3 Import ordering and spacing</a>
      */
     public String fixImports(String input) throws FormatterException {
+        // Tailorbird: imports inside a @formatter:off region are left as written (issue #22).
+        if (FormatterTags.coversImports(input, rules)) {
+            return input;
+        }
         return reorderImports(RemoveUnusedImports.removeUnusedImports(input));
     }
 
@@ -379,7 +393,16 @@ public final class Formatter {
         // TODO(cushon): this is only safe because the modifier ordering doesn't affect whitespace,
         // and doesn't change the replacements that are output. This is not true in general for
         // 'de-linting' changes (e.g. import ordering).
-        javaInput = ModifierOrderer.reorderModifiers(javaInput, characterRanges);
+        // Tailorbird: modifiers inside a @formatter:off region aren't reordered, so no token moves across its markers.
+        RangeSet<Integer> offRegions = FormatterTags.offRegions(javaInput, rules);
+        Collection<Range<Integer>> modifierRanges = characterRanges;
+        if (!offRegions.isEmpty()) {
+            RangeSet<Integer> outside = TreeRangeSet.create();
+            characterRanges.forEach(outside::add);
+            outside.removeAll(offRegions);
+            modifierRanges = outside.asRanges();
+        }
+        javaInput = ModifierOrderer.reorderModifiers(javaInput, modifierRanges);
 
         JavaCommentsHelper commentsHelper = new JavaCommentsHelper(javaInput.getLineSeparator(), options, rules);
         JavaOutput javaOutput;
@@ -389,6 +412,22 @@ public final class Formatter {
             throw new FormatterException(e.diagnostics());
         }
         RangeSet<Integer> tokenRangeSet = javaInput.characterRangesToTokenRanges(characterRanges);
-        return javaOutput.getFormatReplacements(tokenRangeSet);
+        ImmutableList<Replacement> replacements = javaOutput.getFormatReplacements(tokenRangeSet);
+        // Tailorbird: @formatter:off regions are formatted like the rest, then their original text is put back (issue
+        // #22). The regions are delimited by comments, which formatting keeps in order, so the n-th region of the
+        // output is the n-th region of the input.
+        if (offRegions.isEmpty()) {
+            return replacements;
+        }
+        String output = Utils.applyReplacements(input, replacements);
+        String restored = FormatterTags.restore(input, offRegions, output, rules);
+        if (restored == null || !FormatterTags.sameSyntax(input, restored)) {
+            // The regions couldn't be matched up, or putting them back changed the program (for example a modifier
+            // moved across a marker); leave the file as written rather than risk breaking it.
+            return ImmutableList.of();
+        }
+        return restored.equals(input)
+                ? ImmutableList.of()
+                : ImmutableList.of(Replacement.create(0, input.length(), restored));
     }
 }

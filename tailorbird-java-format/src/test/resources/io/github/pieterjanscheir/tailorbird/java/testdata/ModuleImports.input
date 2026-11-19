@@ -1,0 +1,11 @@
+import java.util.List;
+import  module   java.sql ;
+import static java.util.Objects.requireNonNull;
+import module java.base;
+import module.util.Helper;
+import module foo;
+
+class ModuleImports {
+  List<String> xs = new ArrayList<>();
+  Helper helper = requireNonNull(null);
+}
