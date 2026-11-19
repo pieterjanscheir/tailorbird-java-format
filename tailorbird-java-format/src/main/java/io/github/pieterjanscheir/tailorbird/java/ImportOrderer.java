@@ -228,8 +228,8 @@ public final class ImportOrderer {
         this.text = text;
         this.toks = toks;
         this.lineSeparator = Newlines.guessLineSeparator(text);
-        this.importComparator = importComparator;
-        this.shouldInsertBlankLineFn = shouldInsertBlankLineFn;
+        this.importComparator = modulesFirst(importComparator);
+        this.shouldInsertBlankLineFn = blankLineAfterModules(shouldInsertBlankLineFn);
     }
 
     private ImportOrderer(String text, ImmutableList<Tok> toks, Style style) {
@@ -237,26 +237,49 @@ public final class ImportOrderer {
         this.toks = toks;
         this.lineSeparator = Newlines.guessLineSeparator(text);
         if (style.equals(Style.GOOGLE) || style.equals(Style.PALANTIR)) {
-            this.importComparator = GOOGLE_IMPORT_COMPARATOR;
-            this.shouldInsertBlankLineFn = ImportOrderer::shouldInsertBlankLineGoogle;
+            this.importComparator = modulesFirst(GOOGLE_IMPORT_COMPARATOR);
+            this.shouldInsertBlankLineFn = blankLineAfterModules(ImportOrderer::shouldInsertBlankLineGoogle);
         } else if (style.equals(Style.AOSP)) {
-            this.importComparator = AOSP_IMPORT_COMPARATOR;
-            this.shouldInsertBlankLineFn = ImportOrderer::shouldInsertBlankLineAosp;
+            this.importComparator = modulesFirst(AOSP_IMPORT_COMPARATOR);
+            this.shouldInsertBlankLineFn = blankLineAfterModules(ImportOrderer::shouldInsertBlankLineAosp);
         } else {
             throw new IllegalArgumentException("Unsupported code style: " + style);
         }
+    }
+
+    /**
+     * Tailorbird: module imports ({@code import module java.base;}) go first, in one group sorted by module name, before
+     * the style's own groups (issue #57).
+     */
+    private static Comparator<Import> modulesFirst(Comparator<Import> comparator) {
+        return (a, b) -> {
+            if (a.isModule() != b.isModule()) {
+                return a.isModule() ? -1 : 1;
+            }
+            return a.isModule() ? a.imported().compareTo(b.imported()) : comparator.compare(a, b);
+        };
+    }
+
+    /** Tailorbird: a blank line after the module imports; none between them. */
+    private static BiFunction<Import, Import, Boolean> blankLineAfterModules(
+            BiFunction<Import, Import, Boolean> shouldInsertBlankLine) {
+        return (prev, curr) -> (prev.isModule() || curr.isModule())
+                ? prev.isModule() != curr.isModule()
+                : shouldInsertBlankLine.apply(prev, curr);
     }
 
     /** An import statement. */
     class Import {
         private final String imported;
         private final boolean isStatic;
+        private final boolean isModule;
         private final String trailing;
 
-        Import(String imported, String trailing, boolean isStatic) {
+        Import(String imported, String trailing, boolean isStatic, boolean isModule) {
             this.imported = imported;
             this.trailing = trailing;
             this.isStatic = isStatic;
+            this.isModule = isModule;
         }
 
         /** The name being imported, for example {@code java.util.List}. */
@@ -267,6 +290,11 @@ public final class ImportOrderer {
         /** True if this is {@code import static}. */
         boolean isStatic() {
             return isStatic;
+        }
+
+        /** Tailorbird: true if this is {@code import module}; {@link #imported} is then the module's name. */
+        boolean isModule() {
+            return isModule;
         }
 
         /** The top-level package of the import. */
@@ -314,6 +342,9 @@ public final class ImportOrderer {
             if (isStatic()) {
                 sb.append("static ");
             }
+            if (isModule()) {
+                sb.append("module ");
+            }
             sb.append(imported()).append(';');
             if (trailing().trim().isEmpty()) {
                 sb.append(lineSeparator);
@@ -347,7 +378,7 @@ public final class ImportOrderer {
      *
      * <pre>{@code
      * <imports> -> (<end-of-line> | <import>)*
-     * <import> -> "import" <whitespace> ("static" <whitespace>)?
+     * <import> -> "import" <whitespace> ("static" <whitespace> | "module" <whitespace>)?
      *    <identifier> ("." <identifier>)* ("." "*")? <whitespace>? ";"
      *    <whitespace>? <end-of-line>? (<line-comment> <end-of-line>)*
      * }</pre>
@@ -373,6 +404,11 @@ public final class ImportOrderer {
                 if (isSpaceToken(i)) {
                     i++;
                 }
+            }
+            // Tailorbird: `import module java.base;`. `module` followed by a dot is a package named module instead.
+            boolean isModule = !isStatic && tokenAt(i).equals("module") && isSpaceToken(i + 1);
+            if (isModule) {
+                i += 2;
             }
             if (!isIdentifierToken(i)) {
                 throw new FormatterException("Unexpected token after import: " + tokenAt(i));
@@ -409,7 +445,7 @@ public final class ImportOrderer {
                     i++;
                 }
             }
-            imports.add(new Import(importedName, trailing.toString(), isStatic));
+            imports.add(new Import(importedName, trailing.toString(), isStatic, isModule));
             // Remember the position just after the import we just saw, before skipping blank lines.
             // If the next thing after the blank lines is not another import then we don't want to
             // include those blank lines in the text to be replaced.
