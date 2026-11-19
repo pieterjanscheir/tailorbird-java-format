@@ -11,11 +11,11 @@ work=$2
 shift 2
 presets=("$@")
 if [ ${#presets[@]} -eq 0 ]; then
-    presets=(bowerbird palantir google)
+    presets=(tailorbird palantir google)
 fi
 
 script_dir=$(cd "$(dirname "$0")" && pwd)
-# The launcher on main needs these; the bowerbird launcher passes them itself, and passing them twice is harmless.
+# The launcher on main needs these; the tailorbird launcher passes them itself, and passing them twice is harmless.
 JAVA_OPTS="$(for p in api code file main parser tree util; do
     printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' "$p"
 done)"

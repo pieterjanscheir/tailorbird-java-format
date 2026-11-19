@@ -5,8 +5,8 @@ name: Stability
 on:
   pull_request:
     paths:
-      - "bowerbird-java-format/src/main/**"
-      - "bowerbird-java-format-spi/src/main/**"
+      - "tailorbird-java-format/src/main/**"
+      - "tailorbird-java-format-spi/src/main/**"
       - ".github/scripts/check-stability.sh"
       - ".github/scripts/stability-*.txt"
       - ".github/workflows/stability.yml"
@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [bowerbird, palantir, google]
+        preset: [tailorbird, palantir, google]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -46,11 +46,11 @@ jobs:
           cache-read-only: true
 
       - name: Build the launcher
-        run: ./gradlew --stacktrace :bowerbird-java-format:installDist
+        run: ./gradlew --stacktrace :tailorbird-java-format:installDist
 
       - name: Format twice and compare
         env:
           PRESET: ${{ matrix.preset }}
         run: |
-          launcher=$(find "$PWD/bowerbird-java-format/build/install" -path '*/bin/*' -type f ! -name '*.bat' | head -1)
+          launcher=$(find "$PWD/tailorbird-java-format/build/install" -path '*/bin/*' -type f ! -name '*.bat' | head -1)
           .github/scripts/check-stability.sh "$launcher" "$RUNNER_TEMP/stability" "$PRESET"
