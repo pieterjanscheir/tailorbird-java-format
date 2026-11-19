@@ -1,0 +1,61 @@
+name: Stability
+
+# Formats real-world Java projects twice with each preset and fails if the second run changes anything, or the
+# formatter reports an error. Runs on pull requests that change the formatter, nightly, and on demand.
+on:
+  pull_request:
+    paths:
+      - "tailorbird-java-format/src/main/**"
+      - "tailorbird-java-format-spi/src/main/**"
+      - ".github/scripts/check-stability.sh"
+      - ".github/scripts/stability-*.txt"
+      - ".github/workflows/stability.yml"
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stability-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  stability:
+    name: Stable on real projects (${{ matrix.preset }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [tailorbird, palantir, google]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # the version is derived from git history
+
+      # The last version is the default, which Gradle runs on. The formatter runs on 25 (below): it parses with the JDK
+      # it runs on, and the formatter's own test inputs include syntax that only JDK 25 knows.
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: |
+            25
+            21
+
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          cache-read-only: true
+
+      - name: Build the launcher
+        run: ./gradlew --stacktrace :tailorbird-java-format:installDist
+
+      - name: Format twice and compare
+        env:
+          PRESET: ${{ matrix.preset }}
+        run: |
+          export JAVA_HOME="$JAVA_HOME_25_X64"
+          launcher=$(find "$PWD/tailorbird-java-format/build/install" -path '*/bin/*' -type f ! -name '*.bat' | head -1)
+          .github/scripts/check-stability.sh "$launcher" "$RUNNER_TEMP/stability" "$PRESET"

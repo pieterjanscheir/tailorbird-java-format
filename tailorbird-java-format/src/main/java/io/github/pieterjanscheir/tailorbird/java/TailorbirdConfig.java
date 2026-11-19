@@ -70,6 +70,7 @@ import javax.annotation.Nullable;
  *   blankLineAfterParams: true
  *   blankLineAfterReturn: true
  *   singleSpaceAfterTagName: true
+ *   wrap: false
  * }</pre>
  *
  * <p>The formatter finds the file on its own classpath, so a project adds the folder that contains it to the
@@ -116,6 +117,10 @@ public final class TailorbirdConfig {
                     .put("javadoc.blankLineAfterParams", (b, v) -> b.javadocBlankLineAfterParams(v.bool()))
                     .put("javadoc.blankLineAfterReturn", (b, v) -> b.javadocBlankLineAfterReturn(v.bool()))
                     .put("javadoc.singleSpaceAfterTagName", (b, v) -> b.javadocSingleSpaceAfterTagName(v.bool()))
+                    .put("javadoc.wrap", (b, v) -> b.javadocWrap(v.bool()))
+                    .put("formatterTags.enabled", (b, v) -> b.formatterTags(v.bool()))
+                    .put("formatterTags.off", (b, v) -> b.formatterOffTag(v.string()))
+                    .put("formatterTags.on", (b, v) -> b.formatterOnTag(v.string()))
                     .buildOrThrow();
 
     private TailorbirdConfig() {}
@@ -301,6 +306,13 @@ public final class TailorbirdConfig {
                 throw new IllegalArgumentException(name + " must be a whole number, got " + node);
             }
             return node.intValue();
+        }
+
+        String string() {
+            if (!node.isTextual()) {
+                throw new IllegalArgumentException(name + " must be text, got " + node);
+            }
+            return node.textValue();
         }
 
         boolean bool() {

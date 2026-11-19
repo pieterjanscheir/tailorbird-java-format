@@ -50,7 +50,8 @@ public final class JavaCommentsHelper implements CommentsHelper {
         this.options = options;
         this.rules = rules;
         this.maxLineLength = rules != null ? rules.lineLength() : options.maxLineLength();
-        this.javadocFormatter = options.formatJavadoc() ? new JavadocFormatter(maxLineLength) : null;
+        boolean wrapJavadoc = options.formatJavadoc() || (rules != null && rules.javadocWrap());
+        this.javadocFormatter = wrapJavadoc ? new JavadocFormatter(maxLineLength) : null;
     }
 
     @Override
@@ -59,7 +60,9 @@ public final class JavaCommentsHelper implements CommentsHelper {
             return tok.getOriginalText();
         }
         String text = tok.getOriginalText();
-        if (javadocFormatter != null && tok.isJavadocComment()) {
+        // Tailorbird: the JavaDoc lexer reads the original text, so a comment whose delimiters are Unicode escapes
+        // (the closing star written as an escape, say) can't be lexed; leave it as written instead of failing the file.
+        if (javadocFormatter != null && tok.isJavadocComment() && text.startsWith("/**") && text.endsWith("*/")) {
             text = javadocFormatter.formatJavadoc(text, column0);
         }
         if (rules != null && rules.javadocLayout() && tok.isJavadocComment()) {

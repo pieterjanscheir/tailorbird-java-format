@@ -41,6 +41,7 @@ final class CommandLineOptions {
     private final boolean sortImports;
     private final boolean removeUnusedImports;
     private final boolean dryRun;
+    private final boolean diff;
     private final boolean setExitIfChanged;
     private final Optional<String> assumeFilename;
     private final boolean reflowLongStrings;
@@ -63,6 +64,7 @@ final class CommandLineOptions {
             boolean sortImports,
             boolean removeUnusedImports,
             boolean dryRun,
+            boolean diff,
             boolean setExitIfChanged,
             Optional<String> assumeFilename,
             boolean reflowLongStrings,
@@ -83,6 +85,7 @@ final class CommandLineOptions {
         this.sortImports = sortImports;
         this.removeUnusedImports = removeUnusedImports;
         this.dryRun = dryRun;
+        this.diff = diff;
         this.setExitIfChanged = setExitIfChanged;
         this.assumeFilename = assumeFilename;
         this.reflowLongStrings = reflowLongStrings;
@@ -170,6 +173,11 @@ final class CommandLineOptions {
         return dryRun;
     }
 
+    /** Tailorbird: print a unified diff of the changes instead of the formatted file (#50). */
+    boolean diff() {
+        return diff;
+    }
+
     /** Return exit code 1 if there are any formatting changes. */
     boolean setExitIfChanged() {
         return setExitIfChanged;
@@ -214,6 +222,7 @@ final class CommandLineOptions {
         private boolean sortImports = true;
         private boolean removeUnusedImports = true;
         private boolean dryRun = false;
+        private boolean diff = false;
         private boolean setExitIfChanged = false;
         private Optional<String> assumeFilename = Optional.empty();
         private boolean reflowLongStrings = true;
@@ -294,6 +303,11 @@ final class CommandLineOptions {
             return this;
         }
 
+        Builder diff(boolean diff) {
+            this.diff = diff;
+            return this;
+        }
+
         Builder setExitIfChanged(boolean setExitIfChanged) {
             this.setExitIfChanged = setExitIfChanged;
             return this;
@@ -339,6 +353,7 @@ final class CommandLineOptions {
                     sortImports,
                     removeUnusedImports,
                     dryRun,
+                    diff,
                     setExitIfChanged,
                     assumeFilename,
                     reflowLongStrings,

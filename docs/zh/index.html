@@ -61,6 +61,7 @@
     </ul>
     <div class="group">开发</div>
     <ul>
+      <li><a href="#embedding">嵌入</a></li>
       <li><a href="#building">构建</a></li>
       <li><a href="#adding-rules">添加规则</a></li>
       <li><a href="#upstream">同步上游</a></li>
@@ -195,13 +196,25 @@ continuationIndent: 4</code></pre>
 <p>可用的预设有 <code>tailorbird</code>（默认）、<code>palantir</code>（120 个字符、4 空格缩进、8 空格续行缩进）和 <code>google</code>（上游的 Google 风格：与 <code>palantir</code> 类似，但为 100 个字符、2 空格缩进、4 空格续行缩进）。</p>
 
 <h3 id="command-line">在命令行中使用</h3>
-<p>对于 pre-commit 钩子、CI 脚本以及其他直接运行格式化器的工具，请构建命令行启动器，并通过 <code>--config</code> 传入配置文件：</p>
+<p>对于 pre-commit 钩子、CI 脚本以及其他直接运行格式化器的工具，请使用 <code>tailorbird</code> 启动器，并通过 <code>--config</code> 传入配置文件。从第一个版本起，每个 <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> 都附带 <code>tailorbird-&lt;version&gt;.zip</code> 及其 <code>SHA256SUMS</code>。解压后运行：</p>
+<pre><code>tailorbird-&lt;version&gt;/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>每个版本还附带无需 Java 的原生可执行文件：<code>tailorbird-&lt;version&gt;-linux-x86-64</code>、<code>-linux-aarch64</code>、<code>-macos-aarch64</code> 和 <code>-windows-x86-64.exe</code>。它接受相同的选项，输出也相同，而且启动更快，适合用在 pre-commit 钩子中。在 macOS 上，下载的文件可能需要先运行 <code>xattr -d com.apple.quarantine</code>。</p>
+<p>zip 包需要 Java 21 或更高版本，从 <code>JAVA_HOME</code> 或 <code>PATH</code> 中查找。在 Windows 上请使用 <code>bin\tailorbird.bat</code>。也可以自己构建同样的启动器：</p>
 <pre><code>./gradlew :tailorbird-java-format:installDist
-export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' $p; done)"
-tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
-    --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>在 JDK 16 及更高版本上需要 <code>JAVA_OPTS</code> 这一行：格式化器使用 JDK 自带的 Java 解析器，而 JDK 只有在加上这些参数时才会开放它。配置文件无效时，会输出一行错误信息并以退出码 2 结束。</p>
-<p>只指定 <code>--palantir</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>tailorbird.yml</code>；如果没有，则使用 Tailorbird 的默认值。</p>
+tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>启动器会自动传入开放 JDK 自带 Java 解析器所需的参数，因此无需设置 <code>JAVA_OPTS</code>。配置文件无效时，会输出一行错误信息并以退出码 2 结束；命令写错时（例如未知选项或没有给出文件）也以退出码 2 结束，而 <code>--help</code> 和 <code>--version</code> 以 0 结束。</p>
+<p>也可以传入文件夹：会在其中查找 <code>.java</code> 文件，并跳过隐藏文件夹以及名为 <code>build</code> 或 <code>target</code> 的文件夹，因为它们存放的是生成的代码。因此，CI 步骤可以检查整个项目：</p>
+<pre><code>tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed src</code></pre>
+<p>作为 Git pre-commit 钩子（保存为 <code>.git/hooks/pre-commit</code> 并设为可执行），当暂存的 Java 文件未格式化时，它会阻止提交并列出这些文件：</p>
+<pre><code>#!/bin/sh
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
+[ -z "$files" ] || tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed $files</code></pre>
+<p>将 <code>--dry-run --set-exit-if-changed</code> 换成 <code>--replace</code> 再运行一次即可修复。钩子检查的是磁盘上的文件内容，而不只是暂存的改动。</p>
+<p>只指定 <code>--tailorbird</code> 而不指定 <code>--config</code> 时，会使用 classpath 上的 <code>tailorbird.yml</code>；如果没有，则使用 Tailorbird 的默认值。<code>--palantir</code> 的效果相同，保留它是因为上游插件会传入这个参数；它不会生成 Palantir 风格。如需 Palantir 风格，请使用包含 <a href="#presets"><code>preset: palantir</code></a> 的设置文件。</p>
+<p>如果只想检查而不修改任何内容（例如在 CI 或 pre-commit 钩子中），请使用 <code>--diff --set-exit-if-changed</code>。它会以统一 diff 格式输出格式化器将要做的修改；只要有任何修改，就以退出码 1 结束。这个 diff 可以用 <code>patch -p0</code> 或 <code>git apply -p0</code> 应用：</p>
+<pre><code>tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
+    --config tailorbird.yml --diff --set-exit-if-changed src/main/java/Example.java</code></pre>
+<p><code>--dry-run</code>（<code>-n</code>）只列出将被修改的文件名。</p>
 
 <p>Gradle、Spotless 和 IntelliJ 都从 <code>palantirJavaFormat</code> 依赖中加载格式化器，因此读取的是同一个文件；这正是要把它放在那里的原因。文件修改后，Spotless 也会察觉并重新格式化。需要注意以下几点：</p>
 <ul>
@@ -232,12 +245,16 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-blanklines-aroundinterfacemethods"><code>blankLines.aroundInterfaceMethods</code></a></td><td><code>false</code></td><td>在接口或注解类型的每个方法前后添加空行。</td></tr>
     <tr><td><a href="#rule-imports-groups"><code>imports.groups</code></a></td><td><code>[static, java, javax, org, com, "*"]</code></td><td>按顺序排列的导入分组。每一项可以是包名前缀（<code>java</code>、<code>com.example</code>）、表示所有静态导入的 <code>static</code>，或表示其余所有导入的 <code>"*"</code>。每个导入归入前缀匹配最长的分组；没有任何匹配的导入放在最后。<a href="#imports">示例</a>。</td></tr>
     <tr><td><a href="#rule-imports-blanklinebetweengroups"><code>imports.blankLineBetweenGroups</code></a></td><td><code>true</code></td><td>在导入分组之间添加空行。</td></tr>
-    <tr><td><a href="#rule-javadoc-enabled"><code>javadoc.enabled</code></a></td><td><code>true</code></td><td>应用下面的 JavaDoc 配置项。为 false 时，JavaDoc 完全保持原样。<a href="#javadoc">示例</a>。</td></tr>
+    <tr><td><a href="#rule-javadoc-enabled"><code>javadoc.enabled</code></a></td><td><code>true</code></td><td>应用下面的 JavaDoc 配置项（<code>javadoc.wrap</code> 除外）。为 false 时，JavaDoc 完全保持原样。<a href="#javadoc">示例</a>。</td></tr>
     <tr><td><a href="#rule-javadoc-removeblanklinesindescription"><code>javadoc.removeBlankLinesInDescription</code></a></td><td><code>true</code></td><td>删除描述部分内的空行。为 false 时保留段落分隔（每处一个空行）。</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterdescription"><code>javadoc.blankLineAfterDescription</code></a></td><td><code>true</code></td><td>在描述与第一个标签之间保留一个空行。</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterparams"><code>javadoc.blankLineAfterParams</code></a></td><td><code>true</code></td><td>当后面还有其他标签时，在 <code>@param</code> 标签块之后保留一个空行。</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterreturn"><code>javadoc.blankLineAfterReturn</code></a></td><td><code>true</code></td><td>当后面还有其他标签时，在 <code>@return</code> 之后保留一个空行。</td></tr>
     <tr><td><a href="#rule-javadoc-singlespaceaftertagname"><code>javadoc.singleSpaceAfterTagName</code></a></td><td><code>true</code></td><td><code>@param</code> 或 <code>@throws</code> 的名称与其描述之间恰好保留一个空格。</td></tr>
+    <tr><td><a href="#rule-javadoc-wrap"><code>javadoc.wrap</code></a></td><td><code>false</code></td><td>按行长度重新折行 JavaDoc 文本。<code>&lt;pre&gt;</code> 块永远不会被折行。</td></tr>
+    <tr><td><a href="#rule-formattertags-enabled"><code>formatterTags.enabled</code></a></td><td><code>false</code></td><td>保留 <code>// @formatter:off</code> 与 <code>// @formatter:on</code> 之间代码的原样。</td></tr>
+    <tr><td><a href="#rule-formattertags-off"><code>formatterTags.off</code></a></td><td><code>"@formatter:off"</code></td><td>注释中开始此类区域的文本。</td></tr>
+    <tr><td><a href="#rule-formattertags-on"><code>formatterTags.on</code></a></td><td><code>"@formatter:on"</code></td><td>注释中结束此类区域的文本。</td></tr>
   </tbody>
 </table>
 <p>下面是一个包含所有配置项及其默认值的完整文件，可直接复制后修改：</p>
@@ -265,7 +282,12 @@ javadoc:
   blankLineAfterDescription: true
   blankLineAfterParams: true
   blankLineAfterReturn: true
-  singleSpaceAfterTagName: true</code></pre>
+  singleSpaceAfterTagName: true
+  wrap: false
+formatterTags:
+  enabled: false
+  off: "@formatter:off"
+  on: "@formatter:on"</code></pre>
 
 <!-- rules-reference:start -->
 <h3 id="reference">规则参考</h3>
@@ -917,7 +939,7 @@ class Example {
 </div></div>
 <div class="rule" id="rule-javadoc-enabled">
 <h4><code>javadoc.enabled</code></h4>
-<p>应用下面的 <code>javadoc</code> 配置项。为 false 时，JavaDoc 会原样保留。单行 JavaDoc 和包含 <code>&lt;pre&gt;</code> 的 JavaDoc 永远不会被修改。</p>
+<p>应用下面的 <code>javadoc</code> 配置项（<code>javadoc.wrap</code> 除外）。为 false 时，JavaDoc 会原样保留。单行 JavaDoc 和包含 <code>&lt;pre&gt;</code> 的 JavaDoc 永远不会被修改。</p>
 <table class="rule-facts"><tr><th>取值</th><td><code>true</code> 或 <code>false</code></td></tr><tr><th>默认值</th><td><code>true</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
 <details><summary>输入</summary><pre><code>class Example {
     /**
@@ -1252,6 +1274,106 @@ class Example {
 
 }</code></pre></div>
 </div></div>
+<div class="rule" id="rule-javadoc-wrap">
+<h4><code>javadoc.wrap</code></h4>
+<p>按行长度重新折行 JavaDoc 文本：过长的行会被拆开，过短的行会被合并。<code>&lt;pre&gt;</code> 中的文本永远不会被折行。它在其他 <code>javadoc</code> 配置项之前运行，空行仍由那些配置项决定；在 <code>removeBlankLinesInDescription: true</code> 时，第二个段落会以 <code>&lt;p&gt;</code> 开头并紧接在下一行。此配置项独立生效，即使 <code>javadoc.enabled</code> 为 false 也一样。</p>
+<table class="rule-facts"><tr><th>取值</th><td><code>true</code> 或 <code>false</code></td></tr><tr><th>默认值</th><td><code>false</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">这是上游的 JavaDoc 格式化器，Palantir 插件没有提供它。它默认关闭，因为它会改写人工编写的文本。</p>
+<details><summary>输入</summary><pre><code>class Example {
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is open.
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /**
+     * Short lines
+     * are joined.
+     */
+    void joined() {}
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">javadoc:<br>&nbsp;&nbsp;wrap: true</div><pre><code>class Example {
+
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is
+     * open.
+     *
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /** Short lines are joined. */
+    void joined() {}
+
+}</code></pre></div>
+<div><div class="label yaml">javadoc:<br>&nbsp;&nbsp;wrap: false</div><pre><code>class Example {
+
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is open.
+     *
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /**
+     * Short lines
+     * are joined.
+     */
+    void joined() {}
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-formattertags-enabled">
+<h4><code>formatterTags.enabled</code></h4>
+<p>保留包含 <code>@formatter:off</code> 的注释与包含 <code>@formatter:on</code> 的注释之间代码的原样，适用于手动对齐的表格、DSL 和测试数据。这与 IntelliJ 使用的标记相同，IntelliJ 默认同样关闭此功能。</p>
+<table class="rule-facts"><tr><th>取值</th><td><code>true</code> 或 <code>false</code></td></tr><tr><th>默认值</th><td><code>false</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">区域从 <code>off</code> 注释的开头延伸到 <code>on</code> 注释的结尾；格式化器仍会调整 <code>off</code> 注释本身的缩进。只有 <code>off</code> 而没有 <code>on</code> 时，区域延伸到文件末尾；区域内的 <code>off</code> 会被忽略。标记只在注释中生效，在字符串中无效。区域内的 import 不会被排序或删除，区域内的字符串也不会重新换行。</p>
+<details><summary>输入</summary><pre><code>class Example {
+    // @formatter:off
+    int[][] scores = {
+        {  10, 200,  3 },
+        { 400,   5, 60 },
+    };
+    // @formatter:on
+    int   size  =  2;
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">formatterTags:<br>&nbsp;&nbsp;enabled: true</div><pre><code>class Example {
+
+    // @formatter:off
+    int[][] scores = {
+        {  10, 200,  3 },
+        { 400,   5, 60 },
+    };
+    // @formatter:on
+    int size = 2;
+
+}</code></pre></div>
+<div><div class="label yaml">formatterTags:<br>&nbsp;&nbsp;enabled: false</div><pre><code>class Example {
+
+    // @formatter:off
+    int[][] scores = {
+        { 10, 200, 3 },
+        { 400, 5, 60 },
+    };
+    // @formatter:on
+    int size = 2;
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-formattertags-off">
+<h4><code>formatterTags.off</code></h4>
+<p>注释中开始格式化器不处理区域的文本。</p>
+<table class="rule-facts"><tr><th>取值</th><td>不含空格、<code>/</code> 或 <code>*</code> 的文本</td></tr><tr><th>默认值</th><td><code>"@formatter:off"</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>"@formatter:off"</code> · <code>google</code>: <code>"@formatter:off"</code></td></tr></table>
+<p class="note">仅在 <code>formatterTags.enabled</code> 为 true 时使用。</p>
+</div>
+<div class="rule" id="rule-formattertags-on">
+<h4><code>formatterTags.on</code></h4>
+<p>注释中结束此类区域的文本。</p>
+<table class="rule-facts"><tr><th>取值</th><td>不含空格、<code>/</code> 或 <code>*</code> 的文本</td></tr><tr><th>默认值</th><td><code>"@formatter:on"</code></td></tr><tr><th>各预设中的值</th><td><code>palantir</code>: <code>"@formatter:on"</code> · <code>google</code>: <code>"@formatter:on"</code></td></tr></table>
+<p class="note">仅在 <code>formatterTags.enabled</code> 为 true 时使用。</p>
+</div>
 <!-- rules-reference:end -->
 
 <h2 id="rules">默认风格</h2>
@@ -1455,6 +1577,21 @@ void check(int x) {
  * @throws IllegalArgumentException when invalid
  */</code></pre></div>
 </div>
+
+<h2 id="embedding">嵌入 Tailorbird</h2>
+<p>需要用 Tailorbird 格式化 Java 代码的工具（例如构建插件或 IDE 插件）应使用格式化器构件中的 <code>io.github.pieterjanscheir.tailorbird.api.TailorbirdFormatter</code>。该包中的公共类型是受支持的 API：在同一个主版本内不会发生不兼容的修改，也不会暴露上游的类型。jar 中的其他内容都可能随任何一次上游合并而改变。</p>
+<pre><code>TailorbirdFormatter formatter = TailorbirdFormatter.fromConfig(Path.of("tailorbird.yml"));
+String formatted = formatter.format(source);   // 整理导入、排版代码、折行过长的字符串
+
+// 用于只格式化选中内容的编辑器：返回这些范围所涉及的行的修改。
+List&lt;TextEdit&gt; edits = formatter.formatRanges(source, List.of(TextRange.of(start, end)));
+String result = TextEdit.apply(source, edits);</code></pre>
+<ul>
+  <li><code>defaults()</code>、<code>fromConfig(Path)</code>、<code>fromConfigText(String, String)</code> 和 <code>fromClasspath(ClassLoader)</code> 用于创建格式化器。配置文件无效时会抛出 <code>TailorbirdConfigException</code>，其消息会指出文件和配置项，可以直接显示给用户。</li>
+  <li>源代码无法解析时，<code>format</code>、<code>fixImports</code> 和 <code>formatRanges</code> 会抛出 <code>TailorbirdFormatException</code>，其 <code>diagnostics()</code> 给出从 1 开始的行号和列号。</li>
+  <li>格式化器可以在多个线程之间共享。</li>
+  <li>在 JDK 16 及更高版本上，执行格式化的 JVM 需要 <code>TailorbirdFormatter.requiredJvmArguments()</code> 中的参数，与<a href="#command-line">命令行</a>中 <code>JAVA_OPTS</code> 的参数相同。在自身进程中格式化的插件需要在该进程上加上这些参数；否则，请用这些参数为格式化器单独启动一个 JVM。</li>
+</ul>
 
 <h2 id="building">构建</h2>
 <p>需要 JDK 21，其余依赖都由 Gradle wrapper 自动下载。</p>

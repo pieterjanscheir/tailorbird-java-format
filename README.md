@@ -58,7 +58,9 @@ See [Default style](https://pieterjanscheir.github.io/tailorbird-java-format/#ru
 | Maven plugin | `io.github.pieterjanscheir.tailorbird:tailorbird-maven-plugin` |
 
 Releases are published to GitHub Packages, which needs a personal access token with the `read:packages`
-scope, even for public packages. The jars are also attached to each [GitHub Release](https://github.com/pieterjanscheir/tailorbird-java-format/releases).
+scope, even for public packages. The jars are also attached to each [GitHub Release](https://github.com/pieterjanscheir/tailorbird-java-format/releases),
+with a `tailorbird-<version>.zip` command-line launcher, native binaries for Linux, macOS and Windows, and
+their `SHA256SUMS`.
 
 Apply the upstream Gradle plugin and point it at Tailorbird instead of the default formatter:
 
@@ -179,7 +181,8 @@ git fetch upstream --tags
 ## Releasing
 
 Push a version tag. [release.yml](./.github/workflows/release.yml) runs the tests, publishes the four
-artifacts to GitHub Packages and creates a GitHub Release with the jars and generated release notes.
+artifacts to GitHub Packages and creates a GitHub Release with the jars, the launcher zip, its checksums and
+generated release notes.
 
 ```bash
 git tag 1.0.0

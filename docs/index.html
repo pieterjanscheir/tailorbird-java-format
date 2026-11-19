@@ -61,6 +61,7 @@
     </ul>
     <div class="group">Develop</div>
     <ul>
+      <li><a href="#embedding">Embedding</a></li>
       <li><a href="#building">Building</a></li>
       <li><a href="#adding-rules">Adding a rule</a></li>
       <li><a href="#upstream">Upstream sync</a></li>
@@ -195,13 +196,25 @@ continuationIndent: 4</code></pre>
 <p>The presets are <code>tailorbird</code> (the default), <code>palantir</code> (120 characters, 4-space indent, 8-space continuation) and <code>google</code> (upstream's Google style: like <code>palantir</code>, with 100 characters, 2-space indent and 4-space continuation).</p>
 
 <h3 id="command-line">On the command line</h3>
-<p>For pre-commit hooks, CI scripts and other tools that run the formatter directly, build the command-line launcher and pass the settings file with <code>--config</code>:</p>
+<p>For pre-commit hooks, CI scripts and other tools that run the formatter directly, use the <code>tailorbird</code> launcher and pass the settings file with <code>--config</code>. Each <a href="https://github.com/pieterjanscheir/tailorbird-java-format/releases">GitHub Release</a> from the first one on has a <code>tailorbird-&lt;version&gt;.zip</code> and its <code>SHA256SUMS</code>. Unzip it, then run:</p>
+<pre><code>tailorbird-&lt;version&gt;/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>Each release also has a native binary that needs no Java at all: <code>tailorbird-&lt;version&gt;-linux-x86-64</code>, <code>-linux-aarch64</code>, <code>-macos-aarch64</code> and <code>-windows-x86-64.exe</code>. It takes the same options and gives the same output, and starts faster, which helps in pre-commit hooks. On macOS, a downloaded binary may first need <code>xattr -d com.apple.quarantine</code>.</p>
+<p>The zip needs Java 21 or later, from <code>JAVA_HOME</code> or the <code>PATH</code>. On Windows, use <code>bin\tailorbird.bat</code>. To build the same launcher yourself:</p>
 <pre><code>./gradlew :tailorbird-java-format:installDist
-export JAVA_OPTS="$(for p in api code file parser tree util; do printf -- '--add-exports=jdk.compiler/com.sun.tools.javac.%s=ALL-UNNAMED ' $p; done)"
-tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
-    --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
-<p>The <code>JAVA_OPTS</code> line is needed on JDK 16 and later: the formatter uses the JDK's own Java parser, which the JDK only opens up with these flags. An invalid settings file stops with a one-line error and exit code 2.</p>
-<p><code>--palantir</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults.</p>
+tailorbird-java-format/build/install/tailorbird/bin/tailorbird --config tailorbird.yml --replace src/main/java/Example.java</code></pre>
+<p>The launcher passes the flags that open up the JDK's own Java parser, so you don't need to set <code>JAVA_OPTS</code>. An invalid settings file stops with a one-line error and exit code 2, and so does a mistake in the command, such as an unknown option or no files; <code>--help</code> and <code>--version</code> exit with 0.</p>
+<p>A folder works too: it's searched for <code>.java</code> files, skipping hidden folders and folders named <code>build</code> or <code>target</code>, which hold generated code. So a CI step can check a whole project:</p>
+<pre><code>tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed src</code></pre>
+<p>As a Git pre-commit hook, saved as <code>.git/hooks/pre-commit</code> and made executable, it stops the commit when a staged Java file isn't formatted and lists the files:</p>
+<pre><code>#!/bin/sh
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.java')
+[ -z "$files" ] || tailorbird --config tailorbird.yml --dry-run --set-exit-if-changed $files</code></pre>
+<p>Run it again with <code>--replace</code> instead of <code>--dry-run --set-exit-if-changed</code> to fix them. The hook checks the files as they are on disk, not only the staged changes.</p>
+<p><code>--tailorbird</code> without <code>--config</code> uses a <code>tailorbird.yml</code> on the classpath, or Tailorbird's defaults. <code>--palantir</code> does the same and is there for the upstream plugins, which pass it; it doesn't give Palantir's style. For that, use a settings file with <a href="#presets"><code>preset: palantir</code></a>.</p>
+<p>To check without changing anything, for example in CI or a pre-commit hook, use <code>--diff --set-exit-if-changed</code>. It prints a unified diff of what the formatter would change and exits with 1 if anything would. The diff can be applied with <code>patch -p0</code> or <code>git apply -p0</code>:</p>
+<pre><code>tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-format \
+    --config tailorbird.yml --diff --set-exit-if-changed src/main/java/Example.java</code></pre>
+<p><code>--dry-run</code> (<code>-n</code>) lists only the names of the files that would change.</p>
 
 <p>Gradle, Spotless and IntelliJ all load the formatter from the <code>palantirJavaFormat</code> dependencies, so they all read the same file; that's why it goes there. Spotless also notices when the file changes and formats again. A few things to know:</p>
 <ul>
@@ -232,12 +245,16 @@ tailorbird-java-format/build/install/tailorbird-java-format/bin/tailorbird-java-
     <tr><td><a href="#rule-blanklines-aroundinterfacemethods"><code>blankLines.aroundInterfaceMethods</code></a></td><td><code>false</code></td><td>A blank line around each method of an interface or annotation type.</td></tr>
     <tr><td><a href="#rule-imports-groups"><code>imports.groups</code></a></td><td><code>[static, java, javax, org, com, "*"]</code></td><td>Import groups, in order. Each entry is a package prefix (<code>java</code>, <code>com.example</code>), <code>static</code> for all static imports, or <code>"*"</code> for everything else. An import goes in the group with the longest matching prefix; imports that match nothing go last. <a href="#imports">Example</a>.</td></tr>
     <tr><td><a href="#rule-imports-blanklinebetweengroups"><code>imports.blankLineBetweenGroups</code></a></td><td><code>true</code></td><td>A blank line between import groups.</td></tr>
-    <tr><td><a href="#rule-javadoc-enabled"><code>javadoc.enabled</code></a></td><td><code>true</code></td><td>Apply the JavaDoc settings below. When false, JavaDoc is left exactly as written. <a href="#javadoc">Example</a>.</td></tr>
+    <tr><td><a href="#rule-javadoc-enabled"><code>javadoc.enabled</code></a></td><td><code>true</code></td><td>Apply the JavaDoc settings below, except <code>javadoc.wrap</code>. When false, JavaDoc is left exactly as written. <a href="#javadoc">Example</a>.</td></tr>
     <tr><td><a href="#rule-javadoc-removeblanklinesindescription"><code>javadoc.removeBlankLinesInDescription</code></a></td><td><code>true</code></td><td>Remove blank lines inside the description. When false, paragraph breaks are kept (one blank line each).</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterdescription"><code>javadoc.blankLineAfterDescription</code></a></td><td><code>true</code></td><td>One blank line between the description and the first tag.</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterparams"><code>javadoc.blankLineAfterParams</code></a></td><td><code>true</code></td><td>One blank line after the block of <code>@param</code> tags, when more tags follow.</td></tr>
     <tr><td><a href="#rule-javadoc-blanklineafterreturn"><code>javadoc.blankLineAfterReturn</code></a></td><td><code>true</code></td><td>One blank line after <code>@return</code>, when more tags follow.</td></tr>
     <tr><td><a href="#rule-javadoc-singlespaceaftertagname"><code>javadoc.singleSpaceAfterTagName</code></a></td><td><code>true</code></td><td>Exactly one space between a <code>@param</code> or <code>@throws</code> name and its description.</td></tr>
+    <tr><td><a href="#rule-javadoc-wrap"><code>javadoc.wrap</code></a></td><td><code>false</code></td><td>Re-wrap JavaDoc text at the line length. <code>&lt;pre&gt;</code> blocks are never wrapped.</td></tr>
+    <tr><td><a href="#rule-formattertags-enabled"><code>formatterTags.enabled</code></a></td><td><code>false</code></td><td>Leave code between <code>// @formatter:off</code> and <code>// @formatter:on</code> as written.</td></tr>
+    <tr><td><a href="#rule-formattertags-off"><code>formatterTags.off</code></a></td><td><code>"@formatter:off"</code></td><td>The text in a comment that starts such a region.</td></tr>
+    <tr><td><a href="#rule-formattertags-on"><code>formatterTags.on</code></a></td><td><code>"@formatter:on"</code></td><td>The text in a comment that ends it.</td></tr>
   </tbody>
 </table>
 <p>Here is a complete file with every setting at its default, to copy and edit:</p>
@@ -265,7 +282,12 @@ javadoc:
   blankLineAfterDescription: true
   blankLineAfterParams: true
   blankLineAfterReturn: true
-  singleSpaceAfterTagName: true</code></pre>
+  singleSpaceAfterTagName: true
+  wrap: false
+formatterTags:
+  enabled: false
+  off: "@formatter:off"
+  on: "@formatter:on"</code></pre>
 
 <!-- rules-reference:start -->
 <h3 id="reference">Rules reference</h3>
@@ -917,7 +939,7 @@ class Example {
 </div></div>
 <div class="rule" id="rule-javadoc-enabled">
 <h4><code>javadoc.enabled</code></h4>
-<p>Apply the <code>javadoc</code> settings below. When false, JavaDoc is left exactly as written. One-line JavaDoc and JavaDoc containing <code>&lt;pre&gt;</code> are never changed.</p>
+<p>Apply the <code>javadoc</code> settings below, except <code>javadoc.wrap</code>. When false, JavaDoc is left exactly as written. One-line JavaDoc and JavaDoc containing <code>&lt;pre&gt;</code> are never changed.</p>
 <table class="rule-facts"><tr><th>Values</th><td><code>true</code> or <code>false</code></td></tr><tr><th>Default</th><td><code>true</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
 <details><summary>Input</summary><pre><code>class Example {
     /**
@@ -1252,6 +1274,106 @@ class Example {
 
 }</code></pre></div>
 </div></div>
+<div class="rule" id="rule-javadoc-wrap">
+<h4><code>javadoc.wrap</code></h4>
+<p>Re-wrap JavaDoc text at the line length: long lines are broken and short lines are joined. Text inside <code>&lt;pre&gt;</code> is never wrapped. It runs before the other <code>javadoc</code> settings, which still decide the blank lines; with <code>removeBlankLinesInDescription: true</code>, a second paragraph starts with <code>&lt;p&gt;</code> on the next line. This setting works on its own, also when <code>javadoc.enabled</code> is false.</p>
+<table class="rule-facts"><tr><th>Values</th><td><code>true</code> or <code>false</code></td></tr><tr><th>Default</th><td><code>false</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">This is upstream&#39;s JavaDoc formatter, which the Palantir plugins don&#39;t expose. It is off by default because it rewrites text people wrote by hand.</p>
+<details><summary>Input</summary><pre><code>class Example {
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is open.
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /**
+     * Short lines
+     * are joined.
+     */
+    void joined() {}
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">javadoc:<br>&nbsp;&nbsp;wrap: true</div><pre><code>class Example {
+
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is
+     * open.
+     *
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /** Short lines are joined. */
+    void joined() {}
+
+}</code></pre></div>
+<div><div class="label yaml">javadoc:<br>&nbsp;&nbsp;wrap: false</div><pre><code>class Example {
+
+    /**
+     * Places an order on the exchange, after checking that the account has enough margin left and that the market is open.
+     *
+     * @param order the order to place, which can have a very long description that goes past the right margin
+     */
+    void place(String order) {}
+
+    /**
+     * Short lines
+     * are joined.
+     */
+    void joined() {}
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-formattertags-enabled">
+<h4><code>formatterTags.enabled</code></h4>
+<p>Leave the code between a comment containing <code>@formatter:off</code> and one containing <code>@formatter:on</code> exactly as written, for hand-aligned tables, DSLs and test data. These are the same markers as IntelliJ&#39;s, which has them off by default too.</p>
+<table class="rule-facts"><tr><th>Values</th><td><code>true</code> or <code>false</code></td></tr><tr><th>Default</th><td><code>false</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>false</code> · <code>google</code>: <code>false</code></td></tr></table>
+<p class="note">The region runs from the start of the <code>off</code> comment to the end of the <code>on</code> comment; the formatter still indents the <code>off</code> comment itself. An <code>off</code> without an <code>on</code> runs to the end of the file, and an <code>off</code> inside a region is ignored. The markers only count in comments, not in strings. Imports inside a region are neither sorted nor removed, and strings inside one aren&#39;t reflowed.</p>
+<details><summary>Input</summary><pre><code>class Example {
+    // @formatter:off
+    int[][] scores = {
+        {  10, 200,  3 },
+        { 400,   5, 60 },
+    };
+    // @formatter:on
+    int   size  =  2;
+}</code></pre></details>
+<div class="compare">
+<div><div class="label yaml">formatterTags:<br>&nbsp;&nbsp;enabled: true</div><pre><code>class Example {
+
+    // @formatter:off
+    int[][] scores = {
+        {  10, 200,  3 },
+        { 400,   5, 60 },
+    };
+    // @formatter:on
+    int size = 2;
+
+}</code></pre></div>
+<div><div class="label yaml">formatterTags:<br>&nbsp;&nbsp;enabled: false</div><pre><code>class Example {
+
+    // @formatter:off
+    int[][] scores = {
+        { 10, 200, 3 },
+        { 400, 5, 60 },
+    };
+    // @formatter:on
+    int size = 2;
+
+}</code></pre></div>
+</div></div>
+<div class="rule" id="rule-formattertags-off">
+<h4><code>formatterTags.off</code></h4>
+<p>The text in a comment that starts a region the formatter leaves alone.</p>
+<table class="rule-facts"><tr><th>Values</th><td>text without spaces, <code>/</code> or <code>*</code></td></tr><tr><th>Default</th><td><code>"@formatter:off"</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>"@formatter:off"</code> · <code>google</code>: <code>"@formatter:off"</code></td></tr></table>
+<p class="note">Only used when <code>formatterTags.enabled</code> is true.</p>
+</div>
+<div class="rule" id="rule-formattertags-on">
+<h4><code>formatterTags.on</code></h4>
+<p>The text in a comment that ends it.</p>
+<table class="rule-facts"><tr><th>Values</th><td>text without spaces, <code>/</code> or <code>*</code></td></tr><tr><th>Default</th><td><code>"@formatter:on"</code></td></tr><tr><th>In presets</th><td><code>palantir</code>: <code>"@formatter:on"</code> · <code>google</code>: <code>"@formatter:on"</code></td></tr></table>
+<p class="note">Only used when <code>formatterTags.enabled</code> is true.</p>
+</div>
 <!-- rules-reference:end -->
 
 <h2 id="rules">Default style</h2>
@@ -1455,6 +1577,21 @@ void check(int x) {
  * @throws IllegalArgumentException when invalid
  */</code></pre></div>
 </div>
+
+<h2 id="embedding">Embedding Tailorbird</h2>
+<p>Tools that format Java code with Tailorbird, such as build or IDE plugins, should use <code>io.github.pieterjanscheir.tailorbird.api.TailorbirdFormatter</code> from the formatter artifact. The public types in that package are the supported API: they won't change incompatibly within a major version, and they don't expose upstream's types. Everything else in the jar can change with any upstream merge.</p>
+<pre><code>TailorbirdFormatter formatter = TailorbirdFormatter.fromConfig(Path.of("tailorbird.yml"));
+String formatted = formatter.format(source);   // imports fixed, code laid out, long strings wrapped
+
+// For an editor that formats a selection: the edits for the lines the ranges touch.
+List&lt;TextEdit&gt; edits = formatter.formatRanges(source, List.of(TextRange.of(start, end)));
+String result = TextEdit.apply(source, edits);</code></pre>
+<ul>
+  <li><code>defaults()</code>, <code>fromConfig(Path)</code>, <code>fromConfigText(String, String)</code> and <code>fromClasspath(ClassLoader)</code> create a formatter. An invalid settings file throws <code>TailorbirdConfigException</code>, whose message names the file and the setting, ready to show to the user.</li>
+  <li><code>format</code>, <code>fixImports</code> and <code>formatRanges</code> throw <code>TailorbirdFormatException</code> when the source doesn't parse. Its <code>diagnostics()</code> give 1-based lines and columns.</li>
+  <li>A formatter can be shared between threads.</li>
+  <li>On JDK 16 and later, the JVM that formats needs the options in <code>TailorbirdFormatter.requiredJvmArguments()</code>, the same ones as <code>JAVA_OPTS</code> <a href="#command-line">on the command line</a>. A plugin that formats in its own process needs them there; otherwise, start a JVM for the formatter with them.</li>
+</ul>
 
 <h2 id="building">Building</h2>
 <p>You need JDK 21. The Gradle wrapper downloads everything else.</p>
