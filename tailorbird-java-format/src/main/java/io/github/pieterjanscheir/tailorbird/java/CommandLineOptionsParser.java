@@ -94,6 +94,9 @@ final class CommandLineOptionsParser {
                 case "-a":
                     optionsBuilder.aosp(true);
                     break;
+                // Tailorbird: --palantir stays because the upstream plugins pass it; both use Tailorbird's rules.
+                case "--tailorbird":
+                case "-tailorbird":
                 case "--palantir":
                 case "-palantir":
                     optionsBuilder.palantirStyle(true);
@@ -131,6 +134,10 @@ final class CommandLineOptionsParser {
                 case "-n":
                 case "--dry-run":
                     optionsBuilder.dryRun(true);
+                    break;
+                case "--diff":
+                case "-diff":
+                    optionsBuilder.diff(true);
                     break;
                 case "--set-exit-if-changed":
                     optionsBuilder.setExitIfChanged(true);
