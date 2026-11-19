@@ -101,7 +101,7 @@ class TailorbirdConfigTest {
                         .formatterOffTag("fmt:off")
                         .formatterOnTag("fmt:on")
                         .build());
-        assertThat(TailorbirdConfig.settingNames()).hasSize(26);
+        assertThat(TailorbirdConfig.settingNames()).hasSize(28);
     }
 
     @Test
@@ -197,6 +197,12 @@ class TailorbirdConfigTest {
         assertThatThrownBy(() -> TailorbirdConfig.parse("wrapping:\n  methodChainColumnLimit: 0\n", "test"))
                 .isInstanceOf(TailorbirdConfigException.class)
                 .hasMessageContaining("wrapping.methodChainColumnLimit must be at least 1");
+        assertThatThrownBy(() -> TailorbirdConfig.parse("annotations:\n  fields: sideways\n", "test"))
+                .isInstanceOf(TailorbirdConfigException.class)
+                .hasMessageContaining("annotations.fields must be vertical, inline or keep, got sideways");
+        assertThatThrownBy(() -> TailorbirdConfig.parse("annotations:\n  parameters: true\n", "test"))
+                .isInstanceOf(TailorbirdConfigException.class)
+                .hasMessageContaining("annotations.parameters must be text");
         assertThatThrownBy(() -> TailorbirdConfig.parse("lineLength: 10\n", "test"))
                 .isInstanceOf(TailorbirdConfigException.class)
                 .hasMessageContaining("lineLength must be at least 40");

@@ -18,6 +18,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.Immutable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -61,6 +62,8 @@ public final class TailorbirdRules {
     private final boolean javadocBlankLineAfterReturn;
     private final boolean javadocSingleSpaceAfterTagName;
     private final boolean javadocWrap;
+    private final AnnotationPlacement fieldAnnotations;
+    private final AnnotationPlacement parameterAnnotations;
     private final boolean formatterTags;
     private final String formatterOffTag;
     private final String formatterOnTag;
@@ -89,6 +92,8 @@ public final class TailorbirdRules {
         this.javadocBlankLineAfterReturn = b.javadocBlankLineAfterReturn;
         this.javadocSingleSpaceAfterTagName = b.javadocSingleSpaceAfterTagName;
         this.javadocWrap = b.javadocWrap;
+        this.fieldAnnotations = b.fieldAnnotations;
+        this.parameterAnnotations = b.parameterAnnotations;
         this.formatterTags = b.formatterTags;
         this.formatterOffTag = b.formatterOffTag;
         this.formatterOnTag = b.formatterOnTag;
@@ -134,7 +139,28 @@ public final class TailorbirdRules {
                 .blankLinesAroundInterfaceMethods(true)
                 .importGroups(ImmutableList.of(STATIC_IMPORTS, OTHER_IMPORTS))
                 .blankLineBetweenImportGroups(true)
-                .javadocLayout(false);
+                .javadocLayout(false)
+                .fieldAnnotations(AnnotationPlacement.VERTICAL)
+                .parameterAnnotations(AnnotationPlacement.INLINE);
+    }
+
+    /** Where a declaration's annotations go, relative to the rest of the declaration. */
+    public enum AnnotationPlacement {
+        /** Each annotation on its own line. */
+        VERTICAL,
+        /** On the declaration's line while it fits within the line length; one per line otherwise. */
+        INLINE,
+        /** Vertical if the input has a line break between the annotations and the declaration, inline otherwise. */
+        KEEP;
+
+        static AnnotationPlacement parse(String name, String value) {
+            for (AnnotationPlacement placement : values()) {
+                if (placement.name().toLowerCase(Locale.ROOT).equals(value)) {
+                    return placement;
+                }
+            }
+            throw new IllegalArgumentException(name + " must be vertical, inline or keep, got " + value);
+        }
     }
 
     /** A starting point for the rules, picked with {@code preset:} in {@code tailorbird.yml}. */
@@ -286,6 +312,19 @@ public final class TailorbirdRules {
         return javadocWrap;
     }
 
+    /** Where field annotations go. {@link AnnotationPlacement#VERTICAL} by default and in both presets. */
+    public AnnotationPlacement fieldAnnotations() {
+        return fieldAnnotations;
+    }
+
+    /**
+     * Where the annotations of method and constructor parameters go. {@link AnnotationPlacement#INLINE} by default and
+     * in both presets. Record components keep upstream's layout.
+     */
+    public AnnotationPlacement parameterAnnotations() {
+        return parameterAnnotations;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -318,6 +357,8 @@ public final class TailorbirdRules {
                 && javadocBlankLineAfterReturn == o.javadocBlankLineAfterReturn
                 && javadocSingleSpaceAfterTagName == o.javadocSingleSpaceAfterTagName
                 && javadocWrap == o.javadocWrap
+                && fieldAnnotations == o.fieldAnnotations
+                && parameterAnnotations == o.parameterAnnotations
                 && formatterTags == o.formatterTags
                 && formatterOffTag.equals(o.formatterOffTag)
                 && formatterOnTag.equals(o.formatterOnTag);
@@ -349,6 +390,8 @@ public final class TailorbirdRules {
                 javadocBlankLineAfterReturn,
                 javadocSingleSpaceAfterTagName,
                 javadocWrap,
+                fieldAnnotations,
+                parameterAnnotations,
                 formatterTags,
                 formatterOffTag,
                 formatterOnTag);
@@ -386,6 +429,8 @@ public final class TailorbirdRules {
         private boolean javadocBlankLineAfterReturn = true;
         private boolean javadocSingleSpaceAfterTagName = true;
         private boolean javadocWrap = false;
+        private AnnotationPlacement fieldAnnotations = AnnotationPlacement.VERTICAL;
+        private AnnotationPlacement parameterAnnotations = AnnotationPlacement.INLINE;
         private boolean formatterTags = false;
         private String formatterOffTag = "@formatter:off";
         private String formatterOnTag = "@formatter:on";
@@ -540,6 +585,16 @@ public final class TailorbirdRules {
 
         public Builder javadocWrap(boolean value) {
             this.javadocWrap = value;
+            return this;
+        }
+
+        public Builder fieldAnnotations(AnnotationPlacement value) {
+            this.fieldAnnotations = Objects.requireNonNull(value, "fieldAnnotations");
+            return this;
+        }
+
+        public Builder parameterAnnotations(AnnotationPlacement value) {
+            this.parameterAnnotations = Objects.requireNonNull(value, "parameterAnnotations");
             return this;
         }
 

@@ -73,6 +73,9 @@ import javax.annotation.Nullable;
  *   blankLineAfterReturn: true
  *   singleSpaceAfterTagName: true
  *   wrap: false
+ * annotations:
+ *   fields: vertical       # vertical, inline or keep
+ *   parameters: inline     # vertical, inline or keep
  * }</pre>
  *
  * <p>The formatter finds the file on its own classpath, so a project adds the folder that contains it to the
@@ -121,6 +124,14 @@ public final class TailorbirdConfig {
                     .put("javadoc.blankLineAfterReturn", (b, v) -> b.javadocBlankLineAfterReturn(v.bool()))
                     .put("javadoc.singleSpaceAfterTagName", (b, v) -> b.javadocSingleSpaceAfterTagName(v.bool()))
                     .put("javadoc.wrap", (b, v) -> b.javadocWrap(v.bool()))
+                    .put(
+                            "annotations.fields",
+                            (b, v) -> b.fieldAnnotations(
+                                    TailorbirdRules.AnnotationPlacement.parse("annotations.fields", v.string())))
+                    .put(
+                            "annotations.parameters",
+                            (b, v) -> b.parameterAnnotations(
+                                    TailorbirdRules.AnnotationPlacement.parse("annotations.parameters", v.string())))
                     .put("formatterTags.enabled", (b, v) -> b.formatterTags(v.bool()))
                     .put("formatterTags.off", (b, v) -> b.formatterOffTag(v.string()))
                     .put("formatterTags.on", (b, v) -> b.formatterOnTag(v.string()))
